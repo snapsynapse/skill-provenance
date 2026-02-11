@@ -1,0 +1,47 @@
+bundle: skill-provenance
+bundle_version: 3
+bundle_date: 2026-02-10
+description: >
+  Metaskill for version tracking across Agent Skills sessions, surfaces,
+  and platforms. Manifest, changelog, and version headers prevent version
+  confusion during iterative skill development.
+
+compatibility:
+  designed_for:
+    platform: Anthropic Claude
+    model: Claude Opus 4.6
+    surface: Chat
+  tested_on:
+    - platform: Anthropic Claude
+      model: Claude Opus 4.6
+      surface: Chat
+      status: pass
+      date: 2026-02-10
+      notes: Full bootstrap and round-trip validated with .skill ZIP
+  spec_version: agentskills.io/1.0
+  frontmatter_mode: claude
+
+files:
+  - path: SKILL.md
+    role: skill
+    version: 3
+    hash: sha256:42ce803eb25e0fd284aebbd10630ab3b7f6262a3889aa878288a259baa20a6e9
+    note: Canonical skill definition with session protocol, manifest spec, cross-platform compatibility
+
+  - path: README.md
+    role: reference
+    version: 3
+    hash: sha256:e939a9a10b8b17cb2d291f25f2b48e6c06d051ff9980dbcd436ba2d005d166eb
+    note: Human-facing instructions, worked example, porting workflows, troubleshooting, references
+
+  - path: evals.json
+    role: evals
+    version: 3
+    hash: sha256:b3cc54e44ef027b6411e5c8a1ce2c330d27a6a8ed6d4d5bdd997a00fec06c4cb
+    note: 8 evals covering bootstrap, verify, save, conflict, handoff, cross-platform, frontmatter mode, compatibility block
+
+  - path: CHANGELOG.md
+    role: reference
+    version: 3
+    hash: sha256:bd06f53d3d891317cd399a4d70918a7c4d2eff79e268b59a5927d100195f6311
+    note: Append-only change history
