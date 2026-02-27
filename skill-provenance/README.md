@@ -5,8 +5,9 @@ version: 4
 version_date: 2026-02-27
 previous_version: 3
 change_summary: >
-  Added Gemini CLI to quick start table. Added Gemini Gems workflow
-  section. Added Gemini ecosystem references.
+  Refined v4 for portability and consistency. Clarified manifest-only
+  version tracking for strict-format files, documented that the bundle
+  ships in minimal frontmatter mode, and hardened validate.sh behavior.
 ---
 
 # Skill Provenance — README
@@ -14,9 +15,10 @@ change_summary: >
 ## What this is
 
 A metaskill that prevents version confusion when skill projects move between
-Claude sessions and surfaces (Chat, Cowork, Code). It embeds version identity
-inside files rather than filenames, tracks staleness across related files, and
-maintains a manifest so any session can verify what it has.
+sessions, surfaces (Chat, IDE, CLI, Cowork), and platforms (Claude, Gemini
+CLI, Codex, Copilot). It keeps version identity with the bundle, inside files
+when practical and always in the manifest, tracks staleness across related
+files, and maintains a manifest so any session can verify what it has.
 
 You need this if you've ever uploaded a skill file to a new session and
 couldn't tell whether it was the latest version, or discovered that the
@@ -75,6 +77,11 @@ surface you're working in. How you do that depends on the surface:
 | **Claude Code** | Place the `skill-provenance/` folder in your project's skill directory (typically alongside other skills). Reference it in your CLAUDE.md if needed. |
 | **Gemini CLI** | Copy or symlink the `skill-provenance/` folder to `~/.gemini/skills/skill-provenance/` for user-wide availability, or `.gemini/skills/skill-provenance/` for a single project. Use `frontmatter_mode: minimal` in the manifest. |
 
+The checked-in `skill-provenance/` directory is the canonical source bundle
+and now ships in `frontmatter_mode: minimal`, so the same `SKILL.md` works
+for Claude, Codex, and Gemini CLI. The `.skill` file is just a Claude-friendly
+ZIP wrapper around that directory.
+
 ### Where to find and manage skills in Claude settings
 
 **To view installed skills:**
@@ -102,7 +109,8 @@ need to list them or count them.
 
 Claude will:
 - Inventory all files
-- Add version headers to text files
+- Add internal version headers where safe and record manifest-only versions
+  for strict-format files
 - Create `MANIFEST.yaml` (file inventory with roles and hashes)
 - Create `CHANGELOG.md` (with a single entry summarizing known history)
 - Return the updated bundle
@@ -118,9 +126,9 @@ and flags issues before you start working.
 **During a session:** Work normally. The versioning system stays out of
 your way until you're ready to save.
 
-**Closing a session:** Tell Claude you're done. Claude updates version
-headers, manifest, and changelog for everything that changed, flags
-anything stale, and packages the deliverables.
+**Closing a session:** Tell Claude you're done. Claude updates internal
+headers where applicable, the manifest, and the changelog for everything
+that changed, flags anything stale, and packages the deliverables.
 
 
 ## Applying to an existing skill (worked example)
@@ -188,7 +196,8 @@ name, which files are references vs. assets), it will ask.
 ### Step 4: What Claude produces
 
 Claude will:
-- Add version headers to the YAML frontmatter of each `.md` file
+- Add internal headers to frontmatter-friendly files and track strict-format
+  files (such as JSON, scripts, and binaries) via `MANIFEST.yaml`
 - Create `MANIFEST.yaml` listing all files with roles, versions, and hashes
 - Create `CHANGELOG.md` with a v1 bootstrap entry
 - Return all updated files
@@ -199,7 +208,7 @@ Put the updated files back into the directory structure:
 
 ```
 weekly-newsletter/
-├── SKILL.md              ← updated with version header
+├── SKILL.md              ← updated; may remain manifest-only in minimal mode
 ├── MANIFEST.yaml         ← new (versioning)
 ├── CHANGELOG.md          ← new (versioning)
 ├── README.md             ← new (versioning, optional)
@@ -233,7 +242,7 @@ about.
 ### Step 6: Ongoing use
 
 From now on, when you iterate on the skill in any Claude conversation,
-the version headers and manifest travel with it. When you download
+the internal headers (when present) and manifest travel with it. When you download
 it again, the versioning artifacts come with it.
 
 
@@ -320,15 +329,16 @@ project, so the bundle stays put between sessions.
 
 1. **Close the session** and download updated bundle files.
 2. **Copy the bundle directory** into your Obsidian vault.
-3. The manifest, changelog, and version headers are all plain markdown
-   and YAML — they render natively in Obsidian.
+3. The manifest, changelog, and any internal headers are all plain
+   markdown and YAML — they render natively in Obsidian.
 4. When you return, upload from Obsidian to whichever surface you're
    using next.
 
 #### Any surface → Git (publishing)
 
 1. **Ensure bundle is clean and versioned** (all files have current
-   version headers, manifest is up to date, changelog has latest entry).
+   internal headers when applicable, manifest is up to date, changelog
+   has latest entry).
 2. **Copy the bundle directory** into your git repo.
 3. **Commit with a message** that references the bundle version:
    `my-skill v5: added validation phase, updated checklist`
@@ -363,8 +373,8 @@ To version-track a Gem alongside its associated files:
    Gem's instructions — edit it locally, then update the Gem.
 
 2. **Version the bundle normally** using skill-provenance. The Gem
-   instructions file gets version headers, changelog entries, and
-   manifest tracking like any other file.
+   instructions file gets internal headers when appropriate, changelog
+   entries, and manifest tracking like any other file.
 
 3. **On session close**, ask the skill to generate a "Gem update
    summary." This tells you:
@@ -386,7 +396,7 @@ To version-track a Gem alongside its associated files:
 - Gems have file size and count limits for their knowledge base. Check
   current limits in the Gem Manager.
 - The Gem's instructions field is plain text, not YAML frontmatter.
-  Copy the body of `GEM_INSTRUCTIONS.md` without the version header.
+  Copy the body of `GEM_INSTRUCTIONS.md` without the internal header.
 
 
 ## File naming
@@ -403,6 +413,69 @@ The version lives inside the file and in the manifest. If your local
 workflow requires version-numbered filenames (e.g., to keep multiple
 versions visible in a directory), the manifest's version field is the
 tiebreaker for which is canonical.
+
+
+## Local hash validation
+
+LLMs can compute SHA-256 hashes when they have shell access (Claude Code,
+Cowork), but hash computation in Chat sessions is slower and can be
+unreliable on large files. For reliable pre-upload verification, use the
+included `validate.sh` script.
+
+### Verify mode (default)
+
+```bash
+# From inside the bundle directory
+./validate.sh
+
+# Or pass the bundle path
+./validate.sh path/to/my-skill
+```
+
+Output:
+```
+OK       SKILL.md
+OK       evals.json
+MISMATCH README.md
+  expected: abc123...
+  actual:   def456...
+MISSING  generate.js
+
+Checked 4 files, skipped 0, errors 2
+```
+
+### Update mode
+
+After editing files locally, recompute all hashes in MANIFEST.yaml:
+
+```bash
+./validate.sh --update
+```
+
+Output:
+```
+UPDATED  SKILL.md
+OK       evals.json
+UPDATED  README.md
+
+Checked 3 files, skipped 0, updated 2
+MANIFEST.yaml updated.
+```
+
+This closes the local editing loop: edit files in your IDE or
+Obsidian, run `./validate.sh --update`, then upload to Chat with
+correct hashes already in place.
+
+### Details
+
+The script reads `MANIFEST.yaml`, computes actual SHA-256 hashes for
+each file, and reports matches, mismatches, and missing files. Files
+without hashes in the manifest are skipped. `MANIFEST.yaml` itself is not
+self-listed, so the script treats it as the control file rather than a
+hash target. Exit code 0 means all hashes verified (or updated); exit code 1
+means missing files were found.
+
+Zero dependencies beyond `bash`, `shasum`, and `awk`.
 
 
 ## Troubleshooting
@@ -452,13 +525,17 @@ changes, update the hash in the manifest and note it in the changelog.
 
 The Agent Skills format (agentskills.io) defines a `metadata` field in
 SKILL.md frontmatter that supports arbitrary key-value pairs, including
-a `version` key. This skill uses that field for SKILL.md version headers
-(see the frontmatter constraint above).
+a `version` key. Bundles can use that field for SKILL.md version headers
+when they choose `frontmatter_mode: claude` (see the frontmatter constraint
+above).
 
 However, the official spec's `version` field is a static label — it
 doesn't address cross-session staleness tracking, changelogs, manifests,
 or bundle integrity verification. This skill fills that gap. It is
 complementary to the spec, not a replacement.
+
+This bundle ships in `frontmatter_mode: minimal` for maximum portability,
+so its own SKILL.md version lives in `MANIFEST.yaml`.
 
 The API's skill versioning system (epoch timestamps via `/v1/skills`)
 handles version management for skills deployed through the API. This

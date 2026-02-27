@@ -6,7 +6,7 @@ If you build or maintain Claude skills (or skills for Gemini CLI, Codex, Copilot
 
 Skill Provenance solves this with three conventions:
 
-1. Every versioned file carries a **version header** inside itself (not in the filename).
+1. Version identity travels with the bundle: **inside files when practical, and always in the manifest**.
 2. A **changelog** travels with the skill bundle.
 3. A **manifest** lists all files so any session can verify completeness and detect staleness.
 
@@ -23,12 +23,14 @@ The skill is now available in every Claude conversation. To use it, tell Claude:
 
 > "Use the skill-provenance skill to bootstrap this bundle."
 
+For Codex or Gemini CLI, use the checked-in [`skill-provenance/`](skill-provenance/) directory directly. The bundle now ships with minimal `SKILL.md` frontmatter, so the same source works across Claude, Codex, and Gemini CLI.
+
 
 ## What it does
 
 **When you open a session**, it reads the manifest, checks that all files are present, verifies hashes, flags anything stale, and tells you what needs attention before you start working.
 
-**When you close a session**, it updates version headers in changed files, recomputes manifest hashes, appends to the changelog, and flags any files that should have been updated but weren't.
+**When you close a session**, it updates internal version headers where applicable, recomputes manifest hashes, appends to the changelog, and flags any files that should have been updated but weren't.
 
 **When you hand off between sessions**, it generates a handoff note with current state, accomplishments, stale files, and next steps — because Chat sessions don't persist and the next instance of Claude has no memory of what you did.
 
@@ -42,10 +44,13 @@ skill-provenance/
 ├── README.md                    ← User guide: workflows, worked example, troubleshooting
 ├── MANIFEST.yaml                ← File inventory with roles, versions, hashes
 ├── CHANGELOG.md                 ← Change history
-└── evals.json                   ← 8 evaluation scenarios
+├── evals.json                   ← 13 evaluation scenarios
+└── validate.sh                  ← Local hash verification script
 ```
 
 The `skill-provenance/` directory contains the same files that are inside the `.skill` ZIP. If you prefer working with loose files (Claude Code, git repos, Obsidian vaults), use the directory. If you prefer the packaged format (Claude Chat, Settings UI), use the `.skill` file.
+
+The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible packaging wrapper around it.
 
 
 ## Cross-platform compatibility
@@ -61,6 +66,8 @@ The skill works on any platform that supports the agentskills.io standard. Diffe
 
 The manifest tracks a `frontmatter_mode` (`claude` or `minimal`) so the skill knows whether to embed version info in SKILL.md or keep it manifest-only.
 
+This repository now ships in `frontmatter_mode: minimal` for maximum portability.
+
 
 ## Usage guide
 
@@ -74,7 +81,7 @@ See the full [README.md](skill-provenance/README.md) inside the skill bundle for
 
 ## Evals
 
-The `evals.json` file contains 10 evaluation scenarios:
+The `evals.json` file contains 13 evaluation scenarios:
 
 1. **Bootstrap** — versioning an existing unversioned bundle
 2. **Open session** — detecting missing and stale files on load
@@ -86,6 +93,9 @@ The `evals.json` file contains 10 evaluation scenarios:
 8. **Compatibility block** — recording cross-platform test results
 9. **Gemini CLI compatibility** — bootstrapping for Gemini CLI with minimal frontmatter
 10. **Gemini Gems prompt extraction** — generating Gem update summaries
+11. **Git commit message** — generating commit messages for git-bound bundles
+12. **Handoff with per-file changes** — detailed change summaries in handoff notes
+13. **Local hash validation** — using validate.sh for pre-upload verification
 
 These are structured prompts with expected behaviors. Upload them alongside the skill to test it, or use them as a reference for how the skill should behave.
 

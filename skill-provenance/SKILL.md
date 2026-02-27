@@ -2,20 +2,12 @@
 name: skill-provenance
 description: >
   Version tracking for Agent Skills and their associated files across
-  sessions, surfaces, and platforms. Embeds version identity inside files
-  rather than filenames. Maintains a manifest and changelog that travel
-  with the skill bundle. Use this skill whenever opening, saving, or
-  handing off a skill project that spans multiple sessions. Compatible
+  sessions, surfaces, and platforms. Keeps version identity with the
+  bundle instead of filenames, using internal headers where practical and
+  a manifest everywhere else. Maintains a manifest and changelog that
+  travel with the skill bundle. Use this skill whenever opening, saving,
+  or handing off a skill project that spans multiple sessions. Compatible
   with the agentskills.io open standard.
-metadata:
-  skill_bundle: skill-provenance
-  file_role: skill
-  version: 4
-  version_date: 2026-02-27
-  previous_version: 3
-  change_summary: >
-    Added Gemini CLI as supported platform with three-tier discovery
-    documentation. Added Gemini Gems workflow. Added evals 9-10.
 ---
 
 # Skill Provenance
@@ -31,7 +23,8 @@ resolve.
 
 This skill establishes three conventions that prevent that:
 
-1. Every versioned file carries a version header inside itself.
+1. Version identity lives inside files when their format allows it, and
+   always in the manifest.
 2. A changelog travels with the skill bundle.
 3. A manifest lists all files in the bundle so any session can verify completeness.
 
@@ -52,10 +45,10 @@ Scripts, outputs, and handoff notes are tracked by the manifest but version
 with the bundle rather than independently.
 
 
-## Version Header
+## Internal Version Header
 
-Every versioned file begins with a YAML frontmatter block (or extends an
-existing one) containing these fields:
+Files that can safely carry YAML frontmatter begin with a YAML frontmatter
+block (or extend an existing one) containing these fields:
 
 ```yaml
 ---
@@ -94,8 +87,10 @@ removed per-section page breaks, added content flow check" is sufficient.
 - `asset` — templates, images, fonts in assets/ used in output
 - `agents` — platform UI metadata (e.g., Codex's agents/openai.yaml)
 
-For files that cannot carry YAML frontmatter (binary files like .docx, .pdf,
-.png), the manifest tracks their version. They do not get internal headers.
+For files that cannot safely carry YAML frontmatter (binary files like .docx,
+.pdf, .png, and strict-format files like .json or executable .sh), the
+manifest tracks their version. They do not get internal headers. For those
+files, the manifest's `version` field is authoritative.
 
 **SKILL.md frontmatter constraint:** The Agent Skills open standard
 (agentskills.io) requires `name` and `description`. Different platforms
@@ -223,6 +218,10 @@ not versioned by this system.
 
 **Paths are relative** to the bundle root. No absolute paths.
 
+**MANIFEST.yaml is not listed in `files`.** Self-hashing is recursive. Treat
+the manifest as the bundle's control file and verify it via git, transport
+checksums, or the surrounding package when needed.
+
 
 ## The .skill Package Format
 
@@ -307,7 +306,9 @@ When a skill bundle is loaded into a new session:
 
 1. Read `MANIFEST.yaml` first.
 2. Verify all listed files are present. Report any missing files.
-3. For files with hashes, verify hashes match. Flag mismatches.
+3. For files with hashes, verify hashes match. Flag mismatches. In
+   local environments, users can run `validate.sh` before uploading
+   for reliable hash verification without LLM computation.
 4. Read `CHANGELOG.md` to understand recent changes.
 5. Check for staleness: if any file's version is lower than the bundle
    version, flag it as potentially stale and ask the user whether it
@@ -320,14 +321,30 @@ When a skill bundle is loaded into a new session:
 
 When work is complete and files are being delivered:
 
-1. Update version headers in all files that changed.
-2. Update `MANIFEST.yaml` with new versions and hashes.
+1. Update internal version headers for changed files that use them.
+2. Update `MANIFEST.yaml` with new versions and hashes for every changed
+   versioned file, including manifest-only files.
 3. Append to `CHANGELOG.md`.
 4. If any versioned file was changed but another dependent file was not
    updated (e.g., SKILL.md changed but evals.json was not updated), note
    the staleness explicitly in the changelog entry.
 5. Deliver the full bundle to the user, or at minimum the changed files
    plus the updated MANIFEST.yaml and CHANGELOG.md.
+6. If the user indicates the bundle is destined for a git repo, generate
+   a `git_commit.txt` file containing a ready-to-use commit message
+   derived from the changelog entry. Format:
+
+   ```
+   skill-name vN: one-line summary
+
+   - file1.md: what changed
+   - file2.json: what changed
+   - Stale: file3.js (not updated this session)
+   ```
+
+   The user can pass this directly to `git commit -F git_commit.txt`.
+   This file is not tracked in the manifest — it is a transient
+   convenience artifact, not part of the bundle.
 
 ### Handoff between sessions
 
@@ -339,11 +356,16 @@ should include:
 - What is stale and needs attention
 - What the next session should do first
 - Any decisions made that are not yet reflected in the files
+- Per-file change summaries: for each file modified this session, a
+  brief description of what changed (section added, field removed,
+  logic rewritten, etc.). This is more granular than the changelog
+  entry and helps the next session verify the work without re-reading
+  every file.
 
-The handoff note gets a version header and is tracked in the manifest.
-It replaces (not appends to) the previous handoff note — there is only
-one active handoff at a time. Previous handoffs are preserved in the
-changelog history.
+The handoff note gets an internal version header when its format allows it
+and is tracked in the manifest. It replaces (not appends to) the previous
+handoff note — there is only one active handoff at a time. Previous
+handoffs are preserved in the changelog history.
 
 ### Conflict resolution
 
@@ -415,7 +437,9 @@ The manifest and changelog are inert files. No platform currently
 reads them. They exist for the human and for agents that have the
 skill-provenance skill loaded. This means they never break
 compatibility — they're invisible to platforms that don't know
-about them.
+about them. For maximum portability, this bundle itself ships in
+`frontmatter_mode: minimal`; its `SKILL.md` version is tracked in
+`MANIFEST.yaml`.
 
 
 ## File Naming
@@ -433,7 +457,7 @@ trouble in the first place.
 Exception: when a user's local storage requires version-in-filename for
 their own workflow (e.g., keeping multiple versions visible in Obsidian),
 the manifest is the tiebreaker for which version is canonical. The
-internal version header must still match.
+internal version identity, when present, must still match.
 
 
 ## Bootstrap
@@ -444,7 +468,8 @@ To version an existing unversioned skill bundle:
    file list. Do not ask the user to list files; determine this yourself.
 2. Ask the user what version number to assign. If there's a handoff note
    or other context, propose a number based on the history.
-3. Add version headers to all text files.
+3. Add internal version headers to files that can safely carry them and
+   record manifest-only versions for strict-format files.
 4. Generate `MANIFEST.yaml` with hashes.
 5. Create `CHANGELOG.md` with a single entry summarizing known history.
 6. Deliver the versioned bundle.
