@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 3
-bundle_date: 2026-02-10
+bundle_version: 4
+bundle_date: 2026-02-27
 description: >
   Metaskill for version tracking across Agent Skills sessions, surfaces,
   and platforms. Manifest, changelog, and version headers prevent version
@@ -24,24 +24,24 @@ compatibility:
 files:
   - path: SKILL.md
     role: skill
-    version: 3
-    hash: sha256:42ce803eb25e0fd284aebbd10630ab3b7f6262a3889aa878288a259baa20a6e9
+    version: 4
+    hash: sha256:bf4cbc17f7f2f2ef8ae5cc2f609b7c961a19f9b66fdb3fc3bdabc552b6fcee81
     note: Canonical skill definition with session protocol, manifest spec, cross-platform compatibility
 
   - path: README.md
     role: reference
-    version: 3
-    hash: sha256:e939a9a10b8b17cb2d291f25f2b48e6c06d051ff9980dbcd436ba2d005d166eb
-    note: Human-facing instructions, worked example, porting workflows, troubleshooting, references
+    version: 4
+    hash: sha256:dac303f6cc57d2f53e128a821479c950bf026b3d45e42b18e008f2fe588f6dbd
+    note: Human-facing instructions, worked example, porting workflows, Gemini Gems workflow, troubleshooting, references
 
   - path: evals.json
     role: evals
-    version: 3
-    hash: sha256:b3cc54e44ef027b6411e5c8a1ce2c330d27a6a8ed6d4d5bdd997a00fec06c4cb
-    note: 8 evals covering bootstrap, verify, save, conflict, handoff, cross-platform, frontmatter mode, compatibility block
+    version: 4
+    hash: sha256:2e8446fb94f2aed2575c6fc1946ebe96e610b0a401e6f667f8a7a6783f50b21d
+    note: 10 evals covering bootstrap, verify, save, conflict, handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems
 
   - path: CHANGELOG.md
     role: reference
-    version: 3
-    hash: sha256:bd06f53d3d891317cd399a4d70918a7c4d2eff79e268b59a5927d100195f6311
+    version: 4
+    hash: sha256:8328e4db7167d4e3551fd177b87ea4bc92237dea7548327fa935b5cf1ce8e2bf
     note: Append-only change history

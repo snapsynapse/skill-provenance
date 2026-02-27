@@ -1,12 +1,12 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 3
-version_date: 2026-02-10
-previous_version: 2
+version: 4
+version_date: 2026-02-27
+previous_version: 3
 change_summary: >
-  Renamed bundle from skill-versioning to skill-provenance.
-  Prepared for public GitHub release under snapsynapse org.
+  Added Gemini CLI to quick start table. Added Gemini Gems workflow
+  section. Added Gemini ecosystem references.
 ---
 
 # Skill Provenance — README
@@ -73,6 +73,7 @@ surface you're working in. How you do that depends on the surface:
 | **Claude Chat** (project) | Add `SKILL.md` to the project knowledge. It will be available in every conversation within that project. |
 | **Claude Cowork** | Place the `skill-provenance/` folder in your Cowork skill directory. Claude will discover it automatically. |
 | **Claude Code** | Place the `skill-provenance/` folder in your project's skill directory (typically alongside other skills). Reference it in your CLAUDE.md if needed. |
+| **Gemini CLI** | Copy or symlink the `skill-provenance/` folder to `~/.gemini/skills/skill-provenance/` for user-wide availability, or `.gemini/skills/skill-provenance/` for a single project. Use `frontmatter_mode: minimal` in the manifest. |
 
 ### Where to find and manage skills in Claude settings
 
@@ -343,6 +344,51 @@ flow — it works, but you lose hash verification and staleness tracking
 for that transition. Better to carry the manifest.
 
 
+## Gemini Gems workflow
+
+Gemini Gems are Google's equivalent of Claude Skills/Projects in the
+web UI. A Gem consists of a name, a system prompt (the "instructions"
+field), and optional knowledge files uploaded to the Gem's knowledge
+base. Unlike Claude's `.skill` ZIP format, Gems don't accept a single
+bundle — instructions are copy-pasted and files are uploaded individually
+through the Gem Manager.
+
+### Tracking a Gem with skill-provenance
+
+To version-track a Gem alongside its associated files:
+
+1. **Save the Gem's system prompt** as a file in your bundle (e.g.,
+   `GEM_INSTRUCTIONS.md`). Track it in the manifest with
+   `file_role: reference`. This becomes the source of truth for the
+   Gem's instructions — edit it locally, then update the Gem.
+
+2. **Version the bundle normally** using skill-provenance. The Gem
+   instructions file gets version headers, changelog entries, and
+   manifest tracking like any other file.
+
+3. **On session close**, ask the skill to generate a "Gem update
+   summary." This tells you:
+   - Whether `GEM_INSTRUCTIONS.md` changed (and if so, the full text
+     to copy-paste into the Gem Manager's instructions field)
+   - Which files in the bundle need to be re-uploaded to the Gem's
+     knowledge base (any file that changed this session)
+   - The version number and change summary for your records
+
+### Example prompt
+
+> "Package the bundle. I also maintain a Gemini Gem for this skill —
+> tell me what I need to update in the Gem Manager."
+
+### Limitations
+
+- Gem updates are manual (copy-paste instructions, re-upload files).
+  There is no API for programmatic Gem management.
+- Gems have file size and count limits for their knowledge base. Check
+  current limits in the Gem Manager.
+- The Gem's instructions field is plain text, not YAML frontmatter.
+  Copy the body of `GEM_INSTRUCTIONS.md` without the version header.
+
+
 ## File naming
 
 The versioning system uses stable filenames:
@@ -442,6 +488,8 @@ API deployment.
 - [Agent Skills GitHub](https://github.com/agentskills/agentskills) — specification source, reference library, validation tools
 - [Anthropic example skills](https://github.com/anthropics/skills) — official skill examples and templates
 - [Connectors directory](https://claude.com/connectors) — partner-built skills and MCP connectors
+- [Gemini CLI creating skills](https://geminicli.com/docs/cli/creating-skills/) — Gemini CLI skill authoring guide
+- [Gemini Gems](https://support.google.com/gemini/answer/16504957) — creating and sharing Gemini Gems
 
 ### Support articles
 

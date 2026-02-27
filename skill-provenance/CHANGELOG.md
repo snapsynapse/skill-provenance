@@ -1,5 +1,17 @@
 # Changelog
 
+## v4 — 2026-02-27
+- SKILL.md: Added Gemini CLI to frontmatter constraint table and
+  cross-platform considerations section. Documented three-tier skill
+  discovery, installation path, and management commands. Updated
+  frontmatter_mode comment to list Gemini CLI alongside Codex.
+- README.md: Added Gemini CLI to quick start surface table. Added
+  Gemini Gems workflow section with tracking instructions, example
+  prompt, and limitations. Added Gemini ecosystem references.
+- evals.json: Added eval 9 (Gemini CLI compatibility bootstrap) and
+  eval 10 (Gemini Gems prompt extraction). Now 10 evals total.
+- CHANGELOG.md: This entry.
+
 ## v3 — 2026-02-10
 - All files: Renamed bundle from skill-versioning to skill-provenance.
   All internal references, frontmatter, and manifest entries updated.

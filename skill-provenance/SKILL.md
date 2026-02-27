@@ -10,13 +10,12 @@ description: >
 metadata:
   skill_bundle: skill-provenance
   file_role: skill
-  version: 3
-  version_date: 2026-02-10
-  previous_version: 2
+  version: 4
+  version_date: 2026-02-27
+  previous_version: 3
   change_summary: >
-    Renamed bundle from skill-versioning to skill-provenance.
-    Updated evals to cover v2 cross-platform scenarios.
-    Prepared for public GitHub release.
+    Added Gemini CLI as supported platform with three-tier discovery
+    documentation. Added Gemini Gems workflow. Added evals 9-10.
 ---
 
 # Skill Provenance
@@ -24,7 +23,7 @@ metadata:
 ## The Problem This Solves
 
 Skill projects move between sessions, surfaces (Chat, IDE, CLI, Cowork),
-platforms (Claude, Codex, Copilot), and local storage (Obsidian, working
+platforms (Claude, Gemini CLI, Codex, Copilot), and local storage (Obsidian, working
 directories, git repos). Version identity gets lost when it lives only in
 filenames. A file renamed from `SKILL_v4.md` to `SKILL_v5.md` with no
 internal record of what changed creates ambiguity that costs real time to
@@ -106,6 +105,7 @@ enforce different rules about additional fields:
 |---|---|
 | **agentskills.io spec** | `name`, `description`, `license`, `metadata`, `compatibility`, `allowed-tools` |
 | **Claude (settings importer)** | Same as spec. Extra fields rejected. |
+| **Gemini CLI (Google)** | `name` and `description` only. Extra fields not officially supported. |
 | **Codex (OpenAI)** | `name` and `description` only. Extra fields rejected. |
 | **GitHub Copilot** | Follows agentskills.io spec. |
 
@@ -168,8 +168,8 @@ compatibility:
       notes: Misses staleness detection on complex bundles
   spec_version: agentskills.io/1.0
   frontmatter_mode: minimal
-    # minimal = name + description only (max portability)
-    # claude = includes metadata block (Claude-compatible)
+    # minimal = name + description only (Codex, Gemini CLI, max portability)
+    # claude = includes metadata block (Claude, Copilot)
 
 files:
   - path: SKILL.md
@@ -386,6 +386,24 @@ directories. Codex rejects SKILL.md frontmatter fields beyond `name`
 and `description` — use `frontmatter_mode: minimal` in the manifest
 and omit the `metadata` block from SKILL.md. Codex's `agents/openai.yaml`
 can be tracked in the manifest with `role: agents`.
+
+### Gemini CLI (Google)
+Filesystem-based with three-tier skill discovery:
+1. **Workspace:** `.gemini/skills/` in the project directory
+2. **User:** `~/.gemini/skills/` for skills available across all projects
+3. **Extensions:** `~/.gemini/extensions/*/skills/` for extension-provided skills
+
+Gemini CLI requires only `name` and `description` in SKILL.md
+frontmatter — use `frontmatter_mode: minimal` in the manifest and
+omit the `metadata` block from SKILL.md. Skills are loaded on-demand
+by name and description, so context is not bloated by inactive skills.
+
+To install a skill bundle for Gemini CLI, copy or symlink the bundle
+directory into `~/.gemini/skills/skill-name/`. Management commands:
+`gemini skills list`, `gemini skills install`, `gemini skills link`.
+
+Manifest and changelog are ignored by Gemini CLI (treated as unknown
+files in the skill directory).
 
 ### GitHub Copilot / VS Code
 Skills in `.github/skills/` or `.claude/skills/`. Follows the

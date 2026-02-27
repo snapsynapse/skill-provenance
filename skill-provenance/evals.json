@@ -163,6 +163,45 @@
         "CHANGELOG.md entry documents the test results",
         "Existing tested_on entries are preserved, not overwritten"
       ]
+    },
+    {
+      "id": 9,
+      "name": "gemini_cli_compatibility",
+      "description": "Tests bootstrapping a bundle targeting Gemini CLI, which requires SKILL.md frontmatter limited to name and description. The skill should use frontmatter_mode: minimal and provide Gemini CLI installation guidance.",
+      "prompt": "I want to version this skill bundle for use with Gemini CLI. SKILL.md has name and description only. This is version 1. I want to install it to ~/.gemini/skills/ when we're done.",
+      "files": [
+        "SKILL.md",
+        "references/setup-guide.md"
+      ],
+      "expectations": [
+        "MANIFEST.yaml is created with frontmatter_mode: minimal in the compatibility block",
+        "SKILL.md frontmatter is unchanged — no metadata block added",
+        "SKILL.md version is tracked only in MANIFEST.yaml, not in the file itself",
+        "compatibility.designed_for references Gemini CLI as the target platform",
+        "Install guidance references ~/.gemini/skills/ directory structure",
+        "CHANGELOG.md is created with a v1 bootstrap entry",
+        "Manifest and changelog are generated normally alongside the skill files"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "gemini_gems_prompt_extraction",
+      "description": "Tests generating a Gem update summary when the user maintains a Gemini Gem alongside the versioned bundle. The skill should identify what needs to be updated in the Gem Manager.",
+      "prompt": "I maintain a Gemini Gem for this skill. The Gem's system prompt is tracked in GEM_INSTRUCTIONS.md. I've updated SKILL.md and GEM_INSTRUCTIONS.md this session. Package the bundle and tell me what I need to update in the Gem Manager.",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md",
+        "GEM_INSTRUCTIONS.md"
+      ],
+      "expectations": [
+        "Version headers updated for SKILL.md and GEM_INSTRUCTIONS.md",
+        "MANIFEST.yaml and CHANGELOG.md updated normally",
+        "Output includes a Gem update section identifying that GEM_INSTRUCTIONS.md changed",
+        "Tells the user to copy the updated instructions into the Gem Manager",
+        "Identifies which files need to be re-uploaded to the Gem's knowledge base",
+        "Does not attempt to automate Gem Manager interaction"
+      ]
     }
   ]
 }
