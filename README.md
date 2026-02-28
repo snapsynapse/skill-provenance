@@ -100,6 +100,11 @@ The `evals.json` file contains 13 evaluation scenarios:
 These are structured prompts with expected behaviors. Upload them alongside the skill to test it, or use them as a reference for how the skill should behave.
 
 
+## Related projects
+
+- **[Skillman](https://github.com/chrisvoncsefalvay/skillman)** — Python CLI that installs and locks agent skills from GitHub repos (`skills.toml` + `skills.lock`). Skillman is a consumer-side package manager; skill-provenance is an author-side versioning tool. They operate at different lifecycle stages and don't conflict on disk — use skill-provenance to version your bundle during development, and Skillman to distribute and pin it for consumers.
+
+
 ## License
 
 [MIT](LICENSE)

@@ -31,7 +31,7 @@ files:
   - path: README.md
     role: reference
     version: 4
-    hash: sha256:453f095647f815456cfbe4f0b8eaaa022ca5676f02f952ce2027e92f491c1823
+    hash: sha256:9979e1dbefa0ac7876b81c598995f2e88b4a4a6778e589bcd23cde11005cdd1d
     note: Human-facing instructions, worked example, portability guidance, local validation, troubleshooting, references
 
   - path: evals.json

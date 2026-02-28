@@ -567,6 +567,7 @@ API deployment.
 - [Connectors directory](https://claude.com/connectors) — partner-built skills and MCP connectors
 - [Gemini CLI creating skills](https://geminicli.com/docs/cli/creating-skills/) — Gemini CLI skill authoring guide
 - [Gemini Gems](https://support.google.com/gemini/answer/16504957) — creating and sharing Gemini Gems
+- [Skillman](https://github.com/chrisvoncsefalvay/skillman) — CLI for installing and locking agent skills from GitHub repos (consumer-side complement to skill-provenance)
 
 ### Support articles
 
