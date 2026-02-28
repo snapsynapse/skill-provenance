@@ -1,0 +1,69 @@
+name: Compatibility Report
+description: Report test results from a platform other than Claude
+title: "[Compat] "
+labels: ["compatibility"]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Gemini CLI (Google)
+        - Codex (OpenAI)
+        - GitHub Copilot
+        - Cursor
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: platform-version
+    attributes:
+      label: Platform version
+      placeholder: "e.g., Gemini CLI 0.4.2, Codex 1.0"
+    validations:
+      required: false
+  - type: input
+    id: model
+    attributes:
+      label: Model used
+      placeholder: "e.g., Gemini 2.5 Pro, GPT-4.1, Claude Opus 4.6"
+    validations:
+      required: true
+  - type: dropdown
+    id: status
+    attributes:
+      label: Overall status
+      options:
+        - Pass — full functionality
+        - Partial — some features work
+        - Fail — skill does not load or function
+    validations:
+      required: true
+  - type: textarea
+    id: what-worked
+    attributes:
+      label: What worked
+      placeholder: "e.g., Bootstrap, session open/close, manifest verification"
+    validations:
+      required: true
+  - type: textarea
+    id: what-didnt
+    attributes:
+      label: What didn't work
+      placeholder: "e.g., Staleness detection missed, changelog format incorrect"
+    validations:
+      required: false
+  - type: textarea
+    id: workarounds
+    attributes:
+      label: Workarounds applied
+      placeholder: "e.g., Had to remove metadata block from SKILL.md"
+    validations:
+      required: false
+  - type: input
+    id: skill-version
+    attributes:
+      label: Skill Provenance version tested
+      placeholder: "e.g., 4.3.0"
+    validations:
+      required: true

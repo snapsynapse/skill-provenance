@@ -1,72 +1,93 @@
 # Skill Provenance
 
-Version tracking for [Agent Skills](https://agentskills.io) across sessions, surfaces, and platforms.
+A metaskill for version tracking across [Agent Skills](https://agentskills.io) sessions, surfaces, and platforms.
 
-If you build or maintain Claude skills (or skills for Gemini CLI, Codex, Copilot, or any platform that uses the agentskills.io standard), you've hit this problem: you upload a SKILL.md to a new session and can't tell if it's the latest version, or you update the skill definition but forget to update the evals, or you hand off a skill project and the next session has no idea what changed.
+You upload a SKILL.md to a new session and can't tell if it's the latest version. You update the skill definition but forget to update the evals. You hand off a skill project and the next session has no idea what changed. Git tracks *that something changed* — Skill Provenance tracks *what it means*.
 
-Skill Provenance solves this with three conventions:
+```
+Before                              After
+──────                              ─────
+SKILL_v4.md                         SKILL.md          (version lives inside)
+SKILL_v5.md                         MANIFEST.yaml     (what's in the bundle)
+evals_old.json                      CHANGELOG.md      (what changed and why)
+evals.json
+"which one is current?"             "bundle is at 4.2.1, evals are stale"
+```
 
-1. Version identity travels with the bundle: **inside files when practical, and always in the manifest**.
-2. A **changelog** travels with the skill bundle.
-3. A **manifest** lists all files so any session can verify completeness and detect staleness.
 
-It's a metaskill — a skill that manages other skills. Load it alongside your skill project and it handles the bookkeeping at session boundaries.
+## How it compares
+
+| Approach | Tracks versions | Detects staleness | Cross-session | Cross-platform | Tracks intent |
+|---|---|---|---|---|---|
+| **Git tags** | Yes | No | No (requires repo access) | No | No |
+| **Filename suffixes** (`_v5`) | Poorly | No | No | No | No |
+| **Skillman** | Pins versions | No | Consumer-side only | No | No |
+| **Skill Provenance** | Yes (semver) | Yes | Yes (manifest travels) | Yes | Yes (changelog) |
+
+Git tags work when everyone has repo access. Filename suffixes break as soon as you rename. Skillman pins versions for consumers. Skill Provenance fills the gap for authors: it tracks version identity, staleness, and intent *inside the bundle* so it survives session boundaries, surface transitions, and platform changes.
+
+**When not to use this:** Single-file skills that don't change often, or skills that live entirely within one git repo and are never exported to Chat, Obsidian, or other surfaces. If git is your only workflow and you never leave it, git tags are enough.
+
+
+## Platform support
+
+| Platform | Status | Frontmatter | Notes |
+|---|---|---|---|
+| **Claude** (Chat, Code, Cowork) | Pass | `name` + `description`, or with `metadata` block | Full support. Settings UI imports/exports `.skill` ZIP. |
+| **Codex** (OpenAI) | Pass | `name` + `description` only | Extra frontmatter fields rejected. Co-authored v4. |
+| **Gemini CLI** (Google) | Partial | `name` + `description` only | Skill loading works. Gems workflow untested. |
+| **GitHub Copilot** | Untested | Follows agentskills.io spec | Should work — [compatibility reports welcome](CONTRIBUTING.md). |
+| **Cursor** | Untested | Follows agentskills.io spec | Should work — [compatibility reports welcome](CONTRIBUTING.md). |
+
+This bundle ships in `frontmatter_mode: minimal` for maximum portability.
 
 
 ## Quick install
 
-Download `skill-provenance.skill` from the [latest release](https://github.com/snapsynapse/skill-provenance/releases) and install it:
-
+**Claude (Settings UI):**
+Download `skill-provenance.skill` from the [latest release](https://github.com/snapsynapse/skill-provenance/releases) and install:
 `claude.ai` → Profile icon → `Settings` → `Skills` → `Add Skill` → select the file.
 
-The skill is now available in every Claude conversation. To use it, tell Claude:
+**Claude Code / Codex / Gemini CLI:**
+Use the [`skill-provenance/`](skill-provenance/) directory directly. Same source works across all platforms.
 
+**ClawHub:**
+`clawhub install skill-provenance`
+
+Then tell the agent:
 > "Use the skill-provenance skill to bootstrap this bundle."
-
-For Codex or Gemini CLI, use the checked-in [`skill-provenance/`](skill-provenance/) directory directly. The bundle now ships with minimal `SKILL.md` frontmatter, so the same source works across Claude, Codex, and Gemini CLI.
 
 
 ## What it does
 
-**When you open a session**, it reads the manifest, checks that all files are present, verifies hashes, flags anything stale, and tells you what needs attention before you start working.
+**When you open a session**, it reads the manifest, checks that all files are present, verifies hashes, flags anything stale, and tells you what needs attention.
 
 **When you close a session**, it updates internal version headers where applicable, recomputes manifest hashes, appends to the changelog, and flags any files that should have been updated but weren't.
 
-**When you hand off between sessions**, it generates a handoff note with current state, accomplishments, stale files, and next steps — because Chat sessions don't persist and the next instance of Claude has no memory of what you did.
+**When you hand off between sessions**, it generates a handoff note with current state, accomplishments, stale files, and next steps.
 
 
 ## What's in this repo
 
 ```
 skill-provenance.skill           ← Install this in Claude Settings → Skills
-skill-provenance/
-├── SKILL.md                     ← The skill definition (what Claude reads)
+skill-provenance/                ← Canonical source bundle (use this for Code/Codex/Gemini)
+├── SKILL.md                     ← The skill definition (what the agent reads)
 ├── README.md                    ← User guide: workflows, worked example, troubleshooting
 ├── MANIFEST.yaml                ← File inventory with roles, versions, hashes
 ├── CHANGELOG.md                 ← Change history
 ├── evals.json                   ← 13 evaluation scenarios
 └── validate.sh                  ← Local hash verification script
+AGENTS.md                        ← Guide for agents working on this repo
+CONTRIBUTING.md                  ← How to contribute
 ```
 
-The `skill-provenance/` directory contains the same files that are inside the `.skill` ZIP. If you prefer working with loose files (Claude Code, git repos, Obsidian vaults), use the directory. If you prefer the packaged format (Claude Chat, Settings UI), use the `.skill` file.
-
-The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible packaging wrapper around it.
+The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible ZIP wrapper around it.
 
 
-## Cross-platform compatibility
+## Evals
 
-The skill works on any platform that supports the agentskills.io standard. Different platforms have different rules about what's allowed in SKILL.md frontmatter:
-
-| Platform | SKILL.md frontmatter |
-|---|---|
-| **Claude** | `name`, `description`, plus `metadata` block for version info |
-| **Gemini CLI (Google)** | `name` and `description` only — version info lives in manifest only |
-| **Codex (OpenAI)** | `name` and `description` only — version info lives in manifest only |
-| **GitHub Copilot** | Follows agentskills.io spec |
-
-The manifest tracks a `frontmatter_mode` (`claude` or `minimal`) so the skill knows whether to embed version info in SKILL.md or keep it manifest-only.
-
-This repository now ships in `frontmatter_mode: minimal` for maximum portability.
+13 evaluation scenarios covering bootstrap, session open/close, conflict detection, handoff, cross-platform compatibility, and more. See [evals.json](skill-provenance/evals.json) for the full list.
 
 
 ## Usage guide
@@ -75,34 +96,14 @@ See the full [README.md](skill-provenance/README.md) inside the skill bundle for
 
 - Step-by-step bootstrap walkthrough with a worked example
 - Surface-to-surface porting workflows (Chat → Code, Code → Chat, etc.)
-- Troubleshooting common issues (macOS `.skill` extraction, version conflicts, stale files)
+- Troubleshooting common issues
 - Reference links to Agent Skills documentation and ecosystem
-
-
-## Evals
-
-The `evals.json` file contains 13 evaluation scenarios:
-
-1. **Bootstrap** — versioning an existing unversioned bundle
-2. **Open session** — detecting missing and stale files on load
-3. **Save session** — updating artifacts on close
-4. **Conflict detection** — handling version header vs. manifest disagreements
-5. **Chat handoff** — packaging for session-to-session transitions
-6. **Codex bootstrap** — cross-platform with minimal frontmatter mode
-7. **Frontmatter mode toggle** — switching from claude to minimal mode
-8. **Compatibility block** — recording cross-platform test results
-9. **Gemini CLI compatibility** — bootstrapping for Gemini CLI with minimal frontmatter
-10. **Gemini Gems prompt extraction** — generating Gem update summaries
-11. **Git commit message** — generating commit messages for git-bound bundles
-12. **Handoff with per-file changes** — detailed change summaries in handoff notes
-13. **Local hash validation** — using validate.sh for pre-upload verification
-
-These are structured prompts with expected behaviors. Upload them alongside the skill to test it, or use them as a reference for how the skill should behave.
 
 
 ## Related projects
 
-- **[Skillman](https://github.com/chrisvoncsefalvay/skillman)** — Python CLI that installs and locks agent skills from GitHub repos (`skills.toml` + `skills.lock`). Skillman is a consumer-side package manager; skill-provenance is an author-side versioning tool. They operate at different lifecycle stages and don't conflict on disk — use skill-provenance to version your bundle during development, and Skillman to distribute and pin it for consumers.
+- **[Skillman](https://github.com/pi0/skillman)** — JS/TS skill manager (`npx skillman add`). Installs, updates, and organizes agent skills from npm and GitHub. Consumer-side; skill-provenance is author-side.
+- **[Skillman (Python)](https://github.com/chrisvoncsefalvay/skillman)** — Python CLI that installs and locks agent skills from GitHub repos (`skills.toml` + `skills.lock`). Consumer-side package manager for Python toolchains.
 
 
 ## License
@@ -112,4 +113,4 @@ These are structured prompts with expected behaviors. Upload them alongside the 
 
 ## Contributing
 
-Issues and PRs welcome. If you're testing the skill on platforms other than Claude (Gemini CLI, Codex, Copilot, Cursor, etc.), compatibility reports are especially valuable — open an issue with the platform, model, what worked, and what didn't.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Compatibility reports for untested platforms are especially valuable.

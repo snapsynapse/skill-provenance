@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # validate.sh — Verify or update bundle hashes against MANIFEST.yaml
-# Zero dependencies beyond bash, shasum, and awk.
+# Zero dependencies beyond bash, shasum or sha256sum, and awk.
 #
 # Usage:
 #   ./validate.sh [path/to/bundle]          Verify hashes (default)
@@ -70,6 +70,16 @@ done
 BUNDLE_DIR="${BUNDLE_DIR:-$(cd "$(dirname "$0")" && pwd)}"
 MANIFEST="$BUNDLE_DIR/MANIFEST.yaml"
 
+# Detect available SHA-256 command (macOS uses shasum, Linux uses sha256sum)
+if command -v shasum >/dev/null 2>&1; then
+  sha256_hash() { shasum -a 256 "$1" | awk '{print $1}'; }
+elif command -v sha256sum >/dev/null 2>&1; then
+  sha256_hash() { sha256sum "$1" | awk '{print $1}'; }
+else
+  echo "ERROR: neither shasum nor sha256sum found"
+  exit 1
+fi
+
 if [ ! -f "$MANIFEST" ]; then
   echo "ERROR: MANIFEST.yaml not found in $BUNDLE_DIR"
   exit 2
@@ -129,7 +139,7 @@ for i in "${!paths[@]}"; do
     continue
   fi
 
-  actual=$(shasum -a 256 "$filepath" | awk '{print $1}')
+  actual=$(sha256_hash "$filepath")
 
   if [ "$MODE" = "update" ]; then
     if [ "$actual" != "$expected" ]; then

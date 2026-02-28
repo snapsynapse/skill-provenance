@@ -5,7 +5,7 @@
       "id": 1,
       "name": "bootstrap_unversioned_bundle",
       "description": "Tests bootstrapping an existing unversioned skill bundle. The skill should inventory files, assign versions, create MANIFEST.yaml and CHANGELOG.md, add internal headers where safe, and use manifest-only tracking for strict-format files.",
-      "prompt": "I have a skill project with these files: SKILL.md, evals.json, generate.js, and output.pdf. None of them currently carry version metadata. This is version 3 of the skill — we've been through two previous iterations but never tracked versions. Please version this bundle.",
+      "prompt": "I have a skill project with these files: SKILL.md, evals.json, generate.js, and output.pdf. None of them currently carry version metadata. This is the third major version of the skill — we've been through two previous iterations but never tracked versions. Please version this bundle as 3.0.0.",
       "files": [
         "SKILL.md",
         "evals.json",
@@ -15,7 +15,7 @@
       "expectations": [
         "MANIFEST.yaml is created listing all 4 user files plus CHANGELOG.md",
         "MANIFEST.yaml is treated as the control file and is not self-listed in files",
-        "CHANGELOG.md is created with a v3 entry summarizing the bootstrap",
+        "CHANGELOG.md is created with a 3.0.0 entry summarizing the bootstrap",
         "SKILL.md version 3 is tracked according to the chosen frontmatter_mode",
         "evals.json is tracked in MANIFEST.yaml with version: 3 and file_role: evals",
         "generate.js is tracked in MANIFEST.yaml with version: 3 and file_role: script",
@@ -169,7 +169,7 @@
       "id": 9,
       "name": "gemini_cli_compatibility",
       "description": "Tests bootstrapping a bundle targeting Gemini CLI, which requires SKILL.md frontmatter limited to name and description. The skill should use frontmatter_mode: minimal and provide Gemini CLI installation guidance.",
-      "prompt": "I want to version this skill bundle for use with Gemini CLI. SKILL.md has name and description only. This is version 1. I want to install it to ~/.gemini/skills/ when we're done.",
+      "prompt": "I want to version this skill bundle for use with Gemini CLI. SKILL.md has name and description only. This is the first version — call it 1.0.0. I want to install it to ~/.gemini/skills/ when we're done.",
       "files": [
         "SKILL.md",
         "references/setup-guide.md"
@@ -180,7 +180,7 @@
         "SKILL.md version is tracked only in MANIFEST.yaml, not in the file itself",
         "compatibility.designed_for references Gemini CLI as the target platform",
         "Install guidance references ~/.gemini/skills/ directory structure",
-        "CHANGELOG.md is created with a v1 bootstrap entry",
+        "CHANGELOG.md is created with a 1.0.0 bootstrap entry",
         "Manifest and changelog are generated normally alongside the skill files"
       ]
     },
@@ -219,7 +219,7 @@
       "expectations": [
         "All versioning artifacts updated normally (headers, manifest, changelog)",
         "A git_commit.txt file is generated with a ready-to-use commit message",
-        "Commit message first line follows the format: bundle-name vN: summary",
+        "Commit message first line follows the format: bundle-name MAJOR.MINOR.PATCH: summary",
         "Commit message body lists each changed file with what changed",
         "Stale files are noted in the commit message",
         "git_commit.txt is NOT added to MANIFEST.yaml (it is a transient artifact)",

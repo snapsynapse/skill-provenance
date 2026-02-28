@@ -1,13 +1,12 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 4
-version_date: 2026-02-27
-previous_version: 3
+version: 7
+version_date: 2026-02-28
+previous_version: 6
 change_summary: >
-  Refined v4 for portability and consistency. Clarified manifest-only
-  version tracking for strict-format files, documented that the bundle
-  ships in minimal frontmatter mode, and hardened validate.sh behavior.
+  Added pi0/skillman and arxiv survey paper references to ecosystem
+  and research sections.
 ---
 
 # Skill Provenance — README
@@ -101,7 +100,7 @@ Open the project → `Project Settings` (gear icon) → `Skills` section
 Upload all the files that belong to your skill bundle (SKILL.md, evals,
 scripts, outputs, handoff notes — everything) and tell Claude:
 
-> "Bootstrap this skill bundle with skill-provenance. Call it v[N]."
+> "Bootstrap this skill bundle with skill-provenance. Call it [MAJOR.MINOR.PATCH]."
 
 If you don't know the version number, just say "bootstrap this bundle"
 and Claude will ask. Claude inventories the files itself — you don't
@@ -187,7 +186,7 @@ lives). Upload:
 
 Then say:
 
-> "Bootstrap this skill bundle with skill-provenance. Call it v1."
+> "Bootstrap this skill bundle with skill-provenance. Call it 1.0.0."
 
 Claude will inventory the files itself — you don't need to list them
 or count them. If Claude needs clarification (version number, bundle
@@ -199,7 +198,7 @@ Claude will:
 - Add internal headers to frontmatter-friendly files and track strict-format
   files (such as JSON, scripts, and binaries) via `MANIFEST.yaml`
 - Create `MANIFEST.yaml` listing all files with roles, versions, and hashes
-- Create `CHANGELOG.md` with a v1 bootstrap entry
+- Create `CHANGELOG.md` with a 1.0.0 bootstrap entry
 - Return all updated files
 
 ### Step 5: Repack and reinstall
@@ -341,8 +340,8 @@ project, so the bundle stays put between sessions.
    has latest entry).
 2. **Copy the bundle directory** into your git repo.
 3. **Commit with a message** that references the bundle version:
-   `my-skill v5: added validation phase, updated checklist`
-4. **Optionally tag:** `git tag my-skill-v5`
+   `my-skill 5.1.0: added validation phase, updated checklist`
+4. **Optionally tag:** `git tag my-skill-5.1.0`
 5. The manifest hashes can be omitted in git since git handles integrity,
    but version numbers and change summaries remain required.
 
@@ -475,7 +474,7 @@ self-listed, so the script treats it as the control file rather than a
 hash target. Exit code 0 means all hashes verified (or updated); exit code 1
 means missing files were found.
 
-Zero dependencies beyond `bash`, `shasum`, and `awk`.
+Zero dependencies beyond `bash`, `shasum` or `sha256sum`, and `awk`.
 
 
 ## Troubleshooting
@@ -567,7 +566,12 @@ API deployment.
 - [Connectors directory](https://claude.com/connectors) — partner-built skills and MCP connectors
 - [Gemini CLI creating skills](https://geminicli.com/docs/cli/creating-skills/) — Gemini CLI skill authoring guide
 - [Gemini Gems](https://support.google.com/gemini/answer/16504957) — creating and sharing Gemini Gems
-- [Skillman](https://github.com/chrisvoncsefalvay/skillman) — CLI for installing and locking agent skills from GitHub repos (consumer-side complement to skill-provenance)
+- [Skillman](https://github.com/pi0/skillman) — JS/TS skill manager for installing, updating, and organizing agent skills from npm and GitHub
+- [Skillman (Python)](https://github.com/chrisvoncsefalvay/skillman) — Python CLI for installing and locking agent skills from GitHub repos
+
+### Research
+
+- [Agent Skills for Large Language Models](https://arxiv.org/abs/2602.12430) — survey of skill architecture, acquisition, security, and governance (Xu & Yan, 2026)
 
 ### Support articles
 

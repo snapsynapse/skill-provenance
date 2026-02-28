@@ -65,9 +65,10 @@ change_summary: >
 
 ### Rules
 
-**version** is an integer. No semver, no dot notation. Skills iterate fast
-and the distinction between major/minor/patch adds overhead without value
-at this scale.
+**version** is an integer for per-file tracking. It counts revisions to
+that specific file within the bundle. The bundle-level version
+(`bundle_version` in MANIFEST.yaml) uses semver — see the Manifest
+section below.
 
 **change_summary** is required for every version after v1. One to three
 sentences. Must describe what changed, not just that something changed.
@@ -138,7 +139,7 @@ contains.
 
 ```yaml
 bundle: my-skill
-bundle_version: 5
+bundle_version: 5.1.0
 bundle_date: 2026-02-10
 description: >
   Skill for generating professional documents from source material
@@ -206,8 +207,11 @@ files:
 
 ### Rules
 
-**bundle_version** increments when any versioned file in the bundle changes.
-It is always equal to the highest version number among the versioned files.
+**bundle_version** uses semver (MAJOR.MINOR.PATCH). Bump MAJOR for
+breaking changes to the skill's model or interface, MINOR for new
+features or capabilities, PATCH for fixes and documentation updates.
+Per-file `version` fields remain integers — they are revision counters,
+not release identifiers.
 
 **hash** is sha256 of the file contents. This is how a new session verifies
 that the file it received matches what the manifest claims. Compute on save,
@@ -269,18 +273,18 @@ append-only. New entries go at the top.
 ```markdown
 # Changelog
 
-## v5 — 2026-02-10
+## 5.1.0 — 2026-02-10
 - SKILL.md: Rewrote Phase 5 layout rules. Removed per-section page breaks.
   Added content flow check. Added validation checklist as standalone final page.
-- evals.json: Not yet updated (stale, needs v5 alignment).
+- evals.json: Not yet updated (stale, needs alignment).
 
-## v4 — 2026-02-09
+## 5.0.0 — 2026-02-09
 - SKILL.md: Removed minimum section density from Phase 3. Rewrote body section
   flow rules. Added optional appendix section.
 - evals.json: Eval 3 expectations updated for content flow.
 - generate.js: Body sections flow without page breaks. All 11 expectations pass.
 
-## v3 — 2026-02-08
+## 4.0.0 — 2026-02-08
 - SKILL.md: Added Phase 5 density verification.
 - generate.js: First working generation script for eval 3.
 ```
@@ -335,7 +339,7 @@ When work is complete and files are being delivered:
    derived from the changelog entry. Format:
 
    ```
-   skill-name vN: one-line summary
+   skill-name MAJOR.MINOR.PATCH: one-line summary
 
    - file1.md: what changed
    - file2.json: what changed
