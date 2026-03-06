@@ -14,6 +14,11 @@ evals.json
 "which one is current?"             "bundle is at 4.2.1, evals are stale"
 ```
 
+As of `4.3.0`, the portable core is intentionally small: the bundle files,
+`MANIFEST.yaml`, and `CHANGELOG.md`. Optional conveniences like `handoff.md`
+and `git_commit.txt` are still supported when useful, but they are no longer
+treated as default required artifacts.
+
 
 ## How it compares
 
@@ -34,7 +39,7 @@ Git tags work when everyone has repo access. Filename suffixes break as soon as 
 | Platform | Status | Frontmatter | Notes |
 |---|---|---|---|
 | **Claude** (Chat, Code, Cowork) | Pass | `name` + `description`, or with `metadata` block | Full support. Settings UI imports/exports `.skill` ZIP. |
-| **Codex** (OpenAI) | Pass | `name` + `description` only | Extra frontmatter fields rejected. Co-authored v4. |
+| **Codex** (OpenAI) | Pass | `name` + `description` only | Extra frontmatter fields rejected. Works well with the lightweight inline workflow. |
 | **Gemini CLI** (Google) | Partial | `name` + `description` only | Skill loading works. Gems workflow untested. |
 | **GitHub Copilot** | Untested | Follows agentskills.io spec | Should work — [compatibility reports welcome](CONTRIBUTING.md). |
 | **Cursor** | Untested | Follows agentskills.io spec | Should work — [compatibility reports welcome](CONTRIBUTING.md). |
@@ -64,7 +69,9 @@ Then tell the agent:
 
 **When you close a session**, it updates internal version headers where applicable, recomputes manifest hashes, appends to the changelog, and flags any files that should have been updated but weren't.
 
-**When you hand off between sessions**, it generates a handoff note with current state, accomplishments, stale files, and next steps.
+**When you hand off between sessions**, it can generate a handoff note with current state, accomplishments, stale files, and next steps when you're crossing a stateless boundary like Chat. In filesystem-native workflows, the manifest and changelog are usually enough.
+
+**When you need a commit message**, it can produce one inline by default, with a `git_commit.txt` file only when you explicitly want that convenience.
 
 
 ## What's in this repo
@@ -87,7 +94,7 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-13 evaluation scenarios covering bootstrap, session open/close, conflict detection, handoff, cross-platform compatibility, and more. See [evals.json](skill-provenance/evals.json) for the full list.
+13 evaluation scenarios covering bootstrap, session open/close, conflict detection, optional handoff, cross-platform compatibility, and more. See [evals.json](skill-provenance/evals.json) for the full list.
 
 
 ## Usage guide
