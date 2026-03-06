@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 4.2.1
-bundle_date: 2026-02-28
+bundle_version: 4.3.0
+bundle_date: 2026-03-06
 description: >
   Metaskill for version tracking across Agent Skills sessions, surfaces,
   and platforms. Manifest, changelog, and portable internal version
@@ -8,9 +8,14 @@ description: >
 
 compatibility:
   designed_for:
-    platform: Anthropic Claude
-    model: Claude Opus 4.6
-    surface: Chat, Code, Cowork
+    surfaces:
+      - chat
+      - cli
+      - ide
+    capabilities:
+      - minimal SKILL.md frontmatter
+      - local filesystem access
+      - optional git workflow
   tested_on:
     - platform: Anthropic Claude
       model: Claude Opus 4.6
@@ -35,7 +40,7 @@ compatibility:
       surface: CLI
       status: pass
       date: 2026-02-27
-      notes: Minimal frontmatter mode, co-authored v4 changes
+      notes: Minimal frontmatter mode, local editing workflow
     - platform: Google Gemini CLI
       model: Gemini 2.5 Pro
       surface: CLI
@@ -48,26 +53,26 @@ compatibility:
 files:
   - path: SKILL.md
     role: skill
-    version: 5
-    hash: sha256:0ae7be7d3696e94f86ae8b9e29a7253c5ab54248242e6bb28d2a2fed9a464634
+    version: 6
+    hash: sha256:3d2e3169ed91200e5656cf7778b29adde94d2cd765e37ac2b0a91c4fbc7b2888
     note: Canonical skill definition. Version tracked in MANIFEST.yaml for maximum portability
 
   - path: README.md
     role: reference
-    version: 7
-    hash: sha256:1dc7339b9aa0a5bd1811d9b7aed6e4803276b058819bb0039a3b6e4ec2698437
+    version: 8
+    hash: sha256:3e813a745ce8381e0a6dc91bc418d278f59d76667d5379b399fdc326d441bc5e
     note: Human-facing instructions, worked example, portability guidance, local validation, troubleshooting, references
 
   - path: evals.json
     role: evals
-    version: 5
-    hash: sha256:31e5f3a8f487a221dfd8f013d50daaeabe9fd46a82c42164d8ff766c8bc2525e
-    note: 13 evals covering bootstrap, verify, save, conflict, handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit, per-file handoff, local validation
+    version: 6
+    hash: sha256:48b89043498ffe1cd66bde26a59bcf6680ea55f76e8fbf4c7391bf8bfe91b3cb
+    note: 13 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation
 
   - path: CHANGELOG.md
     role: reference
-    version: 7
-    hash: sha256:9da23ed9e14b60a76e4b8500e6ab422a889423c6b5a6073a1ec88fd011828ace
+    version: 8
+    hash: sha256:7b6d50d6ebc0c88691dac06465c8d34881ab4de44a42d593a3bc30334eb5724b
     note: Append-only change history
 
   - path: validate.sh

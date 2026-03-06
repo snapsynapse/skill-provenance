@@ -41,8 +41,10 @@ A skill bundle is a SKILL.md plus all associated files. Typical contents:
 - Source material provided by the user (tracked but not versioned)
 
 The skill itself (SKILL.md) and evals are the primary versioned artifacts.
-Scripts, outputs, and handoff notes are tracked by the manifest but version
-with the bundle rather than independently.
+Scripts and outputs are tracked by the manifest but version with the bundle
+rather than independently. Handoff notes can also be tracked when a
+non-persistent surface needs them, but they are optional convenience
+artifacts rather than part of the core model.
 
 
 ## Internal Version Header
@@ -147,9 +149,14 @@ description: >
 
 compatibility:
   designed_for:
-    platform: Anthropic Claude
-    model: Claude Opus 4.6
-    surface: Chat, Code
+    surfaces:
+      - chat
+      - cli
+      - ide
+    capabilities:
+      - minimal SKILL.md frontmatter
+      - local filesystem access
+      - optional git workflow
   tested_on:
     - platform: Anthropic Claude
       model: Claude Opus 4.6
@@ -191,12 +198,6 @@ files:
     version: 4
     hash: sha256:jkl012...
     note: Rendered eval 3 output, 10 pages, validated
-
-  - path: handoff.md
-    role: handoff
-    version: 2
-    hash: sha256:mno345...
-    note: Session handoff notes
 
   - path: sources/article-1.md
     role: source
@@ -334,9 +335,8 @@ When work is complete and files are being delivered:
    the staleness explicitly in the changelog entry.
 5. Deliver the full bundle to the user, or at minimum the changed files
    plus the updated MANIFEST.yaml and CHANGELOG.md.
-6. If the user indicates the bundle is destined for a git repo, generate
-   a `git_commit.txt` file containing a ready-to-use commit message
-   derived from the changelog entry. Format:
+6. If the user indicates the bundle is destined for a git repo, provide
+   a ready-to-use commit message derived from the changelog entry. Format:
 
    ```
    skill-name MAJOR.MINOR.PATCH: one-line summary
@@ -346,9 +346,9 @@ When work is complete and files are being delivered:
    - Stale: file3.js (not updated this session)
    ```
 
-   The user can pass this directly to `git commit -F git_commit.txt`.
-   This file is not tracked in the manifest — it is a transient
-   convenience artifact, not part of the bundle.
+   Return the message inline by default. Only write a transient
+   `git_commit.txt` file if the user explicitly asks for a file or if the
+   environment makes file output materially more convenient.
 
 ### Handoff between sessions
 
@@ -366,10 +366,13 @@ should include:
   entry and helps the next session verify the work without re-reading
   every file.
 
-The handoff note gets an internal version header when its format allows it
-and is tracked in the manifest. It replaces (not appends to) the previous
-handoff note — there is only one active handoff at a time. Previous
-handoffs are preserved in the changelog history.
+Create a handoff note only when crossing a non-persistent boundary or when
+the user explicitly asks for one. In filesystem-native environments with a
+current manifest, changelog, and git history, a handoff note is usually
+unnecessary overhead. When created, it can be tracked in the manifest and
+replaces (not appends to) the previous handoff note — there is only one
+active handoff at a time. Previous handoffs are preserved in the changelog
+history.
 
 ### Conflict resolution
 
@@ -391,7 +394,8 @@ is to make conflicts visible.
 No persistent filesystem. Files are uploaded/downloaded per session.
 The manifest and changelog must travel with the uploaded files.
 On session open, verify the bundle. On session close, deliver updated
-bundle files to the user.
+bundle files to the user. This is the main case where a handoff note is
+useful.
 
 ### Claude Cowork
 Persistent filesystem within a project. The bundle can live as a
@@ -401,7 +405,8 @@ Same protocol applies but files don't need to be re-uploaded.
 ### Claude Code
 Git-native. The manifest and changelog complement git's own versioning.
 The manifest adds role and staleness tracking that git doesn't provide.
-The changelog adds intent that commit messages often lack.
+The changelog adds intent that commit messages often lack. Handoff notes
+are usually unnecessary here unless the user explicitly wants one.
 Hashes in the manifest can be omitted when the bundle is in a git repo
 since git handles integrity. Version numbers and change summaries
 remain required.
@@ -411,7 +416,8 @@ Filesystem-based. Skills live in `~/.codex/skills/` or project
 directories. Codex rejects SKILL.md frontmatter fields beyond `name`
 and `description` — use `frontmatter_mode: minimal` in the manifest
 and omit the `metadata` block from SKILL.md. Codex's `agents/openai.yaml`
-can be tracked in the manifest with `role: agents`.
+can be tracked in the manifest with `role: agents`. Inline commit
+messages are generally preferable to creating a transient file.
 
 ### Gemini CLI (Google)
 Filesystem-based with three-tier skill discovery:
@@ -437,11 +443,13 @@ agentskills.io spec. Manifest and changelog are ignored by Copilot
 (treated as unknown files in the skill directory).
 
 ### General principle
-The manifest and changelog are inert files. No platform currently
+The manifest and changelog are the portable core. No platform currently
 reads them. They exist for the human and for agents that have the
 skill-provenance skill loaded. This means they never break
 compatibility — they're invisible to platforms that don't know
-about them. For maximum portability, this bundle itself ships in
+about them. Transient conveniences such as handoff notes and commit
+message files should be created only when a surface actually benefits
+from them. For maximum portability, this bundle itself ships in
 `frontmatter_mode: minimal`; its `SKILL.md` version is tracked in
 `MANIFEST.yaml`.
 

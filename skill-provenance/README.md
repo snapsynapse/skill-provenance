@@ -1,12 +1,12 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 7
-version_date: 2026-02-28
-previous_version: 6
+version: 8
+version_date: 2026-03-06
+previous_version: 7
 change_summary: >
-  Added pi0/skillman and arxiv survey paper references to ecosystem
-  and research sections.
+  Reduced Claude-first workflow assumptions, added Codex loading guidance,
+  and made handoff notes and commit message files optional conveniences.
 ---
 
 # Skill Provenance — README
@@ -53,7 +53,8 @@ artifacts come with it. When you upload one, they're preserved. No
 separate file management needed for the core skill bundle.
 
 **What doesn't fit in .skill:** Some skill projects include evals,
-generation scripts, rendered outputs (.docx, .pdf), and handoff notes.
+generation scripts, rendered outputs (.docx, .pdf), and optional handoff
+notes.
 The `.skill` format only carries the skill definition and its references.
 These extra files travel separately (uploaded to conversations, stored
 in working directories, or committed to git). The manifest tracks all
@@ -63,10 +64,10 @@ subset.
 
 ## Quick start
 
-### 1. Make the skill available to Claude
+### 1. Make the skill available to your agent
 
-The skill-provenance SKILL.md needs to be accessible in whatever Claude
-surface you're working in. How you do that depends on the surface:
+The skill-provenance SKILL.md needs to be accessible in whatever surface
+you're working in. How you do that depends on the agent and surface:
 
 | Surface | How to load the skill |
 |---|---|
@@ -74,6 +75,7 @@ surface you're working in. How you do that depends on the surface:
 | **Claude Chat** (project) | Add `SKILL.md` to the project knowledge. It will be available in every conversation within that project. |
 | **Claude Cowork** | Place the `skill-provenance/` folder in your Cowork skill directory. Claude will discover it automatically. |
 | **Claude Code** | Place the `skill-provenance/` folder in your project's skill directory (typically alongside other skills). Reference it in your CLAUDE.md if needed. |
+| **Codex** | Place the `skill-provenance/` folder in `~/.codex/skills/skill-provenance/` or a project skill directory. Keep SKILL.md frontmatter minimal. |
 | **Gemini CLI** | Copy or symlink the `skill-provenance/` folder to `~/.gemini/skills/skill-provenance/` for user-wide availability, or `.gemini/skills/skill-provenance/` for a single project. Use `frontmatter_mode: minimal` in the manifest. |
 
 The checked-in `skill-provenance/` directory is the canonical source bundle
@@ -97,16 +99,17 @@ Open the project → `Project Settings` (gear icon) → `Skills` section
 
 ### 2. Bootstrap an existing skill bundle
 
-Upload all the files that belong to your skill bundle (SKILL.md, evals,
-scripts, outputs, handoff notes — everything) and tell Claude:
+Load or provide all the files that belong to your skill bundle (SKILL.md,
+evals, scripts, outputs, and any existing handoff note) and tell the
+agent:
 
 > "Bootstrap this skill bundle with skill-provenance. Call it [MAJOR.MINOR.PATCH]."
 
 If you don't know the version number, just say "bootstrap this bundle"
-and Claude will ask. Claude inventories the files itself — you don't
+and the agent will ask. The agent inventories the files itself — you don't
 need to list them or count them.
 
-Claude will:
+The agent will:
 - Inventory all files
 - Add internal version headers where safe and record manifest-only versions
   for strict-format files
@@ -118,16 +121,18 @@ Claude will:
 
 Once a bundle is versioned, the protocol is automatic at session boundaries:
 
-**Opening a session:** Upload the bundle files. Tell Claude to verify the
-bundle. Claude reads the manifest, checks for missing or stale files,
-and flags issues before you start working.
+**Opening a session:** Load the bundle files for the current surface.
+Tell the agent to verify the bundle. It reads the manifest, checks for
+missing or stale files, and flags issues before you start working.
 
 **During a session:** Work normally. The versioning system stays out of
 your way until you're ready to save.
 
-**Closing a session:** Tell Claude you're done. Claude updates internal
+**Closing a session:** Tell the agent you're done. It updates internal
 headers where applicable, the manifest, and the changelog for everything
 that changed, flags anything stale, and packages the deliverables.
+If you need a commit message, ask for one; inline output is the default,
+with a file only when you explicitly want one.
 
 
 ## Applying to an existing skill (worked example)
@@ -247,9 +252,9 @@ it again, the versioning artifacts come with it.
 
 ## Porting bundles between surfaces
 
-Each Claude surface handles files differently, and there's no shared
-filesystem between them. The bundle travels through you — typically as
-a `.skill` ZIP or as loose files in a working directory.
+Different surfaces handle files differently. The bundle travels through
+you — typically as a `.skill` ZIP or as loose files in a working
+directory.
 
 ### What to carry
 
@@ -275,11 +280,11 @@ system works identically either way.
 
 #### Chat → Chat (new conversation, same or different project)
 
-1. **Close the old session.** Tell Claude to package the bundle. Claude
+1. **Close the old session.** Tell the agent to package the bundle. It
    updates versioning artifacts and tells you which files to save.
 2. **Download all output files** from the conversation.
 3. **Open a new conversation.** Upload all bundle files.
-4. **Tell Claude to verify the bundle.** Claude reads the manifest and
+4. **Tell the agent to verify the bundle.** It reads the manifest and
    confirms everything arrived intact.
 
 If you're working with installed skills (visible in Settings → Skills),
@@ -300,7 +305,7 @@ download the `.skill` ZIP, unpack, update, repack, and reinstall.
        scripts/
        outputs/
    ```
-3. **In Code**, Claude can verify the bundle by reading the manifest.
+3. **In Code**, the agent can verify the bundle by reading the manifest.
    Hashes can be verified or omitted since git handles integrity.
 4. **Commit the bundle** as your initial versioned state. From here,
    git and the manifest work together: git tracks every change, the
@@ -311,7 +316,7 @@ download the `.skill` ZIP, unpack, update, repack, and reinstall.
 1. **Ensure the bundle is clean** in your repo (no uncommitted changes
    that you care about).
 2. **Copy the bundle files** out of your repo into a local directory.
-3. **Upload to Chat.** Tell Claude to verify the bundle.
+3. **Upload to Chat.** Tell the agent to verify the bundle.
 4. **Or repack as .skill:** ZIP the directory, rename to `.skill`,
    and install via Settings → Skills → Add Skill.
 
@@ -347,7 +352,7 @@ project, so the bundle stays put between sessions.
 
 ### What if I forget to carry the manifest?
 
-Claude can reconstruct one from the files you upload, but it will need
+An agent can reconstruct one from the files you upload, but it will need
 to ask you about version numbers and history. This is the bootstrap
 flow — it works, but you lose hash verification and staleness tracking
 for that transition. Better to carry the manifest.
@@ -382,6 +387,10 @@ To version-track a Gem alongside its associated files:
    - Which files in the bundle need to be re-uploaded to the Gem's
      knowledge base (any file that changed this session)
    - The version number and change summary for your records
+
+Handoff notes are usually unnecessary for CLI and IDE workflows. Generate
+one only when moving through a stateless chat surface or when you want a
+human-readable transfer summary.
 
 ### Example prompt
 
@@ -500,7 +509,7 @@ in project knowledge, or in the skills directory. If you renamed it,
 that's fine — Claude identifies it by frontmatter, not filename.
 
 **Version numbers disagree between a file and the manifest.**
-This is a conflict. Claude will present both claims and ask you to
+This is a conflict. The agent will present both claims and ask you to
 decide. Default: trust the more recent `version_date`.
 
 **I have files that aren't in the manifest.**

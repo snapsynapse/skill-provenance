@@ -1,5 +1,24 @@
 # Changelog
 
+## 4.3.0 — 2026-03-06
+- SKILL.md: Simplified the core protocol for portability. Made handoff
+  notes optional surface-specific artifacts instead of a default bundle
+  requirement, changed git commit output to inline-by-default with optional
+  `git_commit.txt`, and replaced exact `designed_for` model targeting with
+  surface/capability-oriented compatibility guidance.
+- README.md: Reworked the guide to be less Claude-centric in the default
+  path, added explicit Codex loading guidance, clarified that handoff notes
+  are mainly for stateless chat transitions, and documented inline commit
+  message output as the default lightweight workflow.
+- evals.json: Updated eval expectations so chat handoff remains validated
+  where appropriate, but `handoff.md` and `git_commit.txt` are no longer
+  universal success criteria. Relaxed compatibility expectations to allow
+  capability-oriented `designed_for` metadata instead of vendor/model-locked
+  targets.
+- MANIFEST.yaml: Bumped bundle version to 4.3.0, updated compatibility
+  metadata to describe target surfaces and capabilities instead of a single
+  exact model, and advanced per-file revisions for the changed bundle files.
+
 ## 4.2.1 — 2026-02-28
 - README.md (bundle): Added pi0/skillman (JS/TS) alongside existing
   chrisvoncsefalvay/skillman (Python) in ecosystem references. Added
