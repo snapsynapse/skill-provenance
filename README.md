@@ -2,7 +2,7 @@
 
 A metaskill for version tracking across [Agent Skills](https://agentskills.io) sessions, surfaces, and platforms.
 
-You upload a SKILL.md to a new session and can't tell if it's the latest version. You update the skill definition but forget to update the evals. You hand off a skill project and the next session has no idea what changed. Git tracks *that something changed* — Skill Provenance tracks *what it means*.
+You upload a SKILL.md to a new session and can't tell if it's the latest version. You update the skill definition but forget to update the evals. You deploy a skill via the API but your local copy drifts. Skills don't sync between surfaces — a skill in Claude Code, claude.ai, and the API are three separate copies. Git tracks *that something changed* — Skill Provenance tracks *what it means* across all of them.
 
 ```
 Before                              After
@@ -27,9 +27,10 @@ treated as default required artifacts.
 | **Git tags** | Yes | No | No (requires repo access) | No | No |
 | **Filename suffixes** (`_v5`) | Poorly | No | No | No | No |
 | **Skillman** | Pins versions | No | Consumer-side only | No | No |
+| **Skills API** (`/v1/skills`) | Upload timestamps | No | Single surface only | No | No |
 | **Skill Provenance** | Yes (semver) | Yes | Yes (manifest travels) | Yes | Yes (changelog) |
 
-Git tags work when everyone has repo access. Filename suffixes break as soon as you rename. Skillman pins versions for consumers. Skill Provenance fills the gap for authors: it tracks version identity, staleness, and intent *inside the bundle* so it survives session boundaries, surface transitions, and platform changes.
+Git tags work when everyone has repo access. Filename suffixes break as soon as you rename. Skillman pins versions for consumers. The Skills API tracks which upload is active on a single surface but doesn't track what changed or detect staleness. Skill Provenance fills the gap for authors: it tracks version identity, staleness, and intent *inside the bundle* so it survives session boundaries, surface transitions, and platform changes.
 
 **When not to use this:** Single-file skills that don't change often, or skills that live entirely within one git repo and are never exported to Chat, Obsidian, or other surfaces. If git is your only workflow and you never leave it, git tags are enough.
 
@@ -39,10 +40,14 @@ Git tags work when everyone has repo access. Filename suffixes break as soon as 
 | Platform | Status | Frontmatter | Notes |
 |---|---|---|---|
 | **Claude** (Chat, Code, Cowork) | Pass | `name` + `description`, or with `metadata` block | Full support. Settings UI imports/exports `.skill` ZIP. |
-| **Codex** (OpenAI) | Pass | `name` + `description` only | Extra frontmatter fields rejected. Works well with the lightweight inline workflow. |
+| **Claude API** | Compatible | `name` + `description` + `metadata` | Skills uploaded via `/v1/skills` with epoch-timestamp versioning. Manifest maps to API versions. |
+| **Claude Agent SDK** | Compatible | Same as Claude Code | Filesystem-based. Skills loaded via `setting_sources` config. |
+| **Codex** (OpenAI) | Pass | `name` + `description` only | Extra frontmatter fields rejected. |
 | **Gemini CLI** (Google) | Partial | `name` + `description` only | Skill loading works. Gems workflow untested. |
-| **GitHub Copilot** | Untested | Follows agentskills.io spec | Should work — [compatibility reports welcome](CONTRIBUTING.md). |
-| **Cursor** | Untested | Follows agentskills.io spec | Should work — [compatibility reports welcome](CONTRIBUTING.md). |
+| **GitHub Copilot / VS Code** | Compatible | Follows agentskills.io spec | Skills in `.github/skills/`. |
+| **Cursor** | Compatible | Follows agentskills.io spec | Skills in `.cursor/skills/`. |
+
+The agentskills.io spec is now adopted by 30+ agent tools. All use the same `SKILL.md` directory format. Provenance artifacts (`MANIFEST.yaml`, `CHANGELOG.md`) are invisible to platforms that don't know about them — they never break compatibility. See [agentskills.io](https://agentskills.io) for the full adopter list.
 
 This bundle ships in `frontmatter_mode: minimal` for maximum portability.
 

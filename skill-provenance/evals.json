@@ -128,7 +128,7 @@
     {
       "id": 7,
       "name": "frontmatter_mode_toggle",
-      "description": "Tests switching a bundle's frontmatter_mode from claude (metadata block in SKILL.md) to minimal (no metadata block) when the user decides to target additional platforms.",
+      "description": "Tests switching a bundle's frontmatter_mode from metadata (metadata block in SKILL.md) to minimal (no metadata block) when the user decides to target additional platforms.",
       "prompt": "This bundle currently targets Claude only and has metadata in SKILL.md frontmatter. I need to make it Codex-compatible too. Please update the bundle to use minimal frontmatter mode.",
       "files": [
         "MANIFEST.yaml",
@@ -139,7 +139,7 @@
       "expectations": [
         "Removes the metadata block from SKILL.md frontmatter",
         "Preserves name and description in SKILL.md frontmatter",
-        "Updates frontmatter_mode from claude to minimal in MANIFEST.yaml",
+        "Updates frontmatter_mode from metadata to minimal in MANIFEST.yaml",
         "SKILL.md version information is preserved in MANIFEST.yaml",
         "CHANGELOG.md entry describes the frontmatter mode change and why",
         "No version information is lost in the transition",
@@ -264,6 +264,42 @@
         "Notes that this is more reliable than LLM-computed hashes in Chat",
         "Does not attempt to compute hashes itself when the script is available",
         "Explains the exit codes or output format so the user knows what to expect"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "api_surface_awareness",
+      "description": "Tests awareness that skills deployed via the API (/v1/skills) use epoch-timestamp versioning and do not sync across surfaces. The skill should explain how manifest-based tracking complements API deployment.",
+      "prompt": "I've been using skill-provenance locally and now I want to deploy this skill via the Claude API. How does version tracking work across the API and my local development?",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Explains that the API uses epoch-timestamp versioning, not semver",
+        "Notes that skills uploaded to the API do not sync to claude.ai or Claude Code",
+        "Explains that manifest-based tracking handles the development workflow before and across API deployments",
+        "Does not claim that manifest versions replace or override API timestamps",
+        "Recommends noting API deployment events in the changelog for traceability"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "dependencies_field_usage",
+      "description": "Tests that the dependencies field in the manifest is correctly populated when a skill depends on other skills or external resources.",
+      "prompt": "This skill depends on two other skills: 'data-extraction' and 'format-converter'. Please update the manifest to reflect these dependencies.",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "A dependencies field is added to MANIFEST.yaml",
+        "Both data-extraction and format-converter are listed",
+        "CHANGELOG.md entry documents the dependency additions",
+        "Dependencies are listed as skill names, not file paths",
+        "If no dependencies exist, the field can be omitted or set to an empty list"
       ]
     }
   ]

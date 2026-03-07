@@ -102,14 +102,18 @@ enforce different rules about additional fields:
 | Platform | Allowed SKILL.md frontmatter |
 |---|---|
 | **agentskills.io spec** | `name`, `description`, `license`, `metadata`, `compatibility`, `allowed-tools` |
-| **Claude (settings importer)** | Same as spec. Extra fields rejected. |
+| **Claude Chat / Settings UI** | Same as spec. Claude's settings importer rejects unrecognized fields. |
+| **Claude Code** | Spec fields plus extensions: `disable-model-invocation`, `user-invocable`, `context`, `agent`, `model`, `hooks`, `argument-hint`. These are Claude Code features, not part of the base spec. |
+| **Claude API** | Skills uploaded via `/v1/skills`. Validates `name` and `description`. Supports `metadata`. |
 | **Gemini CLI (Google)** | `name` and `description` only. Extra fields not officially supported. |
 | **Codex (OpenAI)** | `name` and `description` only. Extra fields rejected. |
-| **GitHub Copilot** | Follows agentskills.io spec. |
+| **GitHub Copilot / VS Code** | Follows agentskills.io spec. |
+| **Cursor, Roo Code, Junie, others** | Follows agentskills.io spec. See agentskills.io for the full adopter list (30+). |
 
 For maximum portability, keep SKILL.md frontmatter to `name` and
 `description` only. If you need version info in SKILL.md and are only
-targeting Claude-compatible platforms, nest it under `metadata`:
+targeting platforms that support the spec's `metadata` field, nest it
+under `metadata`:
 
 ```yaml
 ---
@@ -129,6 +133,15 @@ metadata:
 If targeting Codex or other strict platforms, omit `metadata` from
 SKILL.md entirely. The manifest tracks SKILL.md's version regardless,
 so no version information is lost.
+
+**Note on spec support:** The agentskills.io spec formally supports
+`metadata` as an arbitrary key-value map, with `version` shown as an
+example use. This means the `metadata.version` approach is now
+spec-blessed, not a Claude-only extension. However, the spec's version
+is a static label — it does not address staleness tracking, changelogs,
+or bundle integrity. Prefer manifest-based tracking as the default and
+use `metadata` only when you need version info visible in the file
+itself.
 
 
 ## Manifest
@@ -172,7 +185,14 @@ compatibility:
   spec_version: agentskills.io/1.0
   frontmatter_mode: minimal
     # minimal = name + description only (Codex, Gemini CLI, max portability)
-    # claude = includes metadata block (Claude, Copilot)
+    # metadata = includes metadata block (any platform supporting the spec's metadata field)
+
+dependencies: []
+  # List skill names this bundle depends on. Omit or leave empty if none.
+  # Example:
+  #   dependencies:
+  #     - data-extraction
+  #     - format-converter
 
 files:
   - path: SKILL.md
@@ -254,6 +274,22 @@ recognize. This means the versioning artifacts travel safely inside the
 When bootstrapping or updating a bundle, always include the versioning
 artifacts in the `.skill` ZIP so they survive round-trips through
 Claude's settings UI.
+
+**Progressive disclosure:** The agentskills.io spec defines a three-tier
+loading model: metadata (~100 tokens, always loaded), instructions
+(<5,000 tokens, loaded when triggered), and resources (loaded as needed).
+The spec recommends keeping SKILL.md under 500 lines and moving detailed
+reference material to separate files. Provenance artifacts fit naturally
+into this model — `MANIFEST.yaml` and `CHANGELOG.md` are Level 3
+resources, loaded only when the provenance skill is invoked or when a
+session needs to verify bundle state.
+
+**Referencing bundled files:** Claude Code provides a `${CLAUDE_SKILL_DIR}`
+variable that resolves to the directory containing the skill's `SKILL.md`.
+Use this in skill content to reference scripts or files portably (e.g.,
+`${CLAUDE_SKILL_DIR}/validate.sh`). Other platforms may not support this
+variable — direct relative paths (`./validate.sh`) work universally when
+the working directory is the bundle root.
 
 **Bundles with files that don't fit in .skill:** Some bundles include
 evals, generation scripts, rendered outputs, and handoff notes. The
@@ -437,10 +473,44 @@ directory into `~/.gemini/skills/skill-name/`. Management commands:
 Manifest and changelog are ignored by Gemini CLI (treated as unknown
 files in the skill directory).
 
+### Claude API
+Skills uploaded via `/v1/skills` and referenced in Messages API requests
+through `container.skills`. The API assigns each upload an epoch-timestamp
+version (e.g., `1759178010641129`) or `latest`. Anthropic's pre-built
+skills (pptx, xlsx, docx, pdf) use date-based versions (e.g., `20251013`).
+Up to 8 skills per request. Skills run in a sandboxed code execution
+container with no network access (API surface) or varying access
+(claude.ai surface).
+
+The API's versioning tracks *which upload is active*. It does not track
+what changed between uploads, detect staleness across files, or maintain
+a changelog. skill-provenance fills the gap for the development workflow
+that precedes API deployment: iterating across sessions, tracking intent,
+and maintaining bundle integrity. After development, `bundle_version` in
+the manifest maps naturally to the API's version parameter.
+
+Custom skills uploaded to one surface do not sync to others. A skill
+uploaded to the API is not available in claude.ai or Claude Code, and
+vice versa. This cross-surface fragmentation is exactly the problem
+skill-provenance addresses.
+
+### Claude Agent SDK
+Skills work in the SDK via `setting_sources` configuration. The SDK
+loads skills from `.claude/skills/` directories and discovers them at
+startup. Same filesystem layout as Claude Code. The manifest and
+changelog travel with the skill directory.
+
 ### GitHub Copilot / VS Code
 Skills in `.github/skills/` or `.claude/skills/`. Follows the
 agentskills.io spec. Manifest and changelog are ignored by Copilot
 (treated as unknown files in the skill directory).
+
+### Other agentskills.io adopters
+The spec is now adopted by 30+ agent tools including Cursor, Roo Code,
+Junie (JetBrains), OpenHands, Goose, Amp, Spring AI, Databricks,
+Factory, Mistral Vibe, and others. All follow the agentskills.io
+directory structure. Manifest and changelog are invisible to platforms
+that don't know about them — they never break compatibility.
 
 ### General principle
 The manifest and changelog are the portable core. No platform currently

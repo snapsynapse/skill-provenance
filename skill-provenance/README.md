@@ -1,12 +1,13 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 8
+version: 10
 version_date: 2026-03-06
-previous_version: 7
+previous_version: 9
 change_summary: >
-  Reduced Claude-first workflow assumptions, added Codex loading guidance,
-  and made handoff notes and commit message files optional conveniences.
+  Trimmed Gemini Gems section to single-paragraph note. Added skills-ref
+  validation mention. Renamed frontmatter_mode references from claude to
+  metadata.
 ---
 
 # Skill Provenance — README
@@ -360,51 +361,12 @@ for that transition. Better to carry the manifest.
 
 ## Gemini Gems workflow
 
-Gemini Gems are Google's equivalent of Claude Skills/Projects in the
-web UI. A Gem consists of a name, a system prompt (the "instructions"
-field), and optional knowledge files uploaded to the Gem's knowledge
-base. Unlike Claude's `.skill` ZIP format, Gems don't accept a single
-bundle — instructions are copy-pasted and files are uploaded individually
-through the Gem Manager.
-
-### Tracking a Gem with skill-provenance
-
-To version-track a Gem alongside its associated files:
-
-1. **Save the Gem's system prompt** as a file in your bundle (e.g.,
-   `GEM_INSTRUCTIONS.md`). Track it in the manifest with
-   `file_role: reference`. This becomes the source of truth for the
-   Gem's instructions — edit it locally, then update the Gem.
-
-2. **Version the bundle normally** using skill-provenance. The Gem
-   instructions file gets internal headers when appropriate, changelog
-   entries, and manifest tracking like any other file.
-
-3. **On session close**, ask the skill to generate a "Gem update
-   summary." This tells you:
-   - Whether `GEM_INSTRUCTIONS.md` changed (and if so, the full text
-     to copy-paste into the Gem Manager's instructions field)
-   - Which files in the bundle need to be re-uploaded to the Gem's
-     knowledge base (any file that changed this session)
-   - The version number and change summary for your records
-
-Handoff notes are usually unnecessary for CLI and IDE workflows. Generate
-one only when moving through a stateless chat surface or when you want a
-human-readable transfer summary.
-
-### Example prompt
-
-> "Package the bundle. I also maintain a Gemini Gem for this skill —
-> tell me what I need to update in the Gem Manager."
-
-### Limitations
-
-- Gem updates are manual (copy-paste instructions, re-upload files).
-  There is no API for programmatic Gem management.
-- Gems have file size and count limits for their knowledge base. Check
-  current limits in the Gem Manager.
-- The Gem's instructions field is plain text, not YAML frontmatter.
-  Copy the body of `GEM_INSTRUCTIONS.md` without the internal header.
+Gemini Gems can be version-tracked by saving the Gem's system prompt as
+a file in your bundle (e.g., `GEM_INSTRUCTIONS.md` with
+`file_role: reference`). On session close, ask the skill for a "Gem
+update summary" to see which files need re-uploading to the Gem's
+knowledge base. Gem updates are manual — there is no API for
+programmatic Gem management. See eval 10 for an example scenario.
 
 
 ## File naming
@@ -531,25 +493,28 @@ changes, update the hash in the manifest and note it in the changelog.
 
 ## Relationship to the Agent Skills specification
 
-The Agent Skills format (agentskills.io) defines a `metadata` field in
-SKILL.md frontmatter that supports arbitrary key-value pairs, including
-a `version` key. Bundles can use that field for SKILL.md version headers
-when they choose `frontmatter_mode: claude` (see the frontmatter constraint
-above).
+The Agent Skills format (agentskills.io, now adopted by 30+ agent tools)
+defines a `metadata` field in SKILL.md frontmatter that supports arbitrary
+key-value pairs, including a `version` key. This is now a spec-standard
+feature, not a Claude-only extension. Bundles can use that field for
+SKILL.md version headers when they choose `frontmatter_mode: metadata` (see
+the frontmatter constraint in the SKILL.md spec).
 
-However, the official spec's `version` field is a static label — it
-doesn't address cross-session staleness tracking, changelogs, manifests,
-or bundle integrity verification. This skill fills that gap. It is
-complementary to the spec, not a replacement.
+However, the spec's `metadata.version` is a static label — it doesn't
+address cross-session staleness tracking, changelogs, manifests, or bundle
+integrity verification. This skill fills that gap. It is complementary to
+the spec, not a replacement.
 
 This bundle ships in `frontmatter_mode: minimal` for maximum portability,
 so its own SKILL.md version lives in `MANIFEST.yaml`.
 
 The API's skill versioning system (epoch timestamps via `/v1/skills`)
-handles version management for skills deployed through the API. This
-skill handles version management for skills in development, moving
-between sessions, and stored locally — the workflow that precedes
-API deployment.
+handles version management for skills deployed through the API. Custom
+skills uploaded to one surface do not sync to others — a skill uploaded
+to the API is not available in claude.ai or Claude Code, and vice versa.
+This skill handles version management for skills in development, moving
+between sessions and surfaces, and stored locally — the workflow that
+precedes API deployment and persists across it.
 
 
 ## References
@@ -570,7 +535,7 @@ API deployment.
 ### Ecosystem
 
 - [Agent Skills open standard](https://agentskills.io/home) — cross-platform spec, adopted by Claude, GitHub Copilot, Cursor, Codex, and others
-- [Agent Skills GitHub](https://github.com/agentskills/agentskills) — specification source, reference library, validation tools
+- [Agent Skills GitHub](https://github.com/agentskills/agentskills) — specification source, reference library, validation tools (`skills-ref` for frontmatter validation)
 - [Anthropic example skills](https://github.com/anthropics/skills) — official skill examples and templates
 - [Connectors directory](https://claude.com/connectors) — partner-built skills and MCP connectors
 - [Gemini CLI creating skills](https://geminicli.com/docs/cli/creating-skills/) — Gemini CLI skill authoring guide

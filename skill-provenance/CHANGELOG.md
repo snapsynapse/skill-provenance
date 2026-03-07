@@ -1,5 +1,43 @@
 # Changelog
 
+## 4.5.0 — 2026-03-06
+- SKILL.md: Added `dependencies` field to manifest spec with empty-list
+  default and usage example. Renamed `frontmatter_mode: claude` to
+  `frontmatter_mode: metadata` throughout spec and examples.
+- README.md (bundle): Trimmed Gemini Gems workflow section from multi-page
+  guide to single-paragraph note with eval reference. Added `skills-ref`
+  validation tool mention to Agent Skills GitHub reference. Renamed
+  `frontmatter_mode` references from `claude` to `metadata`.
+- README.md (root): Added cross-surface fragmentation (API/Chat/Code
+  skill isolation) to opening pitch paragraph.
+- evals.json: Added eval 14 (API surface awareness — epoch-timestamp
+  versioning, cross-surface isolation, manifest-to-API traceability) and
+  eval 15 (dependencies field usage). Renamed `frontmatter_mode: claude`
+  to `metadata` in evals 7 description and expectations. Now 15 evals.
+- MANIFEST.yaml: Added `dependencies: []` field. Bumped bundle to 4.5.0.
+
+## 4.4.0 — 2026-03-06
+- SKILL.md: Updated frontmatter constraint table to distinguish Claude
+  Chat/Settings from Claude Code (which supports extensions like
+  disable-model-invocation, context, agent, hooks). Added Claude API
+  and Agent SDK to cross-surface section documenting epoch-timestamp
+  versioning and cross-surface fragmentation. Added note on 30+ agent
+  adopters. Added metadata.version spec-standard note. Added progressive
+  disclosure guidance (three-tier loading model, <500 line recommendation).
+  Added ${CLAUDE_SKILL_DIR} variable documentation.
+- README.md (bundle): Updated spec relationship section to reflect 30+
+  adopter ecosystem, noted metadata.version as spec-standard rather than
+  Claude-only, added cross-surface fragmentation note for API-deployed
+  skills.
+- README.md (root): Expanded platform support table with Claude API,
+  Agent SDK, GitHub Copilot/VS Code, and Cursor. Added 30+ adopter
+  ecosystem note. Added Skills API row to comparison table.
+- MANIFEST.yaml: Added api to designed_for surfaces, added compatible_with
+  block listing Claude API, Agent SDK, GitHub Copilot, Cursor, and
+  agentskills.io ecosystem. Bumped bundle to 4.4.0.
+- evals.json: Not updated (stale — does not yet cover API surface or
+  30+ adopter ecosystem context).
+
 ## 4.3.0 — 2026-03-06
 - SKILL.md: Simplified the core protocol for portability. Made handoff
   notes optional surface-specific artifacts instead of a default bundle
