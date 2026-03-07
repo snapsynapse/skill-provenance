@@ -88,7 +88,7 @@ skill-provenance/                ← Canonical source bundle (use this for Code/
 ├── README.md                    ← User guide: workflows, worked example, troubleshooting
 ├── MANIFEST.yaml                ← File inventory with roles, versions, hashes
 ├── CHANGELOG.md                 ← Change history
-├── evals.json                   ← 13 evaluation scenarios
+├── evals.json                   ← 15 evaluation scenarios
 └── validate.sh                  ← Local hash verification script
 AGENTS.md                        ← Guide for agents working on this repo
 CONTRIBUTING.md                  ← How to contribute
@@ -99,7 +99,7 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-13 evaluation scenarios covering bootstrap, session open/close, conflict detection, optional handoff, cross-platform compatibility, and more. See [evals.json](skill-provenance/evals.json) for the full list.
+15 evaluation scenarios covering bootstrap, session open/close, conflict detection, optional handoff, cross-platform compatibility, and more. See [evals.json](skill-provenance/evals.json) for the full list.
 
 
 ## Usage guide
