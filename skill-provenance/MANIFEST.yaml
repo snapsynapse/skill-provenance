@@ -1,10 +1,11 @@
 bundle: skill-provenance
-bundle_version: 4.5.0
-bundle_date: 2026-03-06
+bundle_version: 4.6.1
+bundle_date: 2026-03-07
 description: >
   Metaskill for version tracking across Agent Skills sessions, surfaces,
-  and platforms. Manifest, changelog, and portable internal version
-  markers prevent version confusion during iterative skill development.
+  and platforms. Manifest, changelog, deployment notes, and portable
+  internal version markers prevent version confusion during iterative
+  skill development and cross-surface deployment.
 
 compatibility:
   designed_for:
@@ -17,6 +18,8 @@ compatibility:
       - minimal SKILL.md frontmatter
       - local filesystem access
       - optional git workflow
+      - deployment drift tracking
+      - hash-based audit trail
   tested_on:
     - platform: Anthropic Claude
       model: Claude Opus 4.6
@@ -48,6 +51,12 @@ compatibility:
       status: partial
       date: 2026-02-27
       notes: Skill loading and bootstrap work. Gems workflow untested.
+    - platform: Perplexity Computer
+      model: N/A
+      surface: Computer
+      status: partial
+      date: 2026-03-07
+      notes: .zip upload path works. Trigger-oriented description improves discovery.
   compatible_with:
     - Claude API (/v1/skills)
     - Claude Agent SDK
@@ -62,26 +71,26 @@ dependencies: []
 files:
   - path: SKILL.md
     role: skill
-    version: 8
-    hash: sha256:d64bca74322dcb5c9a9b61d25999b8f54a2e11e89d25aa24a5e300f8d4c42de7
+    version: 10
+    hash: sha256:542642ffbc90a0e61c5df138510e4cfb3d64c479b2173f9f752d599b4eab224b
     note: Canonical skill definition. Version tracked in MANIFEST.yaml for maximum portability
 
   - path: README.md
     role: reference
-    version: 10
-    hash: sha256:a5481faa71bbdb62311491a434455275492ae3e0fb2e1409caac78fe334263f9
+    version: 12
+    hash: sha256:de23a7f4a83c17e1b673fdcbb032bfd0b75b940a72aa160c20d75c3907dd52d2
     note: Human-facing instructions, worked example, portability guidance, local validation, troubleshooting, references
 
   - path: evals.json
     role: evals
-    version: 7
-    hash: sha256:18318eec5f7057491a5187f96aef6ba278fe8187363dba9450dd2b5e9b70433e
-    note: 15 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation, API surface, dependencies
+    version: 9
+    hash: sha256:ae0820d58bcb1fd4c2ec511601a7a00ccf52e43f7eb3845cb799ea1967778cae
+    note: 22 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation, API surface, dependencies, deployment drift, multi-surface installs, trust checks, redeploy events, deployment conflicts, hash mismatches, packaged subsets
 
   - path: CHANGELOG.md
     role: reference
-    version: 10
-    hash: sha256:941b4d5880920f2bd160be827cdf3e6f324dc990d0b8b1f15385d1fbc9378c5f
+    version: 13
+    hash: sha256:10da807e02be456483ba68702168ff9455c78f0ba5fcd6d5ffde603c3bb75893
     note: Append-only change history
 
   - path: validate.sh

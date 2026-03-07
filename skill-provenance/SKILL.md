@@ -1,13 +1,12 @@
 ---
 name: skill-provenance
 description: >
-  Version tracking for Agent Skills and their associated files across
-  sessions, surfaces, and platforms. Keeps version identity with the
-  bundle instead of filenames, using internal headers where practical and
-  a manifest everywhere else. Maintains a manifest and changelog that
-  travel with the skill bundle. Use this skill whenever opening, saving,
-  or handing off a skill project that spans multiple sessions. Compatible
-  with the agentskills.io open standard.
+  Version tracking for Agent Skills bundles and their associated files
+  across sessions, surfaces, and platforms. Use when creating, editing,
+  versioning, validating, packaging, or handing off a skill bundle; when
+  checking or updating MANIFEST.yaml, CHANGELOG.md, hashes, stale evals,
+  or frontmatter mode; and when keeping version identity with the bundle
+  instead of filenames. Compatible with the agentskills.io open standard.
 ---
 
 # Skill Provenance
@@ -15,11 +14,10 @@ description: >
 ## The Problem This Solves
 
 Skill projects move between sessions, surfaces (Chat, IDE, CLI, Cowork),
-platforms (Claude, Gemini CLI, Codex, Copilot), and local storage (Obsidian, working
-directories, git repos). Version identity gets lost when it lives only in
-filenames. A file renamed from `SKILL_v4.md` to `SKILL_v5.md` with no
-internal record of what changed creates ambiguity that costs real time to
-resolve.
+platforms (Claude, Gemini CLI, Codex, Copilot), and local storage
+(Obsidian, working directories, git repos). Version identity gets lost
+when it lives only in filenames. A file renamed from `SKILL_v4.md` to
+`SKILL_v5.md` with no internal record of what changed creates ambiguity.
 
 This skill establishes three conventions that prevent that:
 
@@ -27,7 +25,6 @@ This skill establishes three conventions that prevent that:
    always in the manifest.
 2. A changelog travels with the skill bundle.
 3. A manifest lists all files in the bundle so any session can verify completeness.
-
 
 ## What Gets Versioned
 
@@ -42,9 +39,7 @@ A skill bundle is a SKILL.md plus all associated files. Typical contents:
 
 The skill itself (SKILL.md) and evals are the primary versioned artifacts.
 Scripts and outputs are tracked by the manifest but version with the bundle
-rather than independently. Handoff notes can also be tracked when a
-non-persistent surface needs them, but they are optional convenience
-artifacts rather than part of the core model.
+rather than independently. Handoff notes are optional convenience artifacts.
 
 
 ## Internal Version Header
@@ -69,13 +64,10 @@ change_summary: >
 
 **version** is an integer for per-file tracking. It counts revisions to
 that specific file within the bundle. The bundle-level version
-(`bundle_version` in MANIFEST.yaml) uses semver — see the Manifest
-section below.
+(`bundle_version` in MANIFEST.yaml) uses semver.
 
 **change_summary** is required for every version after v1. One to three
-sentences. Must describe what changed, not just that something changed.
-"Updated Phase 5" is insufficient. "Rewrote Phase 5 page layout rules:
-removed per-section page breaks, added content flow check" is sufficient.
+sentences. It must describe what changed, not just that something changed.
 
 **previous_version** creates a chain. Any session can trace the lineage.
 
@@ -90,10 +82,9 @@ removed per-section page breaks, added content flow check" is sufficient.
 - `asset` — templates, images, fonts in assets/ used in output
 - `agents` — platform UI metadata (e.g., Codex's agents/openai.yaml)
 
-For files that cannot safely carry YAML frontmatter (binary files like .docx,
-.pdf, .png, and strict-format files like .json or executable .sh), the
-manifest tracks their version. They do not get internal headers. For those
-files, the manifest's `version` field is authoritative.
+For files that cannot safely carry YAML frontmatter (binary files and
+strict-format files such as `.json` or executable `.sh`), the manifest
+tracks their version and its `version` field is authoritative.
 
 **SKILL.md frontmatter constraint:** The Agent Skills open standard
 (agentskills.io) requires `name` and `description`. Different platforms
@@ -143,14 +134,12 @@ or bundle integrity. Prefer manifest-based tracking as the default and
 use `metadata` only when you need version info visible in the file
 itself.
 
-
 ## Manifest
 
 The manifest is a YAML file named `MANIFEST.yaml` at the root of the skill
 bundle directory — the same level as `SKILL.md`. When the bundle is
-packaged as a `.skill` ZIP (Claude's settings export format), the manifest
-lives inside the ZIP. It is the single source of truth for what the bundle
-contains.
+packaged as a `.skill` ZIP, the manifest lives inside the ZIP. It is the
+single source of truth for what the bundle contains.
 
 ```yaml
 bundle: my-skill
@@ -189,10 +178,15 @@ compatibility:
 
 dependencies: []
   # List skill names this bundle depends on. Omit or leave empty if none.
-  # Example:
-  #   dependencies:
-  #     - data-extraction
-  #     - format-converter
+
+deployments:
+  api:
+    version: 1759178010641129
+    workspace: docs-prod
+  claude:
+    scope: user
+  perplexity:
+    package_format: zip
 
 files:
   - path: SKILL.md
@@ -238,6 +232,12 @@ not release identifiers.
 that the file it received matches what the manifest claims. Compute on save,
 verify on load.
 
+**deployments** is optional. Use it to record deployed or installed copies
+of the same bundle when you want traceability across surfaces. Keep
+`bundle_version` as the author-side semver source of truth. Platform-native
+versions (for example API timestamps) stay in `deployments`, not in
+`bundle_version`.
+
 **version: null** for source files. They are tracked for completeness but
 not versioned by this system.
 
@@ -274,6 +274,9 @@ recognize. This means the versioning artifacts travel safely inside the
 When bootstrapping or updating a bundle, always include the versioning
 artifacts in the `.skill` ZIP so they survive round-trips through
 Claude's settings UI.
+
+Some uploaders only accept `.zip` or `.md`. In those cases, rename the
+archive from `.skill` to `.zip` without changing its contents.
 
 **Progressive disclosure:** The agentskills.io spec defines a three-tier
 loading model: metadata (~100 tokens, always loaded), instructions
@@ -352,8 +355,8 @@ When a skill bundle is loaded into a new session:
    for reliable hash verification without LLM computation.
 4. Read `CHANGELOG.md` to understand recent changes.
 5. Check for staleness: if any file's version is lower than the bundle
-   version, flag it as potentially stale and ask the user whether it
-   needs updating.
+   version, or if `deployments` clearly show a deployed copy behind the
+   local bundle, flag it and ask the user whether it needs updating.
 6. If `MANIFEST.yaml` is missing, treat the bundle as unversioned. Offer
    to create one by inventorying the files and asking the user for version
    context.
@@ -364,7 +367,9 @@ When work is complete and files are being delivered:
 
 1. Update internal version headers for changed files that use them.
 2. Update `MANIFEST.yaml` with new versions and hashes for every changed
-   versioned file, including manifest-only files.
+   versioned file, including manifest-only files. If the user deployed or
+   reinstalled the skill this session, update any relevant `deployments`
+   metadata too.
 3. Append to `CHANGELOG.md`.
 4. If any versioned file was changed but another dependent file was not
    updated (e.g., SKILL.md changed but evals.json was not updated), note
@@ -404,11 +409,9 @@ should include:
 
 Create a handoff note only when crossing a non-persistent boundary or when
 the user explicitly asks for one. In filesystem-native environments with a
-current manifest, changelog, and git history, a handoff note is usually
-unnecessary overhead. When created, it can be tracked in the manifest and
-replaces (not appends to) the previous handoff note — there is only one
-active handoff at a time. Previous handoffs are preserved in the changelog
-history.
+current manifest, changelog, and git history, it is usually unnecessary.
+When created, it replaces the previous handoff note; previous handoffs live
+in changelog history.
 
 ### Conflict resolution
 
@@ -426,102 +429,40 @@ is to make conflicts visible.
 
 ## Cross-Surface and Cross-Platform Considerations
 
-### Claude Chat
-No persistent filesystem. Files are uploaded/downloaded per session.
-The manifest and changelog must travel with the uploaded files.
-On session open, verify the bundle. On session close, deliver updated
-bundle files to the user. This is the main case where a handoff note is
-useful.
+- **Claude Chat:** No persistent filesystem. Upload the bundle files
+  together, verify on open, and return updated files on close. This is
+  the main case where a handoff note helps.
+- **Claude Cowork / Claude Code / Claude Agent SDK:** Directory-based and
+  persistent. The manifest and changelog live with the skill. In git-native
+  environments, hashes can be optional if git already covers integrity,
+  but version numbers and change summaries still matter.
+- **Codex / Gemini CLI:** Filesystem-based and best served by minimal
+  `SKILL.md` frontmatter (`name` and `description` only). Keep
+  `frontmatter_mode: minimal` in the manifest. Codex skills typically live
+  in `~/.codex/skills/`; Gemini skills can live in project, user, or
+  extension skill directories and are loaded by name and description.
+- **Generic agentskills clients:** Some cross-client tooling also
+  recognizes `.agents/skills/` as a neutral install directory. Treat it as
+  another filesystem copy of the same bundle and track drift the same way.
+- **Claude API:** Uploads to `/v1/skills` track which upload is active,
+  not what changed inside the bundle. Use `bundle_version`,
+  `MANIFEST.yaml`, and `CHANGELOG.md` for author-side provenance before
+  deployment. API-uploaded skills do not sync back to Claude Code or
+  claude.ai.
+- **GitHub Copilot / VS Code / Cursor / other agentskills.io adopters:**
+  Follow the standard directory layout and ignore unknown files such as
+  `MANIFEST.yaml` and `CHANGELOG.md`.
 
-### Claude Cowork
-Persistent filesystem within a project. The bundle can live as a
-directory. The manifest and changelog persist between sessions.
-Same protocol applies but files don't need to be re-uploaded.
+General principle: the manifest and changelog are the portable core.
+Platforms that do not understand them ignore them safely. Keep this
+bundle in `frontmatter_mode: minimal`, and track `SKILL.md` version state
+in `MANIFEST.yaml`.
+## Trust and Audit
 
-### Claude Code
-Git-native. The manifest and changelog complement git's own versioning.
-The manifest adds role and staleness tracking that git doesn't provide.
-The changelog adds intent that commit messages often lack. Handoff notes
-are usually unnecessary here unless the user explicitly wants one.
-Hashes in the manifest can be omitted when the bundle is in a git repo
-since git handles integrity. Version numbers and change summaries
-remain required.
-
-### Codex (OpenAI)
-Filesystem-based. Skills live in `~/.codex/skills/` or project
-directories. Codex rejects SKILL.md frontmatter fields beyond `name`
-and `description` — use `frontmatter_mode: minimal` in the manifest
-and omit the `metadata` block from SKILL.md. Codex's `agents/openai.yaml`
-can be tracked in the manifest with `role: agents`. Inline commit
-messages are generally preferable to creating a transient file.
-
-### Gemini CLI (Google)
-Filesystem-based with three-tier skill discovery:
-1. **Workspace:** `.gemini/skills/` in the project directory
-2. **User:** `~/.gemini/skills/` for skills available across all projects
-3. **Extensions:** `~/.gemini/extensions/*/skills/` for extension-provided skills
-
-Gemini CLI requires only `name` and `description` in SKILL.md
-frontmatter — use `frontmatter_mode: minimal` in the manifest and
-omit the `metadata` block from SKILL.md. Skills are loaded on-demand
-by name and description, so context is not bloated by inactive skills.
-
-To install a skill bundle for Gemini CLI, copy or symlink the bundle
-directory into `~/.gemini/skills/skill-name/`. Management commands:
-`gemini skills list`, `gemini skills install`, `gemini skills link`.
-
-Manifest and changelog are ignored by Gemini CLI (treated as unknown
-files in the skill directory).
-
-### Claude API
-Skills uploaded via `/v1/skills` and referenced in Messages API requests
-through `container.skills`. The API assigns each upload an epoch-timestamp
-version (e.g., `1759178010641129`) or `latest`. Anthropic's pre-built
-skills (pptx, xlsx, docx, pdf) use date-based versions (e.g., `20251013`).
-Up to 8 skills per request. Skills run in a sandboxed code execution
-container with no network access (API surface) or varying access
-(claude.ai surface).
-
-The API's versioning tracks *which upload is active*. It does not track
-what changed between uploads, detect staleness across files, or maintain
-a changelog. skill-provenance fills the gap for the development workflow
-that precedes API deployment: iterating across sessions, tracking intent,
-and maintaining bundle integrity. After development, `bundle_version` in
-the manifest maps naturally to the API's version parameter.
-
-Custom skills uploaded to one surface do not sync to others. A skill
-uploaded to the API is not available in claude.ai or Claude Code, and
-vice versa. This cross-surface fragmentation is exactly the problem
-skill-provenance addresses.
-
-### Claude Agent SDK
-Skills work in the SDK via `setting_sources` configuration. The SDK
-loads skills from `.claude/skills/` directories and discovers them at
-startup. Same filesystem layout as Claude Code. The manifest and
-changelog travel with the skill directory.
-
-### GitHub Copilot / VS Code
-Skills in `.github/skills/` or `.claude/skills/`. Follows the
-agentskills.io spec. Manifest and changelog are ignored by Copilot
-(treated as unknown files in the skill directory).
-
-### Other agentskills.io adopters
-The spec is now adopted by 30+ agent tools including Cursor, Roo Code,
-Junie (JetBrains), OpenHands, Goose, Amp, Spring AI, Databricks,
-Factory, Mistral Vibe, and others. All follow the agentskills.io
-directory structure. Manifest and changelog are invisible to platforms
-that don't know about them — they never break compatibility.
-
-### General principle
-The manifest and changelog are the portable core. No platform currently
-reads them. They exist for the human and for agents that have the
-skill-provenance skill loaded. This means they never break
-compatibility — they're invisible to platforms that don't know
-about them. Transient conveniences such as handoff notes and commit
-message files should be created only when a surface actually benefits
-from them. For maximum portability, this bundle itself ships in
-`frontmatter_mode: minimal`; its `SKILL.md` version is tracked in
-`MANIFEST.yaml`.
+Use the manifest, changelog, hashes, and optional deployment metadata to
+verify what belongs in the bundle, whether files still match their
+recorded state, what changed, and which installed or deployed copies may
+now be stale. If a bundle comes from an untrusted source, verify it first.
 
 
 ## File Naming
@@ -536,10 +477,9 @@ The version lives inside the file (via the header) and in the manifest,
 not in the filename. Version-numbered filenames are how we got into
 trouble in the first place.
 
-Exception: when a user's local storage requires version-in-filename for
-their own workflow (e.g., keeping multiple versions visible in Obsidian),
-the manifest is the tiebreaker for which version is canonical. The
-internal version identity, when present, must still match.
+Exception: if a user's local storage requires version-in-filename for
+their workflow, the manifest is the tiebreaker for which version is
+canonical. Internal version identity must still match.
 
 
 ## Bootstrap

@@ -1,13 +1,13 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 10
-version_date: 2026-03-06
-previous_version: 9
+version: 12
+version_date: 2026-03-07
+previous_version: 11
 change_summary: >
-  Trimmed Gemini Gems section to single-paragraph note. Added skills-ref
-  validation mention. Renamed frontmatter_mode references from claude to
-  metadata.
+  Added 2026 ecosystem positioning, optional deployment metadata guidance,
+  trust-and-audit positioning, and eval coverage for deployment drift and
+  untrusted bundle verification.
 ---
 
 # Skill Provenance — README
@@ -24,6 +24,14 @@ You need this if you've ever uploaded a skill file to a new session and
 couldn't tell whether it was the latest version, or discovered that the
 SKILL.md was updated but the evals weren't, or lost track of what changed
 between sessions.
+
+## Why this matters now
+
+As of March 7, 2026, skills are used across Claude settings, Claude Code,
+the API, the Agent SDK, and multiple non-Claude clients. One skill bundle
+often exists as several copies: a local directory, an uploaded `.skill` or
+`.zip`, and one or more deployed surfaces. skill-provenance exists to keep
+those copies traceable without replacing each platform's native versioning.
 
 
 ## The .skill format
@@ -53,6 +61,10 @@ When you download a `.skill` from Claude settings, the versioning
 artifacts come with it. When you upload one, they're preserved. No
 separate file management needed for the core skill bundle.
 
+If a loader only accepts `.zip` or `.md`, rename the archive from
+`.skill` to `.zip` before uploading. This is the tested path for
+Perplexity Computer. The contents stay identical.
+
 **What doesn't fit in .skill:** Some skill projects include evals,
 generation scripts, rendered outputs (.docx, .pdf), and optional handoff
 notes.
@@ -78,11 +90,13 @@ you're working in. How you do that depends on the agent and surface:
 | **Claude Code** | Place the `skill-provenance/` folder in your project's skill directory (typically alongside other skills). Reference it in your CLAUDE.md if needed. |
 | **Codex** | Place the `skill-provenance/` folder in `~/.codex/skills/skill-provenance/` or a project skill directory. Keep SKILL.md frontmatter minimal. |
 | **Gemini CLI** | Copy or symlink the `skill-provenance/` folder to `~/.gemini/skills/skill-provenance/` for user-wide availability, or `.gemini/skills/skill-provenance/` for a single project. Use `frontmatter_mode: minimal` in the manifest. |
+| **Perplexity Computer** | Upload a `.zip` copy of the bundle or loose files when supported. Rename `.skill` to `.zip` first, keep SKILL.md frontmatter minimal, and use trigger-rich descriptions for discovery. |
+| **Generic agentskills clients** | Use the directory bundle directly. Some cross-client tooling also recognizes `.agents/skills/skill-provenance/` as a neutral install location. |
 
 The checked-in `skill-provenance/` directory is the canonical source bundle
 and now ships in `frontmatter_mode: minimal`, so the same `SKILL.md` works
-for Claude, Codex, and Gemini CLI. The `.skill` file is just a Claude-friendly
-ZIP wrapper around that directory.
+for Claude, Codex, Gemini CLI, and Perplexity Computer. The `.skill` file
+is just a Claude-friendly ZIP wrapper around that directory.
 
 ### Where to find and manage skills in Claude settings
 
@@ -351,6 +365,24 @@ project, so the bundle stays put between sessions.
 5. The manifest hashes can be omitted in git since git handles integrity,
    but version numbers and change summaries remain required.
 
+## Deployment surfaces and drift
+
+The same skill bundle can now exist in multiple places at once: a local
+working directory, a `claude.ai` settings upload, an API workspace skill,
+and one or more local skill directories. Treat those as separate copies
+that can drift independently.
+
+The manifest can optionally include a `deployments:` block to record
+surface-specific state such as API upload versions, local install targets,
+or upload package format. Keep `bundle_version` as the author-side source
+of truth. Platform-native versions such as Anthropic's API timestamps stay
+in their own fields and should not be replaced with semver.
+
+When you deploy or reinstall a skill, update the manifest and changelog if
+you want traceability across those copies. When you edit locally without
+redeploying, the deployment metadata becomes a useful reminder that the
+deployed surface may be stale.
+
 ### What if I forget to carry the manifest?
 
 An agent can reconstruct one from the files you upload, but it will need
@@ -447,6 +479,20 @@ means missing files were found.
 
 Zero dependencies beyond `bash`, `shasum` or `sha256sum`, and `awk`.
 
+## Trust and audit
+
+Use the manifest, hashes, and changelog to answer four questions before you
+trust or reinstall a bundle:
+
+- What files are supposed to be here?
+- Do the current files still match the recorded hashes?
+- What changed since the last known-good version?
+- Which deployed or installed copies might now be behind?
+
+This is useful when a skill comes from another repo, a teammate, a release
+artifact, or a settings download that has been modified locally before
+re-upload.
+
 
 ## Troubleshooting
 
@@ -524,6 +570,7 @@ precedes API deployment and persists across it.
 - [Agent Skills overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) — architecture, progressive disclosure, cross-surface availability
 - [Agent Skills best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) — authoring guidance for SKILL.md
 - [Agent Skills specification](https://agentskills.io/specification) — the open standard format definition
+- [Agent Skills integration guide](https://agentskills.io/client-implementation/adding-skills-support) — client install paths, trust checks, collision handling
 - [Skills cookbook](https://platform.claude.com/cookbook/skills-notebooks-01-skills-introduction) — API usage tutorial with Excel, PowerPoint, PDF examples
 - [Using Skills with the API](https://platform.claude.com/docs/en/build-with-claude/skills-guide) — `/v1/skills` endpoints, custom skill uploads
 
@@ -531,12 +578,15 @@ precedes API deployment and persists across it.
 
 - [Introducing Agent Skills](https://claude.com/blog/skills) — launch announcement (October 2025)
 - [Organization Skills and Directory](https://claude.com/blog/organization-skills-and-directory) — org-wide management, partner directory (December 2025)
+- [Improving skill-creator: Test, measure, and refine Agent Skills](https://claude.com/blog/improving-skill-creator-test-measure-and-refine-agent-skills) — evals, benchmarks, and trigger tuning (March 2026)
 
 ### Ecosystem
 
 - [Agent Skills open standard](https://agentskills.io/home) — cross-platform spec, adopted by Claude, GitHub Copilot, Cursor, Codex, and others
 - [Agent Skills GitHub](https://github.com/agentskills/agentskills) — specification source, reference library, validation tools (`skills-ref` for frontmatter validation)
 - [Anthropic example skills](https://github.com/anthropics/skills) — official skill examples and templates
+- [GitHub Copilot skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) — GitHub's Agent Skills implementation
+- [OpenAI skills](https://github.com/openai/skills) — official skill catalog for Codex
 - [Connectors directory](https://claude.com/connectors) — partner-built skills and MCP connectors
 - [Gemini CLI creating skills](https://geminicli.com/docs/cli/creating-skills/) — Gemini CLI skill authoring guide
 - [Gemini Gems](https://support.google.com/gemini/answer/16504957) — creating and sharing Gemini Gems

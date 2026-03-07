@@ -4,6 +4,10 @@ A metaskill for version tracking across [Agent Skills](https://agentskills.io) s
 
 You upload a SKILL.md to a new session and can't tell if it's the latest version. You update the skill definition but forget to update the evals. You deploy a skill via the API but your local copy drifts. Skills don't sync between surfaces — a skill in Claude Code, claude.ai, and the API are three separate copies. Git tracks *that something changed* — Skill Provenance tracks *what it means* across all of them.
 
+## Why this matters now
+
+As of March 7, 2026, skills are no longer a Claude-only niche. Anthropic supports skills across Claude, the API, and the Agent SDK; other clients now load skills from local directories or uploaded bundles; and the same skill often exists in several places at once. That makes author-side provenance more important: you need to know which copy is current, which deployed surface is stale, and what changed between installs.
+
 ```
 Before                              After
 ──────                              ─────
@@ -44,6 +48,7 @@ Git tags work when everyone has repo access. Filename suffixes break as soon as 
 | **Claude Agent SDK** | Compatible | Same as Claude Code | Filesystem-based. Skills loaded via `setting_sources` config. |
 | **Codex** (OpenAI) | Pass | `name` + `description` only | Extra frontmatter fields rejected. |
 | **Gemini CLI** (Google) | Partial | `name` + `description` only | Skill loading works. Gems workflow untested. |
+| **Perplexity Computer** | Partial | `name` + `description` only | Tested with `.zip` upload flow. Trigger-rich descriptions help discovery; `.skill` must be renamed to `.zip`. |
 | **GitHub Copilot / VS Code** | Compatible | Follows agentskills.io spec | Skills in `.github/skills/`. |
 | **Cursor** | Compatible | Follows agentskills.io spec | Skills in `.cursor/skills/`. |
 
@@ -58,8 +63,16 @@ This bundle ships in `frontmatter_mode: minimal` for maximum portability.
 Download `skill-provenance.skill` from the [latest release](https://github.com/snapsynapse/skill-provenance/releases) and install:
 `claude.ai` → Profile icon → `Settings` → `Skills` → `Add Skill` → select the file.
 
+If your loader only accepts `.zip` or `.md` uploads, rename
+`skill-provenance.skill` to `skill-provenance.zip` before uploading. This
+is the tested path for Perplexity Computer. The archive contents stay the
+same.
+
 **Claude Code / Codex / Gemini CLI:**
 Use the [`skill-provenance/`](skill-provenance/) directory directly. Same source works across all platforms.
+
+Some cross-client tooling also recognizes `.agents/skills/`. The same
+directory bundle can be placed there when you want a neutral install path.
 
 **ClawHub:**
 `clawhub install skill-provenance`
@@ -78,6 +91,13 @@ Then tell the agent:
 
 **When you need a commit message**, it can produce one inline by default, with a `git_commit.txt` file only when you explicitly want that convenience.
 
+**When you have deployed copies**, it can record optional deployment metadata in the manifest so API uploads, settings installs, and local directory copies can be traced without replacing platform-native version systems.
+
+
+## Trust and audit
+
+Modern skill workflows increasingly involve downloaded bundles, shared org installs, and multiple local copies. The manifest, changelog, and hashes give agents and humans an audit trail: what files belong to the bundle, what changed, and whether a copied bundle still matches its recorded state. This is especially useful before reinstalling a skill, moving it between tools, or checking whether a deployed surface is behind local changes.
+
 
 ## What's in this repo
 
@@ -88,7 +108,7 @@ skill-provenance/                ← Canonical source bundle (use this for Code/
 ├── README.md                    ← User guide: workflows, worked example, troubleshooting
 ├── MANIFEST.yaml                ← File inventory with roles, versions, hashes
 ├── CHANGELOG.md                 ← Change history
-├── evals.json                   ← 15 evaluation scenarios
+├── evals.json                   ← 22 evaluation scenarios
 └── validate.sh                  ← Local hash verification script
 AGENTS.md                        ← Guide for agents working on this repo
 CONTRIBUTING.md                  ← How to contribute
@@ -99,7 +119,7 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-15 evaluation scenarios covering bootstrap, session open/close, conflict detection, optional handoff, cross-platform compatibility, and more. See [evals.json](skill-provenance/evals.json) for the full list.
+22 evaluation scenarios covering bootstrap, session open/close, conflict detection, optional handoff, cross-platform compatibility, deployment drift, trust checks, redeploy events, deployment conflicts, packaged subsets, and more. See [evals.json](skill-provenance/evals.json) for the full list.
 
 
 ## Usage guide

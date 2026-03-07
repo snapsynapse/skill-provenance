@@ -301,6 +301,135 @@
         "Dependencies are listed as skill names, not file paths",
         "If no dependencies exist, the field can be omitted or set to an empty list"
       ]
+    },
+    {
+      "id": 16,
+      "name": "deployment_metadata_drift",
+      "description": "Tests optional deployment metadata and drift awareness when a local bundle has changed since the last API deployment.",
+      "prompt": "MANIFEST.yaml says this bundle is at 4.6.0 and deployments.api.version records a Claude API upload from last week. I changed SKILL.md locally but haven't redeployed yet. What is stale and what should I update?",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Explains that the local bundle may now be ahead of the deployed API copy",
+        "Treats bundle_version and deployments.api.version as different version systems with different purposes",
+        "Does not overwrite or reinterpret the API timestamp as semver",
+        "Recommends updating deployment metadata only after an actual redeploy or explicit verification",
+        "Recommends noting deployment or non-deployment status in the changelog for traceability"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "multi_surface_install_targets",
+      "description": "Tests guidance for the same canonical bundle being installed in multiple local skill directories or upload surfaces.",
+      "prompt": "I keep the same skill in ~/.codex/skills/, .agents/skills/, and a Claude settings ZIP. How should the manifest track that without turning them into separate skills?",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Treats the bundle as one canonical skill with multiple install or deployment targets",
+        "Uses optional deployment metadata rather than inventing separate bundle names",
+        "Notes that .agents/skills can act as a neutral cross-client install location",
+        "Explains that each installed copy can drift independently from the canonical bundle",
+        "Preserves bundle_version as the author-side source of truth"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "trust_audit_untrusted_bundle",
+      "description": "Tests trust and audit guidance for a downloaded bundle before installation or reuse.",
+      "prompt": "I downloaded a skill bundle from someone else's repo and want to install it across my tools. Before I trust it, what should I verify?",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md",
+        "validate.sh"
+      ],
+      "expectations": [
+        "Recommends reading MANIFEST.yaml to confirm expected files and roles",
+        "Recommends verifying hashes locally with validate.sh when available",
+        "Recommends reviewing CHANGELOG.md to understand recent changes and stale files",
+        "Explains that deployment metadata or install-target notes can reveal which copies may be outdated",
+        "Does not treat the bundle as trustworthy solely because it has a manifest"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "deployment_metadata_redeploy_event",
+      "description": "Tests updating deployment metadata after a real redeploy so author-side semver and platform-native deployment versions remain distinct but traceable.",
+      "prompt": "I updated this bundle locally, then redeployed it through the Claude API just now. Please update the bundle records so the deployment history is accurate.",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Updates deployments.api metadata only because an actual redeploy happened",
+        "Keeps bundle_version as semver and does not replace it with the API timestamp",
+        "Treats the API version as platform-native deployment metadata, not the bundle's canonical version",
+        "Recommends or records a changelog note describing the redeploy event",
+        "Does not imply that redeploying automatically changes unchanged file versions"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "deployment_metadata_conflict",
+      "description": "Tests conflict handling when deployment metadata disagrees with the user's report of what is currently installed or deployed.",
+      "prompt": "MANIFEST.yaml says deployments.api.version is 1759178010641129, but I think I manually redeployed a newer copy yesterday from another machine. Please fix the manifest.",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Treats the deployment discrepancy as a conflict rather than silently overwriting metadata",
+        "Explains which value comes from the manifest and which comes from the user's report",
+        "Asks for confirmation or supporting details before changing deployment metadata",
+        "Does not reinterpret platform-native deployment versions as semver",
+        "Recommends recording the resolution in the changelog once confirmed"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "hash_mismatch_untrusted_bundle",
+      "description": "Tests that a hash mismatch in a downloaded bundle is treated as a verification failure, not merely ordinary staleness.",
+      "prompt": "I downloaded this skill bundle from another repo. MANIFEST.yaml and CHANGELOG.md are present, but one file fails hash verification. What should I do before installing it?",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md",
+        "validate.sh"
+      ],
+      "expectations": [
+        "Treats the hash mismatch as a verification problem or trust issue, not just a stale-file warning",
+        "Recommends verifying the bundle locally with validate.sh when available",
+        "Explains that the manifest helps detect tampering or accidental drift but does not guarantee trust by itself",
+        "Avoids presenting the mismatched bundle as safely installable without clarification",
+        "Recommends checking changelog intent and source provenance before proceeding"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "packaged_subset_vs_canonical_bundle",
+      "description": "Tests awareness that a .skill or .zip installable package may contain only the packaged subset while the canonical source bundle tracks additional files.",
+      "prompt": "I opened a .skill ZIP that has SKILL.md, README.md, and references, but MANIFEST.yaml says the canonical bundle also includes evals and scripts that are not in this package. Is something wrong?",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md",
+        "README.md"
+      ],
+      "expectations": [
+        "Explains the difference between an installable packaged subset and the canonical source bundle",
+        "Does not silently treat the package as complete if the manifest expects additional tracked files",
+        "Flags the missing tracked files clearly and asks how the user wants to proceed",
+        "Explains that some files may travel separately even when the installed skill loads correctly",
+        "Uses the manifest as the authoritative inventory rather than the archive contents alone"
+      ]
     }
   ]
 }

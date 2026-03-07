@@ -1,5 +1,49 @@
 # Changelog
 
+## 4.6.1 — 2026-03-07
+- evals.json: Added eval 19 (deployment metadata redeploy event), eval 20
+  (deployment metadata conflict), eval 21 (hash mismatch in an untrusted
+  bundle), and eval 22 (packaged subset vs canonical bundle). Now 22 evals
+  total.
+- README.md (root): Updated the repo overview to reflect the new eval
+  count.
+- MANIFEST.yaml: Bumped bundle to 4.6.1, advanced the evals and changelog
+  file revisions, and updated the eval inventory note.
+
+## 4.6.0 — 2026-03-07
+- SKILL.md: Added optional `deployments` manifest guidance for tracking
+  installed or deployed copies across surfaces, extended the session
+  protocol to flag deployment drift, documented `.agents/skills/` as an
+  emerging neutral install path, and added a trust-and-audit section while
+  keeping the skill under the 500-line guidance.
+- README.md (bundle): Added 2026 ecosystem context, optional deployment
+  metadata guidance, trust-and-audit guidance, `.agents/skills/` install
+  note, and updated references for recent skill ecosystem developments.
+- evals.json: Added eval 16 (deployment metadata drift), eval 17
+  (multi-surface install targets), and eval 18 (trust/audit verification).
+  Now 18 evals total.
+- README.md (root): Added a 2026 relevance section, trust-and-audit
+  framing, neutral install-path note, deployment metadata positioning, and
+  updated the eval count.
+- MANIFEST.yaml: Bumped bundle to 4.6.0, updated bundle description and
+  capability metadata, advanced per-file revisions for changed bundle
+  files, and updated the eval inventory note.
+
+## 4.5.1 — 2026-03-07
+- SKILL.md: Rewrote the frontmatter description to include stronger
+  discovery triggers (`MANIFEST.yaml`, `CHANGELOG.md`, hashes, stale
+  evals, packaging) and condensed the cross-platform section so the skill
+  stays under the 500-line guidance.
+- README.md (bundle): Added `.zip` upload guidance for loaders that do not
+  accept `.skill` files and documented Perplexity Computer as a tested
+  loading path.
+- README.md (root): Added a quick-install note explaining that `.skill`
+  can be renamed to `.zip` for uploaders that only accept `.zip` or `.md`,
+  and added Perplexity Computer to the platform support table.
+- MANIFEST.yaml: Bumped bundle to 4.5.1, updated bundle date, and advanced
+  per-file revisions for the changed bundle files. Added a Perplexity
+  Computer compatibility test record.
+
 ## 4.5.0 — 2026-03-06
 - SKILL.md: Added `dependencies` field to manifest spec with empty-list
   default and usage example. Renamed `frontmatter_mode: claude` to
