@@ -83,8 +83,8 @@ files:
 
   - path: README.md
     role: reference
-    version: 12
-    hash: sha256:de23a7f4a83c17e1b673fdcbb032bfd0b75b940a72aa160c20d75c3907dd52d2
+    version: 13
+    hash: sha256:357ebef95805d61db72407a3b15878d58b55a6ff75960fc70c6242a1eb0d633d
     note: Human-facing instructions, worked example, portability guidance, local validation, troubleshooting, references
 
   - path: evals.json
@@ -96,7 +96,7 @@ files:
   - path: CHANGELOG.md
     role: reference
     version: 14
-    hash: sha256:37ff5975d32b289978d4660354a80d83643e9858c7d79dc92ea209075c93bd61
+    hash: sha256:67b228d963a49c7cf57dd13bd143644f624f79ce874dd82cf85db1b9f70b419b
     note: Append-only change history
 
   - path: validate.sh

@@ -1,13 +1,14 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 12
-version_date: 2026-03-07
-previous_version: 11
+version: 13
+version_date: 2026-03-09
+previous_version: 12
 change_summary: >
-  Added 2026 ecosystem positioning, optional deployment metadata guidance,
-  trust-and-audit positioning, and eval coverage for deployment drift and
-  untrusted bundle verification.
+  Updated frontmatter_mode references to reflect change from minimal to
+  metadata (attribution fields added). Added ClawHub publishing note.
+  Notes Codex/Gemini CLI users should strip metadata block for strict
+  platforms.
 ---
 
 # Skill Provenance — README
@@ -93,10 +94,12 @@ you're working in. How you do that depends on the agent and surface:
 | **Perplexity Computer** | Upload a `.zip` copy of the bundle or loose files when supported. Rename `.skill` to `.zip` first, keep SKILL.md frontmatter minimal, and use trigger-rich descriptions for discovery. |
 | **Generic agentskills clients** | Use the directory bundle directly. Some cross-client tooling also recognizes `.agents/skills/skill-provenance/` as a neutral install location. |
 
-The checked-in `skill-provenance/` directory is the canonical source bundle
-and now ships in `frontmatter_mode: minimal`, so the same `SKILL.md` works
-for Claude, Codex, Gemini CLI, and Perplexity Computer. The `.skill` file
-is just a Claude-friendly ZIP wrapper around that directory.
+The checked-in `skill-provenance/` directory is the canonical source bundle.
+It ships in `frontmatter_mode: metadata`, which embeds author and source
+attribution in the SKILL.md `metadata` block. For platforms that require
+strict minimal frontmatter (Codex, Gemini CLI), strip the `metadata` block
+from `SKILL.md` before installing. The `.skill` file is a Claude-friendly
+ZIP wrapper around the same directory.
 
 ### Where to find and manage skills in Claude settings
 
@@ -365,6 +368,27 @@ project, so the bundle stays put between sessions.
 5. The manifest hashes can be omitted in git since git handles integrity,
    but version numbers and change summaries remain required.
 
+#### Any surface → ClawHub (publishing)
+
+[ClawHub](https://clawhub.ai) is a skill registry where skills can be
+published and discovered. Publishing to ClawHub is a one-time packaging
+step, not a persistent surface:
+
+1. **Prepare a clean bundle folder** (typically `skill-provenance/`) with
+   SKILL.md, README.md, MANIFEST.yaml, and evals.json. Omit CHANGELOG.md
+   and any developer scripts — those serve the development workflow, not
+   the consumer.
+2. **Remove CHANGELOG.md and validate.sh entries** from MANIFEST.yaml in
+   the published copy.
+3. **Upload the folder** at `https://clawhub.ai/upload?updateSlug=<slug>`.
+   ClawHub accepts a folder drop and recognizes SKILL.md at the root.
+4. **Check the MIT-0 license checkbox.** ClawHub requires MIT-0.
+   Attribution embedded in SKILL.md frontmatter and the Origin section
+   survives this license requirement.
+5. **Set the version number** to match `bundle_version` in your MANIFEST.yaml.
+6. **Update `deployments.clawhub`** in your local MANIFEST.yaml after
+   publishing.
+
 ## Deployment surfaces and drift
 
 The same skill bundle can now exist in multiple places at once: a local
@@ -551,8 +575,9 @@ address cross-session staleness tracking, changelogs, manifests, or bundle
 integrity verification. This skill fills that gap. It is complementary to
 the spec, not a replacement.
 
-This bundle ships in `frontmatter_mode: minimal` for maximum portability,
-so its own SKILL.md version lives in `MANIFEST.yaml`.
+This bundle ships in `frontmatter_mode: metadata`, using the spec's
+`metadata` field to embed author and source attribution. SKILL.md version
+identity still lives in `MANIFEST.yaml`.
 
 The API's skill versioning system (epoch timestamps via `/v1/skills`)
 handles version management for skills deployed through the API. Custom

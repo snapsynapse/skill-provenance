@@ -4,8 +4,14 @@
 - SKILL.md: Added `metadata` block to frontmatter with `author` and `source`
   fields for attribution. Added `## Origin` section at end of body. Both
   changes ensure provenance survives distribution under MIT-0 on ClawHub.
+  Changed frontmatter_mode from minimal to metadata.
+- README.md: Updated frontmatter_mode references to reflect change to
+  metadata mode. Added ClawHub publishing workflow (folder prep, MANIFEST
+  stripping, MIT-0 note). Added note that strict-platform users (Codex,
+  Gemini CLI) should strip the metadata block before installing.
 - MANIFEST.yaml: Bumped bundle to 4.6.2. Added `deployments.clawhub` entry.
-  Advanced SKILL.md and CHANGELOG.md file revisions.
+  Updated frontmatter_mode to metadata. Advanced file revisions for SKILL.md,
+  README.md, and CHANGELOG.md.
 
 ## 4.6.1 — 2026-03-07
 - evals.json: Added eval 19 (deployment metadata redeploy event), eval 20
