@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.6.2 — 2026-03-09
+- SKILL.md: Added `metadata` block to frontmatter with `author` and `source`
+  fields for attribution. Added `## Origin` section at end of body. Both
+  changes ensure provenance survives distribution under MIT-0 on ClawHub.
+- MANIFEST.yaml: Bumped bundle to 4.6.2. Added `deployments.clawhub` entry.
+  Advanced SKILL.md and CHANGELOG.md file revisions.
+
 ## 4.6.1 — 2026-03-07
 - evals.json: Added eval 19 (deployment metadata redeploy event), eval 20
   (deployment metadata conflict), eval 21 (hash mismatch in an untrusted

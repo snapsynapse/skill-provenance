@@ -7,6 +7,9 @@ description: >
   checking or updating MANIFEST.yaml, CHANGELOG.md, hashes, stale evals,
   or frontmatter mode; and when keeping version identity with the bundle
   instead of filenames. Compatible with the agentskills.io open standard.
+metadata:
+  author: Snap Synapse (snapsynapse.com)
+  source: https://github.com/snapsynapse/skill-provenance
 ---
 
 # Skill Provenance
@@ -497,3 +500,9 @@ To version an existing unversioned skill bundle:
 6. Deliver the versioned bundle.
 
 This is a one-time operation per skill bundle.
+
+
+## Origin
+
+Developed by Snap Synapse. Canonical source:
+https://github.com/snapsynapse/skill-provenance

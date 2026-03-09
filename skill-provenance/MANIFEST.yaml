@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 4.6.1
-bundle_date: 2026-03-07
+bundle_version: 4.6.2
+bundle_date: 2026-03-09
 description: >
   Metaskill for version tracking across Agent Skills sessions, surfaces,
   and platforms. Manifest, changelog, deployment notes, and portable
@@ -64,15 +64,21 @@ compatibility:
     - Cursor
     - Any agentskills.io-compatible agent (30+ adopters)
   spec_version: agentskills.io/1.0
-  frontmatter_mode: minimal
+  frontmatter_mode: metadata
 
 dependencies: []
+
+deployments:
+  clawhub:
+    version: 4.6.2
+    date: 2026-03-09
+    url: https://clawhub.ai/skills/skill-provenance
 
 files:
   - path: SKILL.md
     role: skill
-    version: 10
-    hash: sha256:542642ffbc90a0e61c5df138510e4cfb3d64c479b2173f9f752d599b4eab224b
+    version: 11
+    hash: sha256:9245dd495130acaecbadf6b107b2aeca91b303709a9611134ba257fb4f441ab6
     note: Canonical skill definition. Version tracked in MANIFEST.yaml for maximum portability
 
   - path: README.md
@@ -89,8 +95,8 @@ files:
 
   - path: CHANGELOG.md
     role: reference
-    version: 13
-    hash: sha256:10da807e02be456483ba68702168ff9455c78f0ba5fcd6d5ffde603c3bb75893
+    version: 14
+    hash: sha256:37ff5975d32b289978d4660354a80d83643e9858c7d79dc92ea209075c93bd61
     note: Append-only change history
 
   - path: validate.sh
