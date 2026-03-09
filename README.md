@@ -1,3 +1,7 @@
+[![Validate bundle](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml/badge.svg)](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/snapsynapse/skill-provenance)](https://github.com/snapsynapse/skill-provenance/releases/latest)
+[![ClawHub](https://img.shields.io/badge/ClawHub-skill--provenance-blue)](https://clawhub.ai/snapsynapse/skill-provenance)
 # Skill Provenance
 
 A metaskill for version tracking across [Agent Skills](https://agentskills.io) sessions, surfaces, and platforms.
