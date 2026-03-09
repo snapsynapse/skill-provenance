@@ -26,7 +26,8 @@ This skill establishes three conventions that prevent that:
 
 1. Version identity lives inside files when their format allows it, and
    always in the manifest.
-2. A changelog travels with the skill bundle.
+2. A recent changelog travels with the skill bundle, while longer history
+   can live in the source repo.
 3. A manifest lists all files in the bundle so any session can verify completeness.
 
 ## What Gets Versioned
@@ -105,9 +106,9 @@ enforce different rules about additional fields:
 | **Cursor, Roo Code, Junie, others** | Follows agentskills.io spec. See agentskills.io for the full adopter list (30+). |
 
 For maximum portability, keep SKILL.md frontmatter to `name` and
-`description` only. If you need version info in SKILL.md and are only
-targeting platforms that support the spec's `metadata` field, nest it
-under `metadata`:
+`description` only. If the canonical bundle needs attribution or visible
+SKILL.md metadata, use the spec's `metadata` field there and generate a
+derived minimal copy for strict platforms:
 
 ```yaml
 ---
@@ -124,9 +125,9 @@ metadata:
 ---
 ```
 
-If targeting Codex or other strict platforms, omit `metadata` from
-SKILL.md entirely. The manifest tracks SKILL.md's version regardless,
-so no version information is lost.
+If targeting Codex or other strict platforms directly, omit `metadata`
+from SKILL.md entirely. The manifest tracks SKILL.md's version either
+way, so no version information is lost.
 
 **Note on spec support:** The agentskills.io spec formally supports
 `metadata` as an arbitrary key-value map, with `version` shown as an
@@ -281,55 +282,40 @@ Claude's settings UI.
 Some uploaders only accept `.zip` or `.md`. In those cases, rename the
 archive from `.skill` to `.zip` without changing its contents.
 
-**Progressive disclosure:** The agentskills.io spec defines a three-tier
-loading model: metadata (~100 tokens, always loaded), instructions
-(<5,000 tokens, loaded when triggered), and resources (loaded as needed).
 The spec recommends keeping SKILL.md under 500 lines and moving detailed
 reference material to separate files. Provenance artifacts fit naturally
-into this model — `MANIFEST.yaml` and `CHANGELOG.md` are Level 3
-resources, loaded only when the provenance skill is invoked or when a
-session needs to verify bundle state.
+into that model: `MANIFEST.yaml` and `CHANGELOG.md` are load-on-demand
+resources, not always-loaded instructions.
 
-**Referencing bundled files:** Claude Code provides a `${CLAUDE_SKILL_DIR}`
-variable that resolves to the directory containing the skill's `SKILL.md`.
-Use this in skill content to reference scripts or files portably (e.g.,
-`${CLAUDE_SKILL_DIR}/validate.sh`). Other platforms may not support this
-variable — direct relative paths (`./validate.sh`) work universally when
-the working directory is the bundle root.
+Claude Code provides a `${CLAUDE_SKILL_DIR}` variable for bundle-relative
+paths. Other platforms may not. Direct relative paths like
+`./validate.sh` work when the working directory is the bundle root.
 
-**Bundles with files that don't fit in .skill:** Some bundles include
-evals, generation scripts, rendered outputs, and handoff notes. The
-`.skill` format only carries the skill definition and its references.
-For bundles with additional tracked files, those files travel separately
-(uploaded to conversations, stored in working directories, or committed
-to git). The manifest tracks all files regardless of whether they fit
-in the `.skill` ZIP — it is the complete inventory, not just the
-packaged subset.
+The `.skill` ZIP only carries the skill definition and its references.
+Bundles can still track evals, scripts, rendered outputs, and handoff
+notes outside the archive. The manifest remains the complete inventory,
+not just the package inventory.
 
 
 ## Changelog
 
 The changelog is a file named `CHANGELOG.md` at the root of the skill
-bundle directory, alongside `SKILL.md` and `MANIFEST.yaml`. It is
-append-only. New entries go at the top.
+bundle directory, alongside `SKILL.md` and `MANIFEST.yaml`. In the
+bundle, it carries recent history with newest entries at the top. If the
+canonical source lives in git, older entries can be archived in a
+repo-level changelog outside the bundle.
 
 ```markdown
 # Changelog
 
 ## 5.1.0 — 2026-02-10
 - SKILL.md: Rewrote Phase 5 layout rules. Removed per-section page breaks.
-  Added content flow check. Added validation checklist as standalone final page.
+  Added content flow check and a standalone validation checklist.
 - evals.json: Not yet updated (stale, needs alignment).
 
 ## 5.0.0 — 2026-02-09
-- SKILL.md: Removed minimum section density from Phase 3. Rewrote body section
-  flow rules. Added optional appendix section.
+- SKILL.md: Reworked body flow rules and added an optional appendix.
 - evals.json: Eval 3 expectations updated for content flow.
-- generate.js: Body sections flow without page breaks. All 11 expectations pass.
-
-## 4.0.0 — 2026-02-08
-- SKILL.md: Added Phase 5 density verification.
-- generate.js: First working generation script for eval 3.
 ```
 
 ### Rules
@@ -343,6 +329,10 @@ drift that caused the v4/v5 confusion.
 **Entries are human-written prose**, not auto-generated diffs. The point is
 to communicate intent, not enumerate line changes. Git diffs are available
 when the bundle is in git.
+
+**Bundle changelogs can be trimmed.** Keeping the last 5-15 entries in
+the bundle is reasonable if the source repository maintains a full
+append-only changelog elsewhere.
 
 
 ## Session Protocol
@@ -373,7 +363,7 @@ When work is complete and files are being delivered:
    versioned file, including manifest-only files. If the user deployed or
    reinstalled the skill this session, update any relevant `deployments`
    metadata too.
-3. Append to `CHANGELOG.md`.
+3. Add a new top entry to `CHANGELOG.md`.
 4. If any versioned file was changed but another dependent file was not
    updated (e.g., SKILL.md changed but evals.json was not updated), note
    the staleness explicitly in the changelog entry.
@@ -432,34 +422,35 @@ is to make conflicts visible.
 
 ## Cross-Surface and Cross-Platform Considerations
 
-- **Claude Chat:** No persistent filesystem. Upload the bundle files
-  together, verify on open, and return updated files on close. This is
-  the main case where a handoff note helps.
-- **Claude Cowork / Claude Code / Claude Agent SDK:** Directory-based and
-  persistent. The manifest and changelog live with the skill. In git-native
-  environments, hashes can be optional if git already covers integrity,
-  but version numbers and change summaries still matter.
-- **Codex / Gemini CLI:** Filesystem-based and best served by minimal
-  `SKILL.md` frontmatter (`name` and `description` only). Keep
-  `frontmatter_mode: minimal` in the manifest. Codex skills typically live
-  in `~/.codex/skills/`; Gemini skills can live in project, user, or
-  extension skill directories and are loaded by name and description.
-- **Generic agentskills clients:** Some cross-client tooling also
-  recognizes `.agents/skills/` as a neutral install directory. Treat it as
-  another filesystem copy of the same bundle and track drift the same way.
-- **Claude API:** Uploads to `/v1/skills` track which upload is active,
-  not what changed inside the bundle. Use `bundle_version`,
-  `MANIFEST.yaml`, and `CHANGELOG.md` for author-side provenance before
-  deployment. API-uploaded skills do not sync back to Claude Code or
-  claude.ai.
-- **GitHub Copilot / VS Code / Cursor / other agentskills.io adopters:**
-  Follow the standard directory layout and ignore unknown files such as
-  `MANIFEST.yaml` and `CHANGELOG.md`.
+Treat one skill as moving through three states:
 
-General principle: the manifest and changelog are the portable core.
-Platforms that do not understand them ignore them safely. Keep this
-bundle in `frontmatter_mode: minimal`, and track `SKILL.md` version state
-in `MANIFEST.yaml`.
+- **Canonical source bundle:** The working copy in git or local storage.
+  Keep `MANIFEST.yaml` and the active `CHANGELOG.md` here. This is the
+  author-side source of truth. If you maintain a full archive in git,
+  keep it at repo root or another repo-level path outside the bundle.
+- **Strict-platform install copy:** A derived copy for Codex, Gemini CLI,
+  Perplexity, or other loaders that only accept `name` and `description`.
+  Strip the `metadata` block from SKILL.md, set `frontmatter_mode:
+  minimal`, recompute hashes in that copy, and leave the canonical bundle
+  unchanged unless you intentionally promote the derived copy.
+- **Registry or settings package:** A consumer package such as a `.skill`
+  ZIP or ClawHub upload. It may omit development-only files, but its
+  `MANIFEST.yaml` must describe exactly what the package contains. Update
+  `deployments` only after a real publish, reinstall, or redeploy.
+
+Surface notes:
+- **Claude Chat:** Stateless upload/download boundary. Verify on open and
+  consider a handoff note.
+- **Claude Cowork / Claude Code / Claude Agent SDK:** Persistent
+  filesystem. The manifest and changelog live with the bundle.
+- **Claude API:** Deployment versions live in `deployments`, not in
+  `bundle_version`.
+- **Other agentskills clients:** Unknown files are ignored safely.
+  `.agents/skills/` can act as a neutral install path.
+
+General principle: the manifest and changelog stay authoritative, and
+transformed install or publish copies are derived artifacts, not silent
+edits to the canonical bundle.
 ## Trust and Audit
 
 Use the manifest, changelog, hashes, and optional deployment metadata to

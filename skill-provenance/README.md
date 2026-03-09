@@ -1,14 +1,13 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 13
+version: 16
 version_date: 2026-03-09
-previous_version: 12
+previous_version: 15
 change_summary: >
-  Updated frontmatter_mode references to reflect change from minimal to
-  metadata (attribution fields added). Added ClawHub publishing note.
-  Notes Codex/Gemini CLI users should strip metadata block for strict
-  platforms.
+  Clarified that the bundle changelog carries recent history only, with
+  older release history archived in the repo root. Keeps the package
+  lighter without losing full GitHub history.
 ---
 
 # Skill Provenance — README
@@ -48,7 +47,7 @@ my-skill.skill (ZIP)
 └── my-skill/
     ├── SKILL.md
     ├── MANIFEST.yaml          ← versioning: file inventory
-    ├── CHANGELOG.md           ← versioning: change history
+    ├── CHANGELOG.md           ← versioning: recent in-bundle history
     ├── README.md              ← versioning: human instructions
     ├── assets/
     │   └── template.md
@@ -89,17 +88,25 @@ you're working in. How you do that depends on the agent and surface:
 | **Claude Chat** (project) | Add `SKILL.md` to the project knowledge. It will be available in every conversation within that project. |
 | **Claude Cowork** | Place the `skill-provenance/` folder in your Cowork skill directory. Claude will discover it automatically. |
 | **Claude Code** | Place the `skill-provenance/` folder in your project's skill directory (typically alongside other skills). Reference it in your CLAUDE.md if needed. |
-| **Codex** | Place the `skill-provenance/` folder in `~/.codex/skills/skill-provenance/` or a project skill directory. Keep SKILL.md frontmatter minimal. |
-| **Gemini CLI** | Copy or symlink the `skill-provenance/` folder to `~/.gemini/skills/skill-provenance/` for user-wide availability, or `.gemini/skills/skill-provenance/` for a single project. Use `frontmatter_mode: minimal` in the manifest. |
-| **Perplexity Computer** | Upload a `.zip` copy of the bundle or loose files when supported. Rename `.skill` to `.zip` first, keep SKILL.md frontmatter minimal, and use trigger-rich descriptions for discovery. |
+| **Codex** | Use a strict-platform copy in `~/.codex/skills/skill-provenance/` or a project skill directory. Generate one with `./package.sh strict`, or strip the SKILL.md `metadata` block manually. |
+| **Gemini CLI** | Copy or symlink a strict-platform copy to `~/.gemini/skills/skill-provenance/` for user-wide availability, or `.gemini/skills/skill-provenance/` for a single project. `./package.sh strict` prepares the minimal-frontmatter variant. |
+| **Perplexity Computer** | Upload a `.zip` or folder copy when supported. For strict loaders, start from `./package.sh strict`, then rename `.skill` to `.zip` if needed and keep the trigger-rich description. |
 | **Generic agentskills clients** | Use the directory bundle directly. Some cross-client tooling also recognizes `.agents/skills/skill-provenance/` as a neutral install location. |
 
-The checked-in `skill-provenance/` directory is the canonical source bundle.
-It ships in `frontmatter_mode: metadata`, which embeds author and source
-attribution in the SKILL.md `metadata` block. For platforms that require
-strict minimal frontmatter (Codex, Gemini CLI), strip the `metadata` block
-from `SKILL.md` before installing. The `.skill` file is a Claude-friendly
-ZIP wrapper around the same directory.
+Treat the bundle as moving through three states:
+
+1. **Canonical source bundle** — the checked-in `skill-provenance/`
+   directory. It ships in `frontmatter_mode: metadata` and is the
+   author-side source of truth.
+2. **Strict-platform install copy** — a derived copy for Codex, Gemini
+   CLI, Perplexity, or any loader that only accepts `name` and
+   `description`. Generate it with `./package.sh strict`.
+3. **Registry package** — a derived consumer package such as `.skill` or
+   a ClawHub upload. Generate the ClawHub variant with `./package.sh
+   clawhub`.
+
+This keeps the canonical bundle stable while install and publish targets
+stay explicit and reproducible.
 
 ### Where to find and manage skills in Claude settings
 
@@ -278,7 +285,7 @@ directory.
 
 At minimum, carry these files when moving between surfaces:
 - `MANIFEST.yaml` (the source of truth)
-- `CHANGELOG.md` (the history)
+- `CHANGELOG.md` (recent history)
 - Every file listed in the manifest
 
 The manifest tells the receiving session what it should have. If you
@@ -374,20 +381,19 @@ project, so the bundle stays put between sessions.
 published and discovered. Publishing to ClawHub is a one-time packaging
 step, not a persistent surface:
 
-1. **Prepare a clean bundle folder** (typically `skill-provenance/`) with
-   SKILL.md, README.md, MANIFEST.yaml, and evals.json. Omit CHANGELOG.md
-   and any developer scripts — those serve the development workflow, not
-   the consumer.
-2. **Remove CHANGELOG.md and validate.sh entries** from MANIFEST.yaml in
-   the published copy.
-3. **Upload the folder** at `https://clawhub.ai/upload?updateSlug=<slug>`.
-   ClawHub accepts a folder drop and recognizes SKILL.md at the root.
-4. **Check the MIT-0 license checkbox.** ClawHub requires MIT-0.
+1. **Prepare a derived upload folder** with `./package.sh clawhub`.
+   By default this writes to `build/clawhub/skill-provenance/` at the
+   repo root.
+2. **Upload the generated folder** at
+   `https://clawhub.ai/upload?updateSlug=<slug>`. ClawHub accepts a folder
+   drop and recognizes SKILL.md at the root.
+3. **Check the MIT-0 license checkbox.** ClawHub requires MIT-0.
    Attribution embedded in SKILL.md frontmatter and the Origin section
    survives this license requirement.
-5. **Set the version number** to match `bundle_version` in your MANIFEST.yaml.
-6. **Update `deployments.clawhub`** in your local MANIFEST.yaml after
-   publishing.
+4. **Set the version number** to match `bundle_version` in your
+   MANIFEST.yaml.
+5. **Only after publish succeeds**, update `deployments.clawhub` in your
+   canonical MANIFEST.yaml.
 
 ## Deployment surfaces and drift
 
@@ -503,6 +509,44 @@ means missing files were found.
 
 Zero dependencies beyond `bash`, `shasum` or `sha256sum`, and `awk`.
 
+## Derived package helper
+
+`package.sh` builds the two derived bundle states so you do not have to
+hand-edit frontmatter or MANIFEST entries:
+
+```bash
+# Strict-platform install copy for Codex / Gemini CLI / Perplexity-style loaders
+./package.sh strict
+
+# ClawHub upload folder
+./package.sh clawhub
+
+# Build both under the repo's build directory
+./package.sh all
+```
+
+What it does:
+- `strict`: copies the full tracked bundle, strips the SKILL.md
+  `metadata` block, switches the derived manifest to
+  `frontmatter_mode: minimal`, removes deployment records, and recomputes
+  hashes in the copy.
+- `clawhub`: keeps the metadata block, emits a consumer package with
+  `SKILL.md`, `README.md`, `MANIFEST.yaml`, `evals.json`, and
+  `evals-distribution.json`, removes development-only entries from the
+  derived manifest, and recomputes hashes there.
+
+The canonical bundle remains unchanged. Promote a derived copy back into
+the canonical source only if you mean to change the source of truth.
+
+Default output locations:
+- `./package.sh strict` → `build/strict/skill-provenance/`
+- `./package.sh clawhub` → `build/clawhub/skill-provenance/`
+- `./package.sh all` → `build/{strict,clawhub}/skill-provenance/`
+
+These outputs stay visible at the repo root. Add `build/` to `.gitignore`
+so generated artifacts stay local unless you intentionally decide to
+track them.
+
 ## Trust and audit
 
 Use the manifest, hashes, and changelog to answer four questions before you
@@ -550,10 +594,11 @@ you close the session and Claude updates the manifest. If you're
 uploading files that should be tracked, tell Claude to add them.
 
 **The changelog is getting long.**
-That's fine. It's append-only by design. For very mature skills, you
-can archive older entries into a `CHANGELOG-archive.md` and keep only
-the last 10-15 entries in the active changelog. Note this in the
-changelog itself.
+Trim the in-bundle changelog to recent history and move older entries to
+a repo-level full changelog, such as `../CHANGELOG.md` when the bundle
+lives inside a git repo. Keeping the last 5-15 entries in the active
+bundle changelog is reasonable. Note the archive location inside the
+bundle changelog itself.
 
 **I want to version source material too.**
 Source material (user-provided articles, images, data) is tracked in
@@ -575,9 +620,10 @@ address cross-session staleness tracking, changelogs, manifests, or bundle
 integrity verification. This skill fills that gap. It is complementary to
 the spec, not a replacement.
 
-This bundle ships in `frontmatter_mode: metadata`, using the spec's
-`metadata` field to embed author and source attribution. SKILL.md version
-identity still lives in `MANIFEST.yaml`.
+This bundle ships in `frontmatter_mode: metadata` as the canonical source
+bundle, using the spec's `metadata` field to embed author and source
+attribution. Strict-platform copies can be derived when needed; SKILL.md
+version identity still lives in `MANIFEST.yaml`.
 
 The API's skill versioning system (epoch timestamps via `/v1/skills`)
 handles version management for skills deployed through the API. Custom

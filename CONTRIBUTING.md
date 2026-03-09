@@ -20,7 +20,8 @@ The most valuable contribution right now is testing the skill on platforms other
 2. Make your changes. If you modify files inside `skill-provenance/`, follow the versioning protocol:
    - Update per-file `version` integers in `MANIFEST.yaml` for changed files.
    - Run `./skill-provenance/validate.sh --update` to recompute hashes.
-   - Add a `CHANGELOG.md` entry describing what changed.
+   - Add a new top entry to `skill-provenance/CHANGELOG.md` describing what changed.
+   - Mirror the same release entry into root `CHANGELOG.md`, which is the full archive.
    - Bump `bundle_version` in `MANIFEST.yaml` (PATCH for fixes, MINOR for features, MAJOR for breaking changes).
 3. Run `./skill-provenance/validate.sh` to confirm everything is clean.
 4. Open a PR with a clear description of what changed and why.

@@ -19,7 +19,7 @@ evals.json
 ```
 
 As of `4.3.0`, the portable core is intentionally small: the bundle files,
-`MANIFEST.yaml`, and `CHANGELOG.md`. Optional conveniences like `handoff.md`
+`MANIFEST.yaml`, and a recent `CHANGELOG.md`. Optional conveniences like `handoff.md`
 and `git_commit.txt` are still supported when useful, but they are no longer
 treated as default required artifacts.
 
@@ -32,7 +32,7 @@ treated as default required artifacts.
 | **Filename suffixes** (`_v5`) | Poorly | No | No | No | No |
 | **Skillman** | Pins versions | No | Consumer-side only | No | No |
 | **Skills API** (`/v1/skills`) | Upload timestamps | No | Single surface only | No | No |
-| **Skill Provenance** | Yes (semver) | Yes | Yes (manifest travels) | Yes | Yes (changelog) |
+| **Skill Provenance** | Yes (semver) | Yes | Yes (manifest travels) | Yes | Yes (recent changelog + repo archive) |
 
 Git tags work when everyone has repo access. Filename suffixes break as soon as you rename. Skillman pins versions for consumers. The Skills API tracks which upload is active on a single surface but doesn't track what changed or detect staleness. Skill Provenance fills the gap for authors: it tracks version identity, staleness, and intent *inside the bundle* so it survives session boundaries, surface transitions, and platform changes.
 
@@ -57,7 +57,8 @@ The agentskills.io spec is now adopted by 30+ agent tools. All use the same `SKI
 This bundle ships in `frontmatter_mode: metadata`, which adds author and
 source attribution to SKILL.md via the spec's `metadata` field. For strict
 platforms (Codex, Gemini CLI, Perplexity), strip the `metadata` block from
-SKILL.md before installing.
+SKILL.md before installing. The repo now treats that as a derived
+strict-platform copy, not an edit to the canonical source bundle.
 
 
 ## Quick install
@@ -72,7 +73,11 @@ is the tested path for Perplexity Computer. The archive contents stay the
 same.
 
 **Claude Code / Codex / Gemini CLI:**
-Use the [`skill-provenance/`](skill-provenance/) directory directly. Same source works across all platforms.
+Use the canonical [`skill-provenance/`](skill-provenance/) directory for
+Claude-compatible tools. For Codex, Gemini CLI, or other strict loaders,
+generate a derived minimal-frontmatter copy with
+`./skill-provenance/package.sh strict`, which writes to
+`build/strict/skill-provenance/` by default.
 
 Some cross-client tooling also recognizes `.agents/skills/`. The same
 directory bundle can be placed there when you want a neutral install path.
@@ -106,13 +111,16 @@ Modern skill workflows increasingly involve downloaded bundles, shared org insta
 
 ```
 skill-provenance.skill           ← Install this in Claude Settings → Skills
-skill-provenance/                ← Canonical source bundle (use this for Code/Codex/Gemini)
+skill-provenance/                ← Canonical source bundle (metadata mode)
 ├── SKILL.md                     ← The skill definition (what the agent reads)
 ├── README.md                    ← User guide: workflows, worked example, troubleshooting
 ├── MANIFEST.yaml                ← File inventory with roles, versions, hashes
-├── CHANGELOG.md                 ← Change history
-├── evals.json                   ← 22 evaluation scenarios
-└── validate.sh                  ← Local hash verification script
+├── CHANGELOG.md                 ← Recent in-bundle history (last 5 entries)
+├── evals.json                   ← 22 core evaluation scenarios
+├── evals-distribution.json      ← 4 supplemental packaging/deployment evals
+├── validate.sh                  ← Local hash verification script
+└── package.sh                   ← Zero-dependency helper for derived copies
+CHANGELOG.md                     ← Full append-only repo history
 AGENTS.md                        ← Guide for agents working on this repo
 CONTRIBUTING.md                  ← How to contribute
 ```
@@ -122,7 +130,15 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-22 evaluation scenarios covering bootstrap, session open/close, conflict detection, optional handoff, cross-platform compatibility, deployment drift, trust checks, redeploy events, deployment conflicts, packaged subsets, and more. See [evals.json](skill-provenance/evals.json) for the full list.
+26 evaluation scenarios across two files: 22 core workflow evals in
+[evals.json](skill-provenance/evals.json) and 4 supplemental
+distribution/package evals in
+[evals-distribution.json](skill-provenance/evals-distribution.json).
+
+Generated install and publish artifacts now live in `build/` at the repo
+root by default. The ClawHub upload folder is
+`build/clawhub/skill-provenance/`, and `.gitignore` excludes `build/`
+unless you explicitly want to track generated outputs.
 
 
 ## Usage guide
