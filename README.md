@@ -54,7 +54,10 @@ Git tags work when everyone has repo access. Filename suffixes break as soon as 
 
 The agentskills.io spec is now adopted by 30+ agent tools. All use the same `SKILL.md` directory format. Provenance artifacts (`MANIFEST.yaml`, `CHANGELOG.md`) are invisible to platforms that don't know about them — they never break compatibility. See [agentskills.io](https://agentskills.io) for the full adopter list.
 
-This bundle ships in `frontmatter_mode: minimal` for maximum portability.
+This bundle ships in `frontmatter_mode: metadata`, which adds author and
+source attribution to SKILL.md via the spec's `metadata` field. For strict
+platforms (Codex, Gemini CLI, Perplexity), strip the `metadata` block from
+SKILL.md before installing.
 
 
 ## Quick install
