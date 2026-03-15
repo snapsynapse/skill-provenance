@@ -1,0 +1,55 @@
+bundle: capability-scanner
+bundle_version: 1.1.0
+bundle_date: 2026-03-07
+description: >-
+  Monitors the AI ecosystem for new features, providers, capabilities,
+  and pricing changes relevant to the AI Capability Reference repository
+  (snapsynapse/ai-capability-reference). Applies editorial judgment based
+  on the project's ontology, scope rules, and inclusion criteria. Files
+  GitHub issues for candidates that warrant additions or updates.
+
+compatibility:
+  designed_for:
+    surfaces:
+      - chat
+    capabilities:
+      - metadata frontmatter in SKILL.md
+      - scheduled background tasks
+      - web search
+      - bash with curl for GitHub API
+  tested_on:
+    - platform: Perplexity Computer
+      surface: Chat
+      status: pass
+      date: 2026-03-07
+      notes: Initial build. Skill validated. Recurring task created. GitHub PAT verified.
+  spec_version: agentskills.io/1.0
+  frontmatter_mode: metadata
+
+dependencies:
+  - skill-provenance
+
+files:
+  - path: SKILL.md
+    role: skill
+    version: 2
+    hash: sha256:ea0e2b3de398a6ad0ebbeb594beb222b0f3585ec225214ef1d1dd06c41ea2f27
+    note: Editorial decision framework, ontology, scanning instructions, quality rules
+
+  - path: OPERATIONS.md
+    role: reference
+    version: 1
+    hash: sha256:2029ea6ef6928fa4f337ef8feebfd5f139d34a602ba789788b7bfe07d9f0767d
+    note: Operations guide, troubleshooting, maintenance checklists, ADRs
+
+  - path: README.md
+    role: reference
+    version: 1
+    hash: sha256:e0268086bdef6888b8532885080d3f1fd484d1a089a85a486031b0c9c7570e4e
+    note: Quick orientation and command reference
+
+  - path: CHANGELOG.md
+    role: reference
+    version: 1
+    hash: sha256:1092a1b6ec56f97c4f3c5a69c572293937cb41d26c2c3cd7eaa50bb9f20dcb0d
+    note: Version history
