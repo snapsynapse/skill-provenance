@@ -7,6 +7,14 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 4.7.3 — 2026-03-15
+- SKILL.md: Added provenance fields (skill_bundle, file_role, version,
+  version_date, previous_version, change_summary) to own metadata block
+  so the skill exemplifies its own convention. Changed author from
+  "Snap Synapse" to "Sam Rogers (snapsynapse.com)". Updated Origin section.
+- MANIFEST.yaml: Bumped bundle to 4.7.3, advanced SKILL.md to v14 with
+  updated hash and note.
+
 ## 4.7.2 — 2026-03-09
 - SKILL.md: Updated changelog guidance to distinguish between the rolling
   in-bundle changelog and the full repo-level archive.
@@ -67,21 +75,4 @@ Full release history lives in the source repository's top-level
 - MANIFEST.yaml: Bumped bundle to 4.6.1, advanced the evals and changelog
   file revisions, and updated the eval inventory note.
 
-## 4.6.0 — 2026-03-07
-- SKILL.md: Added optional `deployments` manifest guidance for tracking
-  installed or deployed copies across surfaces, extended the session
-  protocol to flag deployment drift, documented `.agents/skills/` as an
-  emerging neutral install path, and added a trust-and-audit section while
-  keeping the skill under the 500-line guidance.
-- README.md (bundle): Added 2026 ecosystem context, optional deployment
-  metadata guidance, trust-and-audit guidance, `.agents/skills/` install
-  note, and updated references for recent skill ecosystem developments.
-- evals.json: Added eval 16 (deployment metadata drift), eval 17
-  (multi-surface install targets), and eval 18 (trust/audit verification).
-  Now 18 evals total.
-- README.md (root): Added a 2026 relevance section, trust-and-audit
-  framing, neutral install-path note, deployment metadata positioning, and
-  updated the eval count.
-- MANIFEST.yaml: Bumped bundle to 4.6.0, updated bundle description and
-  capability metadata, advanced per-file revisions for changed bundle
-  files, and updated the eval inventory note.
+Older entries archived in the source repository's top-level CHANGELOG.md.

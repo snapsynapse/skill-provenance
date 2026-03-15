@@ -8,7 +8,15 @@ description: >
   or frontmatter mode; and when keeping version identity with the bundle
   instead of filenames. Compatible with the agentskills.io open standard.
 metadata:
-  author: Snap Synapse (snapsynapse.com)
+  skill_bundle: skill-provenance
+  file_role: skill
+  version: 14
+  version_date: 2026-03-15
+  previous_version: 13
+  change_summary: >
+    Added provenance fields to own SKILL.md frontmatter metadata block
+    so the skill exemplifies its own convention. Updated author attribution.
+  author: Sam Rogers (snapsynapse.com)
   source: https://github.com/snapsynapse/skill-provenance
 ---
 
@@ -495,5 +503,5 @@ This is a one-time operation per skill bundle.
 
 ## Origin
 
-Developed by Snap Synapse. Canonical source:
+Developed by Sam Rogers (Snap Synapse). Canonical source:
 https://github.com/snapsynapse/skill-provenance

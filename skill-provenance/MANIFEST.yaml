@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 4.7.2
-bundle_date: 2026-03-09
+bundle_version: 4.7.3
+bundle_date: 2026-03-15
 description: >
   Metaskill for version tracking across Agent Skills sessions, surfaces,
   and platforms. Manifest, changelog, deployment notes, and portable
@@ -72,9 +72,9 @@ dependencies: []
 files:
   - path: SKILL.md
     role: skill
-    version: 13
-    hash: sha256:2c5d5aa6278b986a945369b6c099a496aeb4de3649bd48ce37a524158df17c61
-    note: Canonical skill definition. Version tracked in MANIFEST.yaml; canonical bundle ships in metadata mode
+    version: 14
+    hash: sha256:a79b22f6da1db63b84baa8ecaafb0c7fcb7f282f92fd681c0429b2a105e8b239
+    note: Canonical skill definition with full provenance metadata in frontmatter. Exemplifies its own convention.
 
   - path: README.md
     role: reference
@@ -97,7 +97,7 @@ files:
   - path: CHANGELOG.md
     role: reference
     version: 17
-    hash: sha256:bc5922aeb126cc4f83faa6945b7ec4da6026c913227dbaaa9359c35571a03bb7
+    hash: sha256:001a363ac46b4aaf86e3023b3e5dae2fbe42e96a0134e3b54623cbedc16d89b3
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh
