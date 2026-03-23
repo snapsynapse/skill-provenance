@@ -3,4 +3,5 @@
 *.swo
 *~
 .perplexity-research/
+archive/
 build/

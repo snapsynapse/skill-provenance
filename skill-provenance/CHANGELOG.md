@@ -7,6 +7,18 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 4.8.0 — 2026-03-23
+- Added Claude Code plugin infrastructure: `.claude-plugin/plugin.json`
+  manifest and `skills/skill-provenance` symlink so the repo doubles as a
+  Claude Code plugin without restructuring the existing bundle.
+- README.md (root): Added Claude Code plugin install as the first quick
+  install method. Updated example version from 4.2.1 to 4.7.3. Added
+  `.claude-plugin/` and `skills/` to repo structure diagram.
+- SKILL.md: Version bump only (v14 → v15). No definition changes.
+- .gitignore: Added `archive/` to exclusions. Historical material remains
+  on disk and in git history but no longer ships with the repo.
+- MANIFEST.yaml: Bumped bundle to 4.8.0, advanced per-file revisions.
+
 ## 4.7.3 — 2026-03-15
 - SKILL.md: Added provenance fields (skill_bundle, file_role, version,
   version_date, previous_version, change_summary) to own metadata block
@@ -64,15 +76,5 @@ Full release history lives in the source repository's top-level
 - MANIFEST.yaml: Bumped bundle to 4.6.2. Added `deployments.clawhub` entry.
   Updated frontmatter_mode to metadata. Advanced file revisions for SKILL.md,
   README.md, and CHANGELOG.md.
-
-## 4.6.1 — 2026-03-07
-- evals.json: Added eval 19 (deployment metadata redeploy event), eval 20
-  (deployment metadata conflict), eval 21 (hash mismatch in an untrusted
-  bundle), and eval 22 (packaged subset vs canonical bundle). Now 22 evals
-  total.
-- README.md (root): Updated the repo overview to reflect the new eval
-  count.
-- MANIFEST.yaml: Bumped bundle to 4.6.1, advanced the evals and changelog
-  file revisions, and updated the eval inventory note.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.

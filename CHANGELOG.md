@@ -7,6 +7,26 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 4.8.0 — 2026-03-23
+- Added Claude Code plugin infrastructure: `.claude-plugin/plugin.json`
+  manifest and `skills/skill-provenance` symlink so the repo doubles as a
+  Claude Code plugin without restructuring the existing bundle.
+- README.md (root): Added Claude Code plugin install as the first quick
+  install method. Updated example version from 4.2.1 to 4.7.3. Added
+  `.claude-plugin/` and `skills/` to repo structure diagram.
+- SKILL.md: Version bump only (v14 → v15). No definition changes.
+- .gitignore: Added `archive/` to exclusions. Historical material remains
+  on disk and in git history but no longer ships with the repo.
+- MANIFEST.yaml: Bumped bundle to 4.8.0, advanced per-file revisions.
+
+## 4.7.3 — 2026-03-15
+- SKILL.md: Added provenance fields (skill_bundle, file_role, version,
+  version_date, previous_version, change_summary) to own metadata block
+  so the skill exemplifies its own convention. Changed author from
+  "Snap Synapse" to "Sam Rogers (snapsynapse.com)". Updated Origin section.
+- MANIFEST.yaml: Bumped bundle to 4.7.3, advanced SKILL.md to v14 with
+  updated hash and note.
+
 ## 4.7.2 — 2026-03-09
 - SKILL.md: Updated changelog guidance to distinguish between the rolling
   in-bundle changelog and the full repo-level archive.

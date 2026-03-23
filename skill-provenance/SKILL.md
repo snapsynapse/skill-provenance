@@ -10,12 +10,12 @@ description: >
 metadata:
   skill_bundle: skill-provenance
   file_role: skill
-  version: 14
-  version_date: 2026-03-15
-  previous_version: 13
+  version: 15
+  version_date: 2026-03-23
+  previous_version: 14
   change_summary: >
-    Added provenance fields to own SKILL.md frontmatter metadata block
-    so the skill exemplifies its own convention. Updated author attribution.
+    No skill definition changes. Version bump for Claude Code plugin
+    infrastructure (plugin.json, skills/ symlink, README updates).
   author: Sam Rogers (snapsynapse.com)
   source: https://github.com/snapsynapse/skill-provenance
 ---

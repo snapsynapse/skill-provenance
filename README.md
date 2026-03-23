@@ -19,7 +19,7 @@ SKILL_v4.md                         SKILL.md          (version lives inside)
 SKILL_v5.md                         MANIFEST.yaml     (what's in the bundle)
 evals_old.json                      CHANGELOG.md      (what changed and why)
 evals.json
-"which one is current?"             "bundle is at 4.2.1, evals are stale"
+"which one is current?"             "bundle is at 4.7.3, evals are stale"
 ```
 
 As of `4.3.0`, the portable core is intentionally small: the bundle files,
@@ -67,6 +67,12 @@ strict-platform copy, not an edit to the canonical source bundle.
 
 ## Quick install
 
+**Claude Code (Plugin):**
+```shell
+/plugin marketplace add snapsynapse/skill-provenance
+/plugin install skill-provenance@snapsynapse-skill-provenance
+```
+
 **Claude (Settings UI):**
 Download `skill-provenance.skill` from the [latest release](https://github.com/snapsynapse/skill-provenance/releases) and install:
 `claude.ai` → Profile icon → `Settings` → `Skills` → `Add Skill` → select the file.
@@ -76,7 +82,7 @@ If your loader only accepts `.zip` or `.md` uploads, rename
 is the tested path for Perplexity Computer. The archive contents stay the
 same.
 
-**Claude Code / Codex / Gemini CLI:**
+**Claude Code / Codex / Gemini CLI (manual):**
 Use the canonical [`skill-provenance/`](skill-provenance/) directory for
 Claude-compatible tools. For Codex, Gemini CLI, or other strict loaders,
 generate a derived minimal-frontmatter copy with
@@ -114,6 +120,8 @@ Modern skill workflows increasingly involve downloaded bundles, shared org insta
 ## What's in this repo
 
 ```
+.claude-plugin/plugin.json       ← Claude Code plugin manifest
+skills/skill-provenance/         ← Symlink to skill-provenance/ (plugin discovery)
 skill-provenance.skill           ← Install this in Claude Settings → Skills
 skill-provenance/                ← Canonical source bundle (metadata mode)
 ├── SKILL.md                     ← The skill definition (what the agent reads)
@@ -129,7 +137,7 @@ AGENTS.md                        ← Guide for agents working on this repo
 CONTRIBUTING.md                  ← How to contribute
 ```
 
-The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible ZIP wrapper around it.
+The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible ZIP wrapper around it. The `.claude-plugin/` directory and `skills/` symlink make this repo double as a Claude Code plugin without restructuring the existing bundle.
 
 
 ## Evals
