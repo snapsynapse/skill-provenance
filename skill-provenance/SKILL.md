@@ -16,7 +16,7 @@ metadata:
   change_summary: >
     No skill definition changes. Version bump for Claude Code plugin
     infrastructure (plugin.json, skills/ symlink, README updates).
-  author: Sam Rogers (snapsynapse.com)
+  author: PAICE.work PBC (paice.work)
   source: https://github.com/snapsynapse/skill-provenance
 ---
 
@@ -503,5 +503,5 @@ This is a one-time operation per skill bundle.
 
 ## Origin
 
-Developed by Sam Rogers (Snap Synapse). Canonical source:
+Developed for [PAICE.work](https://paice.work/) PBC. Canonical source:
 https://github.com/snapsynapse/skill-provenance

@@ -3,8 +3,8 @@
   "version": "4.8.0",
   "description": "Version tracking for Agent Skills bundles and their associated files across sessions, surfaces, and platforms. Embeds version identity inside files rather than filenames. Maintains a manifest and changelog that travel with the skill bundle. Compatible with the agentskills.io open standard.",
   "author": {
-    "name": "Sam Rogers",
-    "url": "https://snapsynapse.com"
+    "name": "PAICE.work PBC",
+    "url": "https://paice.work"
   },
   "homepage": "https://github.com/snapsynapse/skill-provenance",
   "repository": "https://github.com/snapsynapse/skill-provenance",

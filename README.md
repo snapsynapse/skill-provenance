@@ -174,6 +174,11 @@ See the full [README.md](skill-provenance/README.md) inside the skill bundle for
 [MIT](LICENSE)
 
 
+## About
+
+Skill Provenance is a [PAICE.work](https://paice.work/) project. PAICE.work PBC is a public benefit corporation building infrastructure for productive collaboration between humans and autonomous agents.
+
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Compatibility reports for untested platforms are especially valuable.

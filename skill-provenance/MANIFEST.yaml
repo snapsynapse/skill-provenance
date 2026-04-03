@@ -73,7 +73,7 @@ files:
   - path: SKILL.md
     role: skill
     version: 15
-    hash: sha256:612885b33c7fd93343697f35666f22032fd7182c2daeaf184de65295995488c8
+    hash: sha256:2ceccb36d6e05b685bcacb022d0e200d8092def696423e083144699d9851fde6
     note: Canonical skill definition with full provenance metadata in frontmatter. Exemplifies its own convention.
 
   - path: README.md
