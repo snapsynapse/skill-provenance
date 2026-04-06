@@ -160,6 +160,10 @@ See the full [README.md](skill-provenance/README.md) inside the skill bundle for
 - **[Graceful Boundaries](https://github.com/snapsynapse/graceful-boundaries)** -- A specification for how services communicate operational limits to humans and autonomous agents. Also a PAICE.work project.
 
 
+## Sponsor
+
+Skill Provenance is free and open. If your team builds or distributes agent skills, consider [sponsoring this work](https://github.com/sponsors/snapsynapse) to keep it maintained across platforms. See [SPONSORS.md](SPONSORS.md).
+
 ## License
 
 [MIT](LICENSE)
