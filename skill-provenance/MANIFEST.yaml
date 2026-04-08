@@ -79,13 +79,13 @@ files:
   - path: README.md
     role: reference
     version: 17
-    hash: sha256:4cb266136b18958d9016c238f06c18c61375a31a9f457392317f8a97aa3d9fb0
+    hash: sha256:049c20087f441c1e3442b7b36c00645664e663bcaef08a1cb96dd86da592061e
     note: Human-facing instructions, worked example, three-state bundle model, local validation, packaging, troubleshooting, references
 
   - path: evals.json
     role: evals
     version: 9
-    hash: sha256:ae0820d58bcb1fd4c2ec511601a7a00ccf52e43f7eb3845cb799ea1967778cae
+    hash: sha256:60c41bfa58d7b46579578a2856df9e5ecb82ca2715e0a44e4008fc82ecb9cd8f
     note: 26 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation, API surface, dependencies, deployment drift, multi-surface installs, trust checks, redeploy events, deployment conflicts, hash mismatches, packaged subsets, Settings UI round-trip, Copilot/VS Code bootstrap, Cursor bootstrap, Cowork persistence
 
   - path: evals-distribution.json
