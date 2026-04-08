@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 4.8.0
-bundle_date: 2026-03-23
+bundle_version: 4.9.0
+bundle_date: 2026-04-08
 description: >
   Metaskill for version tracking across Agent Skills sessions, surfaces,
   and platforms. Manifest, changelog, deployment notes, and portable
@@ -72,19 +72,19 @@ dependencies: []
 files:
   - path: SKILL.md
     role: skill
-    version: 15
-    hash: sha256:2ceccb36d6e05b685bcacb022d0e200d8092def696423e083144699d9851fde6
+    version: 16
+    hash: sha256:aa4e7bae1789c4d72a81dc39b089b85691bddebca79f6c30f291a110d2ded20b
     note: Canonical skill definition with full provenance metadata in frontmatter. Exemplifies its own convention.
 
   - path: README.md
     role: reference
-    version: 17
+    version: 18
     hash: sha256:049c20087f441c1e3442b7b36c00645664e663bcaef08a1cb96dd86da592061e
-    note: Human-facing instructions, worked example, three-state bundle model, local validation, packaging, troubleshooting, references
+    note: Human-facing instructions, worked example, three-state bundle model, local validation, packaging, use case walkthroughs (untrusted bundle, team sharing), troubleshooting, references
 
   - path: evals.json
     role: evals
-    version: 9
+    version: 10
     hash: sha256:60c41bfa58d7b46579578a2856df9e5ecb82ca2715e0a44e4008fc82ecb9cd8f
     note: 26 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation, API surface, dependencies, deployment drift, multi-surface installs, trust checks, redeploy events, deployment conflicts, hash mismatches, packaged subsets, Settings UI round-trip, Copilot/VS Code bootstrap, Cursor bootstrap, Cowork persistence
 
@@ -96,8 +96,8 @@ files:
 
   - path: CHANGELOG.md
     role: reference
-    version: 18
-    hash: sha256:c9037d885ee0808580d5835cd7b7e27ddcdce2a77015339b52809f37345e6832
+    version: 19
+    hash: sha256:5362dcef72414b6fc7f31e06e888562219a0abeeb79cbff55baed2fce2f7edaf
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh

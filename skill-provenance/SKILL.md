@@ -10,12 +10,12 @@ description: >
 metadata:
   skill_bundle: skill-provenance
   file_role: skill
-  version: 15
-  version_date: 2026-03-23
-  previous_version: 14
+  version: 16
+  version_date: 2026-04-08
+  previous_version: 15
   change_summary: >
-    No skill definition changes. Version bump for Claude Code plugin
-    infrastructure (plugin.json, skills/ symlink, README updates).
+    No skill definition changes. Version bump for GitHub Pages site,
+    trust narrative reframe, new evals, and plugin system fix.
   author: PAICE.work PBC (paice.work)
   source: https://github.com/snapsynapse/skill-provenance
 ---

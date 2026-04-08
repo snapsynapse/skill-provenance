@@ -7,6 +7,26 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 4.9.0 — 2026-04-08
+- README.md (bundle): Added two use case walkthroughs — verifying a
+  downloaded/untrusted bundle, and sharing a skill across a team.
+- evals.json: Added 4 new evals (22 → 26 core, 30 total): Settings UI
+  .skill ZIP round-trip, Copilot/VS Code bootstrap, Cursor bootstrap,
+  Cowork filesystem persistence.
+- MANIFEST.yaml: Updated Gemini CLI and Perplexity Computer from
+  partial to pass. Bumped per-file versions for README.md, evals.json,
+  SKILL.md, and CHANGELOG.md.
+- SKILL.md: Version bump only (v15 → v16). No definition changes.
+- Plugin system: Added marketplace.json so `claude plugin marketplace
+  add` and `claude plugin install` commands work end-to-end. Added
+  explicit skills path to plugin.json.
+- GitHub Pages: Added skillprovenance.dev landing page with trust/
+  integrity narrative, credibility signals, and install instructions
+  for Claude Code, Settings UI, ClawHub, Codex, and Gemini CLI.
+- README.md (root): Reframed to lead with trust and integrity
+  verification. Added audience hooks, Integrity column to comparison
+  table, ProSkills.md and ClawHub installs badges.
+
 ## 4.8.0 — 2026-03-23
 - Added Claude Code plugin infrastructure: `.claude-plugin/plugin.json`
   manifest and `skills/skill-provenance` symlink so the repo doubles as a
@@ -63,18 +83,5 @@ Full release history lives in the source repository's top-level
 - MANIFEST.yaml: Bumped bundle to 4.7.0, removed the premature
   `deployments.clawhub` record, added the new eval and script files, and
   updated compatibility metadata for derived package generation.
-
-## 4.6.2 — 2026-03-09
-- SKILL.md: Added `metadata` block to frontmatter with `author` and `source`
-  fields for attribution. Added `## Origin` section at end of body. Both
-  changes ensure provenance survives distribution under MIT-0 on ClawHub.
-  Changed frontmatter_mode from minimal to metadata.
-- README.md: Updated frontmatter_mode references to reflect change to
-  metadata mode. Added ClawHub publishing workflow (folder prep, MANIFEST
-  stripping, MIT-0 note). Added note that strict-platform users (Codex,
-  Gemini CLI) should strip the metadata block before installing.
-- MANIFEST.yaml: Bumped bundle to 4.6.2. Added `deployments.clawhub` entry.
-  Updated frontmatter_mode to metadata. Advanced file revisions for SKILL.md,
-  README.md, and CHANGELOG.md.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.

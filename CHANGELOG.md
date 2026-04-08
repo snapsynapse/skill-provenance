@@ -7,6 +7,26 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 4.9.0 — 2026-04-08
+- README.md (bundle): Added two use case walkthroughs — verifying a
+  downloaded/untrusted bundle, and sharing a skill across a team.
+- evals.json: Added 4 new evals (22 → 26 core, 30 total): Settings UI
+  .skill ZIP round-trip, Copilot/VS Code bootstrap, Cursor bootstrap,
+  Cowork filesystem persistence.
+- MANIFEST.yaml: Updated Gemini CLI and Perplexity Computer from
+  partial to pass. Bumped per-file versions for README.md, evals.json,
+  SKILL.md, and CHANGELOG.md.
+- SKILL.md: Version bump only (v15 → v16). No definition changes.
+- Plugin system: Added marketplace.json so `claude plugin marketplace
+  add` and `claude plugin install` commands work end-to-end. Added
+  explicit skills path to plugin.json.
+- GitHub Pages: Added skillprovenance.dev landing page with trust/
+  integrity narrative, credibility signals, and install instructions
+  for Claude Code, Settings UI, ClawHub, Codex, and Gemini CLI.
+- README.md (root): Reframed to lead with trust and integrity
+  verification. Added audience hooks, Integrity column to comparison
+  table, ProSkills.md and ClawHub installs badges.
+
 ## 4.8.0 — 2026-03-23
 - Added Claude Code plugin infrastructure: `.claude-plugin/plugin.json`
   manifest and `skills/skill-provenance` symlink so the repo doubles as a

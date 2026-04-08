@@ -1,6 +1,6 @@
 {
   "name": "skill-provenance",
-  "version": "4.8.0",
+  "version": "4.9.0",
   "description": "Version tracking for Agent Skills bundles and their associated files across sessions, surfaces, and platforms. Embeds version identity inside files rather than filenames. Maintains a manifest and changelog that travel with the skill bundle. Compatible with the agentskills.io open standard.",
   "author": {
     "name": "PAICE.work PBC",
