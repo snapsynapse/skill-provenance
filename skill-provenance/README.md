@@ -562,6 +562,92 @@ artifact, or a settings download that has been modified locally before
 re-upload.
 
 
+## Use case: verifying a downloaded skill
+
+You found a skill on ClawHub, a colleague's repo, or a forum post. Before
+you install it across your tools, you want to know it's intact.
+
+**Step 1: Check the manifest.**
+Open `MANIFEST.yaml`. It lists every file in the bundle, its role, version,
+and SHA-256 hash. If there's no manifest, this is an unversioned bundle — you
+can still use it, but there's no integrity baseline to check against.
+
+**Step 2: Run the hash check.**
+```bash
+cd the-skill/
+./validate.sh
+```
+If the bundle includes `validate.sh`, it will check every file hash against
+the manifest. Exit code 0 means everything matches. Exit code 1 means at
+least one file has been modified since the manifest was written.
+
+If the bundle doesn't include `validate.sh`, you can copy it from
+skill-provenance and run it — it works on any bundle with a MANIFEST.yaml.
+
+**Step 3: Read the changelog.**
+`CHANGELOG.md` tells you what changed recently and whether any files are
+flagged as stale. If SKILL.md was updated but evals.json wasn't, the
+changelog will say so.
+
+**Step 4: Check the source.**
+The manifest verifies internal consistency — it tells you the files match
+what the *author* recorded. It doesn't tell you whether you trust the author.
+For that, check the git history, the repo owner, and the distribution channel.
+Hashes catch accidental corruption and intermediate tampering; the source
+provides the trust.
+
+**What a hash failure means:**
+- The file changed after the manifest was written
+- This could be a local fork with intentional edits (common and fine)
+- Or it could be corruption, a partial download, or a modified copy
+- Either way, you know *before* you install, not after
+
+
+## Use case: sharing a skill across a team
+
+Your team has five developers using the same skill across Claude Code,
+Codex, and Claude Chat. Each person has their own copy. Over time, copies
+diverge. This is how provenance keeps it manageable.
+
+**Designate one canonical source.**
+This is usually a git repo. It contains the full bundle: SKILL.md,
+MANIFEST.yaml, CHANGELOG.md, evals, scripts, everything. The
+`bundle_version` in the manifest is the authoritative version number.
+
+**Derive platform-specific copies when needed.**
+Codex and Gemini CLI reject extra frontmatter fields. Run
+`./package.sh strict` to generate a minimal-frontmatter copy. This is
+a derived artifact, not a fork — the canonical bundle stays unchanged.
+
+**Track where the skill is deployed.**
+The manifest's optional `deployments` section records where copies live:
+```yaml
+deployments:
+  api:
+    version: 1759178010641129
+    workspace: prod
+  claude:
+    scope: user
+  codex:
+    path: ~/.codex/skills/my-skill
+```
+
+**When someone asks "are we on the latest?":**
+1. Check `bundle_version` in their local MANIFEST.yaml
+2. Compare against the canonical repo's version
+3. Run `./validate.sh` to confirm their copy is intact
+4. If they're behind, the changelog shows exactly what changed
+
+**When someone updates the skill:**
+They edit in the canonical repo, bump versions, update hashes
+(`./validate.sh --update`), and push. Everyone else pulls. Platform
+copies get regenerated from the new canonical source.
+
+The point is not to prevent copies from diverging — that's inevitable
+in a multi-platform world. The point is to make divergence visible and
+reconciliation straightforward.
+
+
 ## Troubleshooting
 
 **I can't open a .skill file on macOS.**

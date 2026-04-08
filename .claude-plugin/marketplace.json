@@ -1,0 +1,17 @@
+{
+  "name": "snapsynapse-skill-provenance",
+  "owner": {
+    "name": "PAICE.work PBC",
+    "url": "https://paice.work"
+  },
+  "metadata": {
+    "description": "Plugin marketplace for Skill Provenance — version tracking and integrity verification for Agent Skills."
+  },
+  "plugins": [
+    {
+      "name": "skill-provenance",
+      "source": "./",
+      "description": "Version tracking for Agent Skills bundles across sessions, surfaces, and platforms."
+    }
+  ]
+}

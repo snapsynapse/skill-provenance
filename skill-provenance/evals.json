@@ -430,6 +430,83 @@
         "Explains that some files may travel separately even when the installed skill loads correctly",
         "Uses the manifest as the authoritative inventory rather than the archive contents alone"
       ]
+    },
+    {
+      "id": 23,
+      "name": "settings_ui_skill_zip_round_trip",
+      "description": "Tests that a .skill ZIP exported from Claude Settings can be re-imported without losing version identity or integrity. Verifies the round-trip preserves manifest, changelog, and hash-verifiable state.",
+      "prompt": "I exported this skill as a .skill ZIP from Claude Settings, then re-imported it into a different account. The ZIP contains SKILL.md, README.md, MANIFEST.yaml, CHANGELOG.md, and references/. Please verify the imported bundle is intact and matches the manifest.",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md",
+        "README.md"
+      ],
+      "expectations": [
+        "Reads MANIFEST.yaml and checks all listed files against the imported contents",
+        "Verifies hashes for files present in the import",
+        "Notes any files listed in the manifest that are absent from the .skill ZIP (e.g., evals, scripts) and explains they may travel separately from the installable package",
+        "Does not treat a packaged subset as a corruption or integrity failure",
+        "Confirms the bundle version and changelog are intact",
+        "Explains that .skill is a standard ZIP and can be renamed to .zip for platforms that require it"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "copilot_vscode_skill_bootstrap",
+      "description": "Tests bootstrapping a versioned bundle for use with GitHub Copilot in VS Code, which discovers skills in .github/skills/ or ~/.agents/skills/.",
+      "prompt": "I want to version this skill for GitHub Copilot in VS Code. The skill lives in .github/skills/my-skill/ with SKILL.md and a references/ folder. This is version 1.0.0.",
+      "files": [
+        "SKILL.md",
+        "references/guide.md"
+      ],
+      "expectations": [
+        "MANIFEST.yaml is created following the standard bootstrap protocol",
+        "Uses frontmatter_mode: minimal or follows the agentskills.io spec for Copilot compatibility",
+        "Does not add platform-specific frontmatter fields that Copilot would reject",
+        "CHANGELOG.md is created with a 1.0.0 bootstrap entry",
+        "Manifest paths are relative to the skill directory, not the repo root",
+        "Notes that the same bundle can be installed to ~/.agents/skills/ for personal scope"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "cursor_skill_bootstrap",
+      "description": "Tests bootstrapping a versioned bundle for use with Cursor, which discovers skills in .cursor/skills/ and follows the agentskills.io spec.",
+      "prompt": "I'm building a skill for Cursor. It lives in .cursor/skills/my-skill/ with SKILL.md and a scripts/ folder. Please bootstrap versioning at 1.0.0.",
+      "files": [
+        "SKILL.md",
+        "scripts/setup.sh"
+      ],
+      "expectations": [
+        "MANIFEST.yaml is created following the standard bootstrap protocol",
+        "Uses frontmatter_mode compatible with Cursor (follows agentskills.io spec)",
+        "scripts/setup.sh is tracked in the manifest with role: script",
+        "CHANGELOG.md is created with a 1.0.0 bootstrap entry",
+        "Does not assume Claude-specific features or frontmatter extensions",
+        "Manifest and changelog live alongside SKILL.md in the skill directory"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "cowork_filesystem_persistence",
+      "description": "Tests that the session protocol works correctly in a Cowork environment where the filesystem persists between sessions, making handoff notes unnecessary.",
+      "prompt": "I'm using this skill in Claude Cowork. The bundle is in my project directory and persists between sessions. I just finished updating SKILL.md. Please close the session and update versioning.",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md",
+        "evals.json"
+      ],
+      "expectations": [
+        "Updates version headers, manifest, and changelog normally",
+        "Does NOT create a handoff note because the filesystem persists",
+        "Does not ask the user to save or re-upload files",
+        "Treats the session close as a local file update, not a stateless handoff",
+        "Notes any stale files (e.g., evals.json if not updated) in the changelog",
+        "Recognizes that the manifest and changelog in the directory are sufficient context for the next session"
+      ]
     }
   ]
 }
+

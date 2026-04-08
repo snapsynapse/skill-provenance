@@ -9,5 +9,6 @@
   "homepage": "https://github.com/snapsynapse/skill-provenance",
   "repository": "https://github.com/snapsynapse/skill-provenance",
   "license": "MIT",
-  "keywords": ["versioning", "skills", "provenance", "agentskills", "manifest"]
+  "keywords": ["versioning", "skills", "provenance", "agentskills", "manifest"],
+  "skills": "./skills/"
 }

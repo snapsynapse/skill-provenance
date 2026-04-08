@@ -49,13 +49,13 @@ compatibility:
     - platform: Google Gemini CLI
       model: Gemini 2.5 Pro
       surface: CLI
-      status: partial
-      date: 2026-02-27
-      notes: Skill loading and bootstrap work. Gems workflow untested.
+      status: pass
+      date: 2026-03-07
+      notes: Skill loading, bootstrap, and Gems workflow validated.
     - platform: Perplexity Computer
       model: N/A
       surface: Computer
-      status: partial
+      status: pass
       date: 2026-03-07
       notes: .zip upload path works. Trigger-oriented description improves discovery.
   compatible_with:
@@ -86,7 +86,7 @@ files:
     role: evals
     version: 9
     hash: sha256:ae0820d58bcb1fd4c2ec511601a7a00ccf52e43f7eb3845cb799ea1967778cae
-    note: 22 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation, API surface, dependencies, deployment drift, multi-surface installs, trust checks, redeploy events, deployment conflicts, hash mismatches, packaged subsets
+    note: 26 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation, API surface, dependencies, deployment drift, multi-surface installs, trust checks, redeploy events, deployment conflicts, hash mismatches, packaged subsets, Settings UI round-trip, Copilot/VS Code bootstrap, Cursor bootstrap, Cowork persistence
 
   - path: evals-distribution.json
     role: evals
