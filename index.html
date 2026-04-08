@@ -14,6 +14,11 @@
   <meta name="twitter:title" content="Skill Provenance">
   <meta name="twitter:description" content="Version identity that travels with your skill bundle. Tracks versions, detects staleness, and works across sessions and platforms.">
   <meta name="twitter:image" content="https://skillprovenance.dev/imgs/og.png">
+  <link rel="icon" href="imgs/favicon.ico" sizes="48x48">
+  <link rel="icon" href="imgs/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="imgs/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="imgs/logo.png" type="image/png" sizes="1000x1000">
+  <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -88,6 +93,11 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+    }
+    nav .logo img {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
     }
     nav .links { display: flex; gap: 1.5rem; font-size: 0.9rem; }
     nav .links a { color: var(--text-muted); }
@@ -333,7 +343,7 @@
 
 <nav>
   <div class="container">
-    <a href="/" class="logo">Skill Provenance</a>
+    <a href="/" class="logo"><img src="imgs/logo-128.png" alt="Skill Provenance logo">Skill Provenance</a>
     <div class="links">
       <a href="#why">Why</a>
       <a href="#start">Quick Start</a>
