@@ -5,12 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Skill Provenance &mdash; Version tracking for Agent Skills</title>
   <meta name="description" content="Version identity that travels with your skill bundle. Manifest, changelog, and hash verification across sessions, surfaces, and platforms.">
+  <meta name="keywords" content="skill provenance, agent skills, SKILL.md, MANIFEST.yaml, version identity, bundle versioning, semver, SHA-256, hash verification, staleness detection, agentskills.io, cross-platform skills, Claude skills, Codex skills, Gemini skills, ClawHub">
+  <meta name="author" content="Sam Rogers">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta name="theme-color" content="#2a7a7a">
+  <link rel="canonical" href="https://skillprovenance.dev/">
   <meta property="og:title" content="Skill Provenance">
   <meta property="og:description" content="Version identity that travels with your skill bundle. Tracks versions, detects staleness, and works across sessions and platforms.">
   <meta property="og:image" content="https://skillprovenance.dev/imgs/og.png">
-  <meta property="og:url" content="https://skillprovenance.dev">
-  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://skillprovenance.dev/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Skill Provenance">
+  <meta property="og:locale" content="en_US">
+  <meta property="article:published_time" content="2026-01-31T00:00:00Z">
+  <meta property="article:modified_time" content="2026-04-09T00:00:00Z">
+  <meta property="article:author" content="Sam Rogers">
+  <meta property="article:publisher" content="https://paice.work/">
+  <meta property="article:section" content="Agent Skills">
+  <meta property="article:tag" content="Agent Skills">
+  <meta property="article:tag" content="Version Identity">
+  <meta property="article:tag" content="SKILL.md">
+  <meta property="article:tag" content="Provenance">
+  <meta property="article:tag" content="Hash Verification">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@snapsynapse">
   <meta name="twitter:title" content="Skill Provenance">
   <meta name="twitter:description" content="Version identity that travels with your skill bundle. Tracks versions, detects staleness, and works across sessions and platforms.">
   <meta name="twitter:image" content="https://skillprovenance.dev/imgs/og.png">
@@ -19,6 +37,72 @@
   <link rel="icon" href="imgs/favicon-16x16.png" type="image/png" sizes="16x16">
   <link rel="icon" href="imgs/logo.png" type="image/png" sizes="1000x1000">
   <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Skill Provenance — Version tracking for Agent Skills",
+    "description": "Version identity that travels with your skill bundle. Manifest, changelog, and hash verification across sessions, surfaces, and platforms.",
+    "datePublished": "2026-01-31",
+    "dateModified": "2026-04-09",
+    "author": {
+      "@type": "Person",
+      "name": "Sam Rogers",
+      "url": "https://paice.work/",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "PAICE.work PBC"
+      }
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PAICE.work PBC",
+      "url": "https://paice.work/"
+    },
+    "image": "https://skillprovenance.dev/imgs/og.png",
+    "keywords": "skill provenance, agent skills, SKILL.md, MANIFEST.yaml, version identity, semver, SHA-256, hash verification, staleness detection, agentskills.io",
+    "isPartOf": {
+      "@type": "CreativeWork",
+      "name": "PAICE.work Open Patterns",
+      "url": "https://paice.work/"
+    },
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "copyrightHolder": {
+      "@type": "Organization",
+      "name": "PAICE.work PBC"
+    },
+    "citation": [
+      {
+        "@type": "CreativeWork",
+        "name": "Knowledge as Code",
+        "url": "https://knowledgeascode.dev/"
+      },
+      {
+        "@type": "CreativeWork",
+        "name": "Graceful Boundaries",
+        "url": "https://gracefulboundaries.dev/"
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "Skill Provenance",
+    "alternateName": ["skill-provenance", "Skill Provenance spec"],
+    "description": "A metaskill for version identity and integrity verification of Agent Skills — bundle versions, per-file revisions, SHA-256 hashes, and changelogs that travel with the skill across sessions, surfaces, and platforms.",
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "PAICE.work Open Patterns",
+      "url": "https://paice.work/"
+    },
+    "sameAs": [
+      "https://github.com/snapsynapse/skill-provenance",
+      "https://clawhub.ai/snapsynapse/skill-provenance"
+    ]
+  }
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -56,6 +140,81 @@
     }
 
     html { scroll-behavior: smooth; }
+
+    /* Skip link for a11y */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.75rem 1rem;
+      z-index: 100;
+      border-radius: 0 0 6px 0;
+      font-weight: 600;
+    }
+    .skip-link:focus { left: 0; text-decoration: none; color: #fff; }
+
+    /* GitHub star button */
+    .gh-star {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text) !important;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .gh-star:hover {
+      text-decoration: none;
+      transform: translateY(-1px);
+      border-color: var(--accent);
+    }
+    .gh-star svg { width: 16px; height: 16px; fill: var(--accent); }
+
+    /* Byline */
+    .byline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0 auto 2rem;
+      max-width: 720px;
+    }
+    .byline > span, .byline > a, .byline > time { display: inline; }
+    .byline > *:not(:last-child)::after {
+      content: "·";
+      margin-left: 0.75rem;
+      color: var(--border);
+    }
+    .byline .version {
+      display: inline-block;
+      padding: 0.1rem 0.5rem;
+      border: 1px solid var(--accent);
+      border-radius: 100px;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+
+    /* Canonical reference aside */
+    .canonical-note {
+      margin-top: 2.5rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg-alt);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .canonical-note strong { color: var(--text); }
 
     body {
       font-family: var(--font);
@@ -341,21 +500,33 @@
 </head>
 <body>
 
+<a class="skip-link" href="#main-content">Skip to content</a>
+
 <nav>
   <div class="container">
     <a href="/" class="logo"><img src="imgs/logo-128.png" alt="Skill Provenance logo">Skill Provenance</a>
     <div class="links">
       <a href="#why">Why</a>
       <a href="#start">Quick Start</a>
-      <a href="https://github.com/snapsynapse/skill-provenance">GitHub</a>
+      <a href="https://github.com/snapsynapse/skill-provenance" class="gh-star" target="_blank" rel="noopener" aria-label="Star snapsynapse/skill-provenance on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25z"/></svg>
+        Star on GitHub
+      </a>
     </div>
   </div>
 </nav>
 
-<section class="hero">
+<section class="hero" id="main-content">
   <div class="container">
     <h1>Skill Provenance</h1>
     <p class="subtitle">Version identity and integrity verification for Agent Skills.</p>
+    <p class="byline">
+      <span>By <a href="https://paice.work/" rel="author" target="_blank" rel="noopener">Sam Rogers, PAICE.work PBC</a></span>
+      <span>Published <time datetime="2026-01-31">January 31, 2026</time></span>
+      <span>Updated <time datetime="2026-04-09">April 9, 2026</time></span>
+      <span class="version">v4.9.0</span>
+      <a href="https://creativecommons.org/licenses/by/4.0/" rel="license" target="_blank" rel="noopener">CC BY 4.0</a>
+    </p>
     <p class="hook">Agent Skills move between sessions, surfaces, and platforms. Filename suffixes break. Git tags require repo access. Version identity gets lost at every boundary. This skill keeps it inside the bundle where it belongs.</p>
 
     <img src="imgs/og.png" alt="Skill Provenance: before and after — from scattered versioned filenames to a single SKILL.md with manifest and changelog" class="hero-img">
@@ -396,7 +567,7 @@ CHANGELOG.md
     </div>
 
     <div class="cta-row">
-      <a href="https://github.com/snapsynapse/skill-provenance/blob/main/skill-provenance/SKILL.md" class="btn btn-primary">Read the Skill</a>
+      <a href="https://github.com/snapsynapse/skill-provenance/blob/main/skill-provenance/SKILL.md" class="btn btn-primary" target="_blank" rel="noopener">Read the Skill</a>
       <a href="#start" class="btn btn-secondary">Quick Start</a>
     </div>
   </div>
@@ -528,22 +699,22 @@ Or use .agents/skills/ for the neutral cross-client path.</pre>
       <span class="platform-badge pass">Perplexity</span>
     </div>
     <p style="text-align: center; margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
-      Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard (30+ adopters).
+      Compatible with the <a href="https://agentskills.io" target="_blank" rel="noopener">agentskills.io</a> open standard (30+ adopters).
     </p>
 
     <div class="cta-row" style="margin-top: 2rem;">
-      <a href="https://github.com/snapsynapse/skill-provenance" class="btn btn-primary">View on GitHub</a>
-      <a href="https://github.com/snapsynapse/skill-provenance/releases/latest" class="btn btn-warm">Latest Release</a>
+      <a href="https://github.com/snapsynapse/skill-provenance" class="btn btn-primary" target="_blank" rel="noopener">View on GitHub</a>
+      <a href="https://github.com/snapsynapse/skill-provenance/releases/latest" class="btn btn-warm" target="_blank" rel="noopener">Latest Release</a>
     </div>
 
     <div class="signals">
       <div class="signal">
         <div class="number teal">8.41/10</div>
-        <div class="label"><a href="https://proskills.md">ProSkills.md</a> score</div>
+        <div class="label"><a href="https://proskills.md" target="_blank" rel="noopener">ProSkills.md</a> score</div>
       </div>
       <div class="signal">
         <div class="number teal">333</div>
-        <div class="label"><a href="https://clawhub.ai/snapsynapse/skill-provenance">ClawHub</a> installs</div>
+        <div class="label"><a href="https://clawhub.ai/snapsynapse/skill-provenance" target="_blank" rel="noopener">ClawHub</a> installs</div>
       </div>
       <div class="signal">
         <div class="number warm">30</div>
@@ -554,6 +725,10 @@ Or use .agents/skills/ for the neutral cross-client path.</pre>
         <div class="label">platforms tested</div>
       </div>
     </div>
+
+    <aside class="canonical-note">
+      <strong>Canonical source.</strong> This page is the authoritative home for the Skill Provenance metaskill. Cross-posts on GitHub, ClawHub, and other registries may lag — always check the <a href="https://github.com/snapsynapse/skill-provenance/commits/main/skill-provenance/SKILL.md" target="_blank" rel="noopener">revision history</a> to verify which version you're reading.
+    </aside>
   </div>
 </section>
 
@@ -561,16 +736,17 @@ Or use .agents/skills/ for the neutral cross-client path.</pre>
   <div class="container">
     <div class="footer-grid">
       <div class="footer-meta">
-        <p>Skill Provenance v4.9.0 &middot; <a href="https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE">MIT</a></p>
-        <p>A <a href="https://paice.work/">PAICE.work</a> project.</p>
-        <p style="margin-top: 0.5rem;">See also: <a href="https://gracefulboundaries.dev">Graceful Boundaries</a></p>
+        <p>Skill Provenance v4.9.0 &middot; <a href="https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE" target="_blank" rel="noopener license">MIT</a></p>
+        <p>A <a href="https://paice.work/" target="_blank" rel="noopener">PAICE.work</a> project.</p>
+        <p style="margin-top: 0.5rem;">See also: <a href="https://knowledgeascode.dev" target="_blank" rel="noopener">Knowledge as Code</a> &middot; <a href="https://gracefulboundaries.dev" target="_blank" rel="noopener">Graceful Boundaries</a></p>
       </div>
       <div class="footer-links">
-        <a href="https://github.com/snapsynapse/skill-provenance">GitHub</a>
-        <a href="https://github.com/snapsynapse/skill-provenance/blob/main/skill-provenance/SKILL.md">Skill</a>
-        <a href="https://github.com/snapsynapse/skill-provenance/blob/main/CHANGELOG.md">Changelog</a>
-        <a href="https://clawhub.ai/snapsynapse/skill-provenance">ClawHub</a>
-        <a href="https://github.com/sponsors/snapsynapse">Sponsor</a>
+        <a href="https://github.com/snapsynapse/skill-provenance" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/snapsynapse/skill-provenance/blob/main/skill-provenance/SKILL.md" target="_blank" rel="noopener">Skill</a>
+        <a href="https://github.com/snapsynapse/skill-provenance/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+        <a href="https://github.com/snapsynapse/skill-provenance/commits/main/skill-provenance/SKILL.md" target="_blank" rel="noopener">Revisions</a>
+        <a href="https://clawhub.ai/snapsynapse/skill-provenance" target="_blank" rel="noopener">ClawHub</a>
+        <a href="https://github.com/sponsors/snapsynapse" target="_blank" rel="noopener">Sponsor</a>
       </div>
     </div>
   </div>
