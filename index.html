@@ -11,6 +11,7 @@
   <meta name="theme-color" content="#2a7a7a">
   <link rel="canonical" href="https://skillprovenance.dev/">
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="alternate" type="text/plain" href="https://skillprovenance.dev/llms.txt" title="LLM-readable summary">
   <meta property="og:title" content="Skill Provenance">
   <meta property="og:description" content="Version identity that travels with your skill bundle. Tracks versions, detects staleness, and works across sessions and platforms.">
   <meta property="og:image" content="https://skillprovenance.dev/imgs/og.png">
@@ -177,32 +178,28 @@
     }
     .gh-star svg { width: 16px; height: 16px; fill: var(--accent); }
 
-    /* Byline */
+    /* Byline — flex on parent only, never on children. See canonical-spec-page
+       a11y-fix-recipes.md "Byline whitespace collapse" for the full trap write-up. */
     .byline {
       display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.9rem;
       align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
-      gap: 0.5rem 0.75rem;
       font-size: 0.85rem;
       color: var(--text-muted);
       margin: 0 auto 2rem;
       max-width: 720px;
     }
-    .byline > span, .byline > a, .byline > time { display: inline; }
-    .byline > *:not(:last-child)::after {
-      content: "·";
-      margin-left: 0.75rem;
-      color: var(--border);
-    }
+    .byline .sep { color: var(--border); }
     .byline .version {
-      display: inline-block;
-      padding: 0.1rem 0.5rem;
-      border: 1px solid var(--accent);
-      border-radius: 100px;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      background: var(--bg-alt);
       color: var(--accent);
-      font-weight: 600;
-      font-size: 0.75rem;
+      border: 1px solid var(--border);
     }
 
     /* Canonical reference aside */
@@ -522,11 +519,15 @@
     <h1>Skill Provenance</h1>
     <p class="subtitle">Version identity and integrity verification for Agent Skills.</p>
     <p class="byline">
-      <span>By <a href="https://paice.work/" rel="author" target="_blank" rel="noopener">Sam Rogers, PAICE.work PBC</a></span>
-      <span>Published <time datetime="2026-01-31">January 31, 2026</time></span>
-      <span>Updated <time datetime="2026-04-09">April 9, 2026</time></span>
+      By <a href="https://paice.work/" target="_blank" rel="noopener author">Sam Rogers, PAICE.work PBC</a>
+      <span class="sep">&middot;</span>
+      Published <time datetime="2026-01-31">January 31, 2026</time>
+      <span class="sep">&middot;</span>
+      Updated <time datetime="2026-04-09">April 9, 2026</time>
+      <span class="sep">&middot;</span>
       <span class="version">v4.9.0</span>
-      <a href="https://creativecommons.org/licenses/by/4.0/" rel="license" target="_blank" rel="noopener">CC BY 4.0</a>
+      <span class="sep">&middot;</span>
+      <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>
     </p>
     <p class="hook">Agent Skills move between sessions, surfaces, and platforms. Filename suffixes break. Git tags require repo access. Version identity gets lost at every boundary. This skill keeps it inside the bundle where it belongs.</p>
 
