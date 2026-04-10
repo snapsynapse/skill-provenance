@@ -1,0 +1,40 @@
+# Skill Provenance
+
+> Version identity and integrity verification for Agent Skills.
+
+Skill Provenance is a metaskill that keeps version identity, staleness detection, and hash-based integrity verification inside the skill bundle so it survives every session, surface, and platform transition.
+
+## Core concepts
+
+- **Bundle version**: Semver version for the entire skill bundle, stored in MANIFEST.yaml
+- **Per-file versions**: Integer revision counters for each file in the bundle
+- **SHA-256 hashes**: Every file's hash is recorded in the manifest for integrity verification
+- **Staleness detection**: When SKILL.md changes but evals.json doesn't, the changelog says so
+- **Cross-platform**: Works across Claude, Codex, Gemini CLI, Copilot, Perplexity, and any agent that reads markdown
+
+## Key files in a bundle
+
+- `SKILL.md` — the skill definition (what agents read)
+- `MANIFEST.yaml` — file inventory with roles, versions, SHA-256 hashes
+- `CHANGELOG.md` — rolling recent history (last 5 entries)
+- `evals.json` — evaluation scenarios for testing skill behavior
+- `validate.sh` — local hash verification script
+
+## Links
+
+- Canonical site: https://skillprovenance.dev/
+- GitHub: https://github.com/snapsynapse/skill-provenance
+- ClawHub: https://clawhub.ai/snapsynapse/skill-provenance
+- Skill definition: https://github.com/snapsynapse/skill-provenance/blob/main/skill-provenance/SKILL.md
+- Changelog: https://github.com/snapsynapse/skill-provenance/blob/main/CHANGELOG.md
+- Agent Skills spec: https://agentskills.io
+
+## Related patterns
+
+- Knowledge as Code: https://knowledgeascode.dev/
+- Graceful Boundaries: https://gracefulboundaries.dev/
+- PAICE.work Open Patterns: https://paice.work/
+
+## License
+
+MIT — https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE
