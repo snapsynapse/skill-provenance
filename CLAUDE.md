@@ -14,6 +14,23 @@ A metaskill for version tracking across Agent Skills sessions, surfaces, and pla
 - `CHANGELOG.md` -- full append-only repo history
 - `AGENTS.md` -- detailed guide for agents working on this repo
 
+## Claude Code plugin
+
+This repo doubles as a Claude Code plugin. The plugin structure:
+
+- `.claude-plugin/plugin.json` -- plugin manifest (name, version, metadata)
+- `.claude-plugin/marketplace.json` -- marketplace listing for self-hosted install
+- `skills/open/SKILL.md` -- `/skill-provenance:open` (verify bundle on session start)
+- `skills/close/SKILL.md` -- `/skill-provenance:close` (update versions on session end)
+- `skills/handoff/SKILL.md` -- `/skill-provenance:handoff` (generate handoff note)
+- `skills/bootstrap/SKILL.md` -- `/skill-provenance:bootstrap` (version an unversioned bundle)
+- `skills/skill-provenance` -- symlink to `skill-provenance/` for the monolithic skill
+
+The four focused skills extract specific workflows from the monolithic SKILL.md.
+The symlink preserves `/skill-provenance:skill-provenance` as the full monolithic skill.
+
+Test locally: `claude --plugin-dir .`
+
 ## Commands
 
 ```bash

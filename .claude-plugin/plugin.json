@@ -1,14 +1,26 @@
 {
   "name": "skill-provenance",
-  "version": "4.9.0",
-  "description": "Version tracking for Agent Skills bundles and their associated files across sessions, surfaces, and platforms. Embeds version identity inside files rather than filenames. Maintains a manifest and changelog that travel with the skill bundle. Compatible with the agentskills.io open standard.",
+  "description": "Version tracking and provenance verification for agent skills across sessions, surfaces, and platforms",
+  "version": "0.1.0",
   "author": {
     "name": "PAICE.work PBC",
     "url": "https://paice.work"
   },
-  "homepage": "https://github.com/snapsynapse/skill-provenance",
+  "homepage": "https://skillprovenance.dev",
   "repository": "https://github.com/snapsynapse/skill-provenance",
   "license": "MIT",
-  "keywords": ["versioning", "skills", "provenance", "agentskills", "manifest"],
-  "skills": "./skills/"
+  "skills": [
+    "./skills/open",
+    "./skills/close",
+    "./skills/handoff",
+    "./skills/bootstrap"
+  ],
+  "keywords": [
+    "version-tracking",
+    "skills",
+    "provenance",
+    "manifest",
+    "agent-skills",
+    "agentskills"
+  ]
 }

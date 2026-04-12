@@ -52,6 +52,12 @@ catch tampering and accidental drift alike.
 /plugin install skill-provenance@snapsynapse-skill-provenance
 ```
 
+After install, four commands are available:
+- `/skill-provenance:open` — verify bundle integrity at session start
+- `/skill-provenance:close` — update versions, hashes, changelog when done
+- `/skill-provenance:handoff` — generate a handoff note for the next session
+- `/skill-provenance:bootstrap` — add version tracking to an unversioned bundle
+
 **Claude (Settings UI):**
 Download `skill-provenance.skill` from the [latest release](https://github.com/snapsynapse/skill-provenance/releases) and install:
 `claude.ai` -> Profile icon -> `Settings` -> `Skills` -> `Add Skill` -> select the file.
@@ -183,7 +189,11 @@ tells you whether a specific copy matches. Together they answer both
 
 ```
 .claude-plugin/plugin.json       <- Claude Code plugin manifest
-skills/skill-provenance/         <- Symlink to skill-provenance/ (plugin discovery)
+skills/open/SKILL.md             <- /skill-provenance:open (verify bundle on session start)
+skills/close/SKILL.md            <- /skill-provenance:close (update versions on session end)
+skills/handoff/SKILL.md          <- /skill-provenance:handoff (generate handoff note)
+skills/bootstrap/SKILL.md        <- /skill-provenance:bootstrap (version an unversioned bundle)
+skills/skill-provenance/         <- Symlink to skill-provenance/ (monolithic skill)
 skill-provenance.skill           <- Install this in Claude Settings -> Skills
 skill-provenance/                <- Canonical source bundle (metadata mode)
   SKILL.md                       <- The skill definition (what the agent reads)
@@ -199,7 +209,7 @@ AGENTS.md                        <- Guide for agents working on this repo
 CONTRIBUTING.md                  <- How to contribute
 ```
 
-The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible ZIP wrapper around it. The `.claude-plugin/` directory and `skills/` symlink make this repo double as a Claude Code plugin without restructuring the existing bundle.
+The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible ZIP wrapper around it. The `.claude-plugin/` directory and `skills/` make this repo double as a Claude Code plugin. Four focused skills (`open`, `close`, `handoff`, `bootstrap`) extract specific workflows from the monolithic SKILL.md. The symlink preserves `/skill-provenance:skill-provenance` as the full monolithic skill.
 
 
 ## Evals
