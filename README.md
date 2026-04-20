@@ -3,7 +3,9 @@
 [![Latest release](https://img.shields.io/github/v/release/snapsynapse/skill-provenance)](https://github.com/snapsynapse/skill-provenance/releases/latest)
 [![ClawHub](https://img.shields.io/badge/ClawHub-skill--provenance-blue)](https://clawhub.ai/snapsynapse/skill-provenance)
 [![ProSkills.md](https://img.shields.io/badge/ProSkills.md-8.41%2F10-brightgreen)](https://proskills.md)
-[![ClawHub installs](https://img.shields.io/badge/ClawHub-333%20installs-blue)](https://clawhub.ai/snapsynapse/skill-provenance)
+[![ClawHub installs](https://img.shields.io/badge/ClawHub-400%2B%20installs-blue)](https://clawhub.ai/snapsynapse/skill-provenance)
+[![Awesome OpenClaw Skills](https://img.shields.io/badge/Awesome%20OpenClaw-Skills-blueviolet)](https://github.com/VoltAgent/awesome-openclaw-skills)
+[![OpenClaw scan](https://img.shields.io/badge/OpenClaw-Benign%20%E2%80%93%20High%20Confidence-brightgreen)](https://clawhub.ai/snapsynapse/skill-provenance)
 
 # Skill Provenance
 
