@@ -5,3 +5,14 @@
 .perplexity-research/
 archive/
 build/
+
+# --- baseline additions (automated audit 2026-04-21) ---
+.env
+.env.*
+node_modules/
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+.venv/
+venv/
