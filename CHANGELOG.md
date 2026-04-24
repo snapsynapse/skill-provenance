@@ -7,6 +7,18 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 4.9.1 — 2026-04-23
+- evals-distribution.json: Added 4 supplemental repo-integrity evals for
+  rolling changelog enforcement, declared eval-count verification,
+  repo-doc inventory drift checks, and release metadata alignment.
+- MANIFEST.yaml: Bumped bundle to 4.9.1, updated bundle_date, advanced
+  evals-distribution.json and CHANGELOG.md per-file versions, and
+  refreshed the supplemental eval inventory note.
+- CHANGELOG.md (bundle): Added this release entry and restored the
+  in-bundle file to the documented 5-entry rolling window.
+- README.md (root): Corrected the repo structure and eval inventory
+  counts from 30 total / 4 supplemental to 34 total / 8 supplemental.
+
 ## 4.9.0 — 2026-04-08
 - README.md (bundle): Added two use case walkthroughs — verifying a
   downloaded/untrusted bundle, and sharing a skill across a team.

@@ -7,6 +7,16 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 4.9.1 — 2026-04-23
+- evals-distribution.json: Added 4 supplemental repo-integrity evals for
+  rolling changelog enforcement, declared eval-count verification,
+  repo-doc inventory drift checks, and release metadata alignment.
+- MANIFEST.yaml: Bumped bundle to 4.9.1, updated bundle_date, advanced
+  evals-distribution.json and CHANGELOG.md per-file versions, and
+  refreshed the supplemental eval inventory note.
+- CHANGELOG.md: Added this release entry and restored the in-bundle file
+  to the documented 5-entry rolling window.
+
 ## 4.9.0 — 2026-04-08
 - README.md (bundle): Added two use case walkthroughs — verifying a
   downloaded/untrusted bundle, and sharing a skill across a team.
@@ -66,22 +76,5 @@ Full release history lives in the source repository's top-level
   artifacts stay visible in one place.
 - MANIFEST.yaml: Bumped bundle to 4.7.1 and advanced file revisions for
   the updated README, changelog, and package helper.
-
-## 4.7.0 — 2026-03-09
-- SKILL.md: Replaced the stale minimal-mode guidance with a consistent
-  three-state model: canonical source bundle, strict-platform install
-  copy, and registry package. Trimmed packaging prose so the skill stays
-  below the 500-line guidance.
-- README.md: Updated install and publishing guidance to use the same
-  three-state model. Added package helper usage for strict-platform and
-  ClawHub outputs.
-- evals-distribution.json: New supplemental eval suite covering derived
-  strict-platform copies, ClawHub package preparation, publish
-  confirmation, and registry-install versus canonical-bundle behavior.
-- package.sh: New zero-dependency packaging helper that builds strict
-  install copies and ClawHub upload packages from the canonical bundle.
-- MANIFEST.yaml: Bumped bundle to 4.7.0, removed the premature
-  `deployments.clawhub` record, added the new eval and script files, and
-  updated compatibility metadata for derived package generation.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.

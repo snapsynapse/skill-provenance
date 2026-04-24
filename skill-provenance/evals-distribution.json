@@ -1,6 +1,6 @@
 {
   "skill_name": "skill-provenance",
-  "suite_name": "distribution-and-packaging",
+  "suite_name": "distribution-packaging-and-integrity",
   "evals": [
     {
       "id": 101,
@@ -81,6 +81,78 @@
         "Uses the package's own MANIFEST.yaml to assess completeness instead of assuming repo-only files are missing",
         "Explains that the canonical source bundle may intentionally include additional development files",
         "Recommends returning to the canonical bundle before editing, repackaging, or republishing"
+      ]
+    },
+    {
+      "id": 105,
+      "name": "rolling_changelog_window_enforcement",
+      "description": "Tests enforcing the documented rolling-history policy for the in-bundle changelog instead of allowing the active bundle changelog to grow without bound.",
+      "prompt": "Please verify this bundle's changelog state before release. The in-bundle changelog is supposed to keep only the newest five entries while the repo root keeps the full archive.",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "../CHANGELOG.md",
+        "README.md"
+      ],
+      "expectations": [
+        "Checks that the in-bundle CHANGELOG.md contains exactly 5 release headings",
+        "Checks that those 5 entries are the newest 5 entries from the repo-level changelog",
+        "Flags the bundle changelog as inconsistent if it contains fewer or more than 5 entries",
+        "Treats the root CHANGELOG.md as the full append-only archive"
+      ]
+    },
+    {
+      "id": 106,
+      "name": "declared_eval_counts_match_files",
+      "description": "Tests preventing stale human-facing eval counts by requiring documented totals to match the JSON files on disk.",
+      "prompt": "Before publishing this update, confirm that every README and manifest note describing the eval suite still matches the actual eval files.",
+      "files": [
+        "MANIFEST.yaml",
+        "README.md",
+        "../README.md",
+        "evals.json",
+        "evals-distribution.json"
+      ],
+      "expectations": [
+        "Counts scenarios directly from evals.json and evals-distribution.json",
+        "Checks that README references to core, supplemental, and total eval counts match those file counts",
+        "Checks that MANIFEST.yaml notes describing eval inventory use the same counts",
+        "Flags stale prose such as outdated core or supplemental totals before release"
+      ]
+    },
+    {
+      "id": 107,
+      "name": "repo_docs_match_bundle_inventory",
+      "description": "Tests repo-level structure documentation against the canonical bundle inventory so file lists and bundle summaries do not drift.",
+      "prompt": "Review the repo documentation and make sure the documented bundle structure still matches the canonical bundle inventory in MANIFEST.yaml.",
+      "files": [
+        "MANIFEST.yaml",
+        "README.md",
+        "../README.md",
+        "../AGENTS.md"
+      ],
+      "expectations": [
+        "Cross-checks documented bundle structure against the MANIFEST.yaml file list",
+        "Verifies that named bundle artifacts in repo docs still exist and are described with current counts",
+        "Flags repo-level documentation when it claims stale bundle contents or inventory details",
+        "Preserves the distinction between canonical bundle files and repo-only files"
+      ]
+    },
+    {
+      "id": 108,
+      "name": "release_metadata_and_changelog_alignment",
+      "description": "Tests that a new release entry, manifest version, and rolling changelog policy all stay aligned after a bundle update.",
+      "prompt": "We just bumped the bundle version and updated release notes. Please confirm the manifest and both changelogs are aligned before we package the bundle.",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "../CHANGELOG.md"
+      ],
+      "expectations": [
+        "Checks that the top release heading in both changelogs matches bundle_version in MANIFEST.yaml",
+        "Checks that bundle_date is consistent with the new release entry",
+        "Checks that the in-bundle changelog still satisfies the rolling 5-entry policy after adding the new release",
+        "Flags mismatches between release metadata and changelog headings before packaging"
       ]
     }
   ]

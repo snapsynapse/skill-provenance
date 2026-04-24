@@ -202,8 +202,8 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 22 core evaluation scenarios
-  evals-distribution.json        <- 4 supplemental packaging/deployment evals
+  evals.json                     <- 26 core evaluation scenarios
+  evals-distribution.json        <- 8 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
 CHANGELOG.md                     <- Full append-only repo history
@@ -216,9 +216,9 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-30 evaluation scenarios across two files: 26 core workflow evals in
-[evals.json](skill-provenance/evals.json) and 4 supplemental
-distribution/package evals in
+34 evaluation scenarios across two files: 26 core workflow evals in
+[evals.json](skill-provenance/evals.json) and 8 supplemental
+distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).
 
 Generated install and publish artifacts now live in `build/` at the repo
