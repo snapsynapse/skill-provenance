@@ -506,7 +506,83 @@
         "Notes any stale files (e.g., evals.json if not updated) in the changelog",
         "Recognizes that the manifest and changelog in the directory are sufficient context for the next session"
       ]
+    },
+    {
+      "id": 27,
+      "name": "validate_command_only",
+      "description": "Tests the dedicated validate workflow. The skill should run or instruct validate.sh and avoid the broader open or close protocols.",
+      "prompt": "Please only validate this skill bundle. I do not want a session-opening review or any version updates.",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md",
+        "README.md",
+        "validate.sh"
+      ],
+      "expectations": [
+        "Uses validate.sh when available or computes hash comparisons directly",
+        "Reports file count, missing files, hash mismatches, skipped files, and pass/fail status",
+        "Does not summarize recent changelog entries as an open-session review",
+        "Does not update hashes, bump versions, edit CHANGELOG.md, or create a handoff note",
+        "Explains that validation is an integrity check, not a trust anchor"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "complementary_tool_positioning",
+      "description": "Tests explaining how Skill Provenance complements GitHub gh skill, ClawHub, Skillman, and platform APIs instead of replacing them.",
+      "prompt": "If GitHub gh skill, ClawHub, Skillman, and the Claude Skills API already track versions, why do I need Skill Provenance?",
+      "files": [
+        "MANIFEST.yaml",
+        "README.md",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Explains that GitHub gh skill tracks source refs, tree SHAs, pinning, and upstream changes",
+        "Explains that ClawHub and registries track discovery, publishing, install trust, and registry versions",
+        "Explains that Skillman and package managers track consumer-side installs and locks",
+        "Explains that platform APIs track deployed surface versions",
+        "Positions Skill Provenance as the author-side bundle-local layer for integrity, per-file staleness, changelog, hashes, and cross-surface drift",
+        "Does not claim competing tools are useless or obsolete"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "integrity_not_trust_anchor",
+      "description": "Tests the trust model when a user asks whether matching hashes prove a bundle is safe.",
+      "prompt": "validate.sh passes on this downloaded skill. Does that mean it is safe to install?",
+      "files": [
+        "MANIFEST.yaml",
+        "CHANGELOG.md",
+        "SKILL.md",
+        "validate.sh"
+      ],
+      "expectations": [
+        "States that matching hashes prove the files match the recorded manifest state",
+        "States that this is an integrity check, not a trust anchor",
+        "Explains that the manifest does not prove author identity, cryptographically sign the bundle, scan for malware, or sandbox runtime behavior",
+        "Recommends checking source, publisher, git history, registry page, and changelog before installing",
+        "Avoids presenting hash verification as a complete security review"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "validate_derived_copy_without_false_corruption",
+      "description": "Tests validating a strict-platform or registry copy as its own package rather than treating missing canonical development files as corruption.",
+      "prompt": "This strict-platform copy only contains SKILL.md, README.md, MANIFEST.yaml, and evals. Please validate it and tell me if anything is wrong.",
+      "files": [
+        "MANIFEST.yaml",
+        "SKILL.md",
+        "README.md",
+        "evals.json"
+      ],
+      "expectations": [
+        "Uses the copy's own MANIFEST.yaml as the authoritative inventory",
+        "Identifies the copy as a derived strict-platform install copy or registry package when frontmatter_mode or contents indicate that",
+        "Does not treat missing development-only files as corruption unless this manifest lists them",
+        "Reports hash and missing-file status for the files listed in this manifest",
+        "Recommends returning to the canonical source bundle before editing, repackaging, or republishing"
+      ]
     }
   ]
 }
-

@@ -1,27 +1,28 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 16
-version_date: 2026-03-09
-previous_version: 15
+version: 19
+version_date: 2026-05-19
+previous_version: 18
 change_summary: >
-  Clarified that the bundle changelog carries recent history only, with
-  older release history archived in the repo root. Keeps the package
-  lighter without losing full GitHub history.
+  Reframed the guide around author-side bundle provenance, added
+  complementary-tool guidance, and clarified validate-only and trust-model
+  behavior.
 ---
 
-# Skill Provenance — README
+# Skill Provenance - README
 
 ## What this is
 
-A metaskill that prevents version confusion when skill projects move between
-sessions, surfaces (Chat, IDE, CLI, Cowork), and platforms (Claude, Gemini
-CLI, Codex, Copilot). It keeps version identity with the bundle, inside files
-when practical and always in the manifest, tracks staleness across related
-files, and maintains a manifest so any session can verify what it has.
+A metaskill that provides portable provenance, integrity, and drift control
+for Agent Skills across local folders, registries, platform uploads, and
+multi-agent sessions. It keeps version identity with the bundle, inside
+files when practical and always in the manifest, tracks staleness across
+related files, and maintains a manifest so any session can verify what it
+has.
 
 You need this if you've ever uploaded a skill file to a new session and
-couldn't tell whether it was the latest version, or discovered that the
+couldn't tell whether it was the latest version, discovered that the
 SKILL.md was updated but the evals weren't, or lost track of what changed
 between sessions.
 
@@ -33,6 +34,17 @@ often exists as several copies: a local directory, an uploaded `.skill` or
 `.zip`, and one or more deployed surfaces. skill-provenance exists to keep
 those copies traceable without replacing each platform's native versioning.
 
+## Why this still exists
+
+Most ecosystem tools track source, registry, install, or deployment state.
+Skill Provenance tracks the actual multi-file bundle an agent is editing.
+That matters when `SKILL.md`, evals, scripts, packages, and deployed
+copies can drift independently.
+
+It is an author-side layer that complements package managers, registries,
+and platform APIs. Source pinning and registry versioning reduce risk, but
+they do not replace bundle-local staleness detection, changelogs, hashes,
+or cross-surface drift checks.
 
 ## The .skill format
 
@@ -454,6 +466,10 @@ Cowork), but hash computation in Chat sessions is slower and can be
 unreliable on large files. For reliable pre-upload verification, use the
 included `validate.sh` script.
 
+If installed as a Claude Code plugin, `/skill-provenance:validate` runs
+this narrow hash and inventory check without the broader session-opening
+review, changelog summary, handoff, or version bump behavior.
+
 ### Verify mode (default)
 
 ```bash
@@ -560,6 +576,10 @@ trust or reinstall a bundle:
 This is useful when a skill comes from another repo, a teammate, a release
 artifact, or a settings download that has been modified locally before
 re-upload.
+
+The manifest is an integrity check, not a trust anchor. It can show that
+files match the state the author recorded, but it does not prove author
+identity, provide cryptographic signing, scan for malware, or sandbox code.
 
 
 ## Use case: verifying a downloaded skill
@@ -690,6 +710,33 @@ bundle changelog itself.
 Source material (user-provided articles, images, data) is tracked in
 the manifest for completeness but not versioned. If source material
 changes, update the hash in the manifest and note it in the changelog.
+
+
+## Complementary tools
+
+Skill Provenance is not a package manager, registry, API deployment
+system, or signing layer. Use it with those tools when a skill becomes a
+maintained multi-file bundle.
+
+- **GitHub `gh skill`:** use for GitHub-hosted source refs, tree SHAs,
+  pinning, and upstream update checks. Use Skill Provenance to track
+  local bundle integrity, per-file versions, staleness, and changelog
+  state after the source is installed or edited.
+- **ClawHub and registries:** use for discovery, publishing, install
+  trust, registry versions, and consumer packages. Use Skill Provenance
+  to keep the canonical authoring bundle auditable before and after
+  packaging.
+- **Claude Skills API and platform uploads:** use for deployed platform
+  versions. Use Skill Provenance to keep author-side semver, package
+  contents, and deployment metadata traceable without replacing
+  platform-native version IDs.
+- **Skillman and package managers:** use for consumer-side install,
+  update, and lockfile workflows. Use Skill Provenance when the bundle
+  itself has multiple files that can drift while being authored.
+
+Source pinning and registry versioning reduce risk. They do not replace
+bundle-local staleness detection, changelogs, hashes, or cross-surface
+drift checks.
 
 
 ## Relationship to the Agent Skills specification

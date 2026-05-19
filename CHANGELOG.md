@@ -7,6 +7,30 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 4.10.0 — 2026-05-19
+- skill-provenance/SKILL.md: Added validate-only protocol guidance and
+  clarified how Skill Provenance complements source, registry,
+  package-manager, and platform versioning.
+- skill-provenance/README.md: Reframed the guide around portable
+  author-side provenance, added a "Why this still exists" section,
+  documented the validate command, added complementary-tool guidance, and
+  clarified the trust model.
+- skill-provenance/evals.json: Added 4 core evals covering validate-only
+  behavior, complementary-tool positioning, integrity versus trust-anchor
+  language, and derived-copy validation.
+- skill-provenance/MANIFEST.yaml: Bumped bundle to 4.10.0, updated
+  bundle_date, advanced changed file versions, refreshed hashes, and
+  updated eval inventory notes.
+- skill-provenance/CHANGELOG.md: Added this release entry and kept the
+  in-bundle rolling changelog to the newest 5 entries.
+- skills/validate/SKILL.md: Added a focused Claude Code plugin command for
+  hash and inventory validation without open, close, or handoff behavior.
+- .claude-plugin/plugin.json: Bumped plugin version to 0.2.0 and registered
+  the validate command.
+- README.md, index.html, llms.txt, ROADMAP.md, SECURITY.md: Updated public
+  positioning around portable provenance, complementary ecosystem tools,
+  validate command availability, and the integrity-check trust model.
+
 ## 4.9.1 — 2026-04-23
 - evals-distribution.json: Added 4 supplemental repo-integrity evals for
   rolling changelog enforcement, declared eval-count verification,

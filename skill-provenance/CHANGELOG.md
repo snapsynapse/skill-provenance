@@ -7,6 +7,19 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 4.10.0 — 2026-05-19
+- SKILL.md: Added validate-only protocol guidance and clarified how
+  Skill Provenance complements source, registry, package-manager, and
+  platform versioning.
+- README.md: Reframed the guide around portable author-side provenance,
+  added a "Why this still exists" section, documented the validate command,
+  added complementary-tool guidance, and clarified the trust model.
+- evals.json: Added 4 core evals covering validate-only behavior,
+  complementary-tool positioning, integrity versus trust-anchor language,
+  and derived-copy validation.
+- MANIFEST.yaml: Bumped bundle to 4.10.0, updated bundle_date, advanced
+  changed file versions, refreshed hashes, and updated eval inventory notes.
+
 ## 4.9.1 — 2026-04-23
 - evals-distribution.json: Added 4 supplemental repo-integrity evals for
   rolling changelog enforcement, declared eval-count verification,
@@ -56,25 +69,5 @@ Full release history lives in the source repository's top-level
   "Snap Synapse" to "Sam Rogers (snapsynapse.com)". Updated Origin section.
 - MANIFEST.yaml: Bumped bundle to 4.7.3, advanced SKILL.md to v14 with
   updated hash and note.
-
-## 4.7.2 — 2026-03-09
-- SKILL.md: Updated changelog guidance to distinguish between the rolling
-  in-bundle changelog and the full repo-level archive.
-- README.md: Clarified that the bundle keeps recent changelog history
-  while the source repository carries the full archive.
-- CHANGELOG.md: Trimmed the in-bundle changelog to the five most recent
-  entries and pointed readers to the root changelog for older history.
-- MANIFEST.yaml: Bumped bundle to 4.7.2, updated changelog notes, and
-  advanced file revisions for the changelog split model.
-
-## 4.7.1 — 2026-03-09
-- README.md: Changed derived package instructions to use an in-repo
-  `build/` directory by default so strict-platform and ClawHub outputs
-  are easier to find locally.
-- package.sh: Changed default output locations from `/tmp` to
-  `../build/{strict,clawhub}/` relative to the repo so generated
-  artifacts stay visible in one place.
-- MANIFEST.yaml: Bumped bundle to 4.7.1 and advanced file revisions for
-  the updated README, changelog, and package helper.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.

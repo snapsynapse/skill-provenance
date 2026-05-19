@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Skill Provenance &mdash; Version tracking for Agent Skills</title>
-  <meta name="description" content="Version identity that travels with your skill bundle. Manifest, changelog, and hash verification across sessions, surfaces, and platforms.">
+  <title>Skill Provenance &mdash; Portable provenance for Agent Skills</title>
+  <meta name="description" content="Portable provenance, integrity, and drift control for Agent Skills across local folders, registries, platform uploads, and multi-agent sessions.">
   <meta name="keywords" content="skill provenance, agent skills, SKILL.md, MANIFEST.yaml, version identity, bundle versioning, semver, SHA-256, hash verification, staleness detection, agentskills.io, cross-platform skills, Claude skills, Codex skills, Gemini skills, ClawHub">
   <meta name="author" content="Sam Rogers">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -13,14 +13,14 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="alternate" type="text/plain" href="https://skillprovenance.dev/llms.txt" title="LLM-readable summary">
   <meta property="og:title" content="Skill Provenance">
-  <meta property="og:description" content="Version identity that travels with your skill bundle. Tracks versions, detects staleness, and works across sessions and platforms.">
+  <meta property="og:description" content="Portable provenance, integrity, and drift control for Agent Skills across local folders, registries, platform uploads, and multi-agent sessions.">
   <meta property="og:image" content="https://skillprovenance.dev/imgs/og.png">
   <meta property="og:url" content="https://skillprovenance.dev/">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Skill Provenance">
   <meta property="og:locale" content="en_US">
   <meta property="article:published_time" content="2026-01-31T00:00:00Z">
-  <meta property="article:modified_time" content="2026-04-09T00:00:00Z">
+  <meta property="article:modified_time" content="2026-05-19T00:00:00Z">
   <meta property="article:author" content="Sam Rogers">
   <meta property="article:publisher" content="https://paice.work/">
   <meta property="article:section" content="Agent Skills">
@@ -32,7 +32,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@snapsynapse">
   <meta name="twitter:title" content="Skill Provenance">
-  <meta name="twitter:description" content="Version identity that travels with your skill bundle. Tracks versions, detects staleness, and works across sessions and platforms.">
+  <meta name="twitter:description" content="Portable provenance, integrity, and drift control for Agent Skills across local folders, registries, platform uploads, and multi-agent sessions.">
   <meta name="twitter:image" content="https://skillprovenance.dev/imgs/og.png">
   <link rel="icon" href="imgs/favicon.ico" sizes="48x48">
   <link rel="icon" href="imgs/favicon-32x32.png" type="image/png" sizes="32x32">
@@ -43,10 +43,10 @@
   {
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "Skill Provenance — Version tracking for Agent Skills",
-    "description": "Version identity that travels with your skill bundle. Manifest, changelog, and hash verification across sessions, surfaces, and platforms.",
+    "headline": "Skill Provenance - Portable provenance for Agent Skills",
+    "description": "Portable provenance, integrity, and drift control for Agent Skills across local folders, registries, platform uploads, and multi-agent sessions.",
     "datePublished": "2026-01-31",
-    "dateModified": "2026-04-09",
+    "dateModified": "2026-05-19",
     "author": {
       "@type": "Person",
       "name": "Sam Rogers",
@@ -93,7 +93,7 @@
     "@type": "DefinedTerm",
     "name": "Skill Provenance",
     "alternateName": ["skill-provenance", "Skill Provenance spec"],
-    "description": "A metaskill for version identity and integrity verification of Agent Skills — bundle versions, per-file revisions, SHA-256 hashes, and changelogs that travel with the skill across sessions, surfaces, and platforms.",
+    "description": "A metaskill for portable provenance, integrity, and drift control of Agent Skills across local folders, registries, platform uploads, and multi-agent sessions.",
     "inDefinedTermSet": {
       "@type": "DefinedTermSet",
       "name": "PAICE.work Open Patterns",
@@ -517,19 +517,19 @@
 <section class="hero" id="main-content">
   <div class="container">
     <h1>Skill Provenance</h1>
-    <p class="subtitle">Version identity and integrity verification for Agent Skills.</p>
+    <p class="subtitle">Portable provenance, integrity, and drift control for Agent Skills.</p>
     <p class="byline">
       By <a href="https://paice.work/" target="_blank" rel="noopener author">Sam Rogers, PAICE.work PBC</a>
       <span class="sep">&middot;</span>
       Published <time datetime="2026-01-31">January 31, 2026</time>
       <span class="sep">&middot;</span>
-      Updated <time datetime="2026-04-09">April 9, 2026</time>
+      Updated <time datetime="2026-05-19">May 19, 2026</time>
       <span class="sep">&middot;</span>
-      <span class="version">v4.9.0</span>
+      <span class="version">v4.10.0</span>
       <span class="sep">&middot;</span>
       <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>
     </p>
-    <p class="hook">Agent Skills move between sessions, surfaces, and platforms. Filename suffixes break. Git tags require repo access. Version identity gets lost at every boundary. This skill keeps it inside the bundle where it belongs.</p>
+    <p class="hook">Agent Skills move between local folders, registries, platform uploads, and multi-agent sessions. Source refs, registry versions, and platform APIs each help, but they do not track the actual multi-file bundle an agent is editing. This skill keeps provenance inside the bundle where it belongs.</p>
 
     <img src="imgs/og.png" alt="Skill Provenance: before and after — from scattered versioned filenames to a single SKILL.md with manifest and changelog" class="hero-img">
 
@@ -577,8 +577,8 @@ CHANGELOG.md
 
 <section class="alt" id="why">
   <div class="container">
-    <h2>Why provenance matters</h2>
-    <p>Skills are the unit of reuse in the agent ecosystem. They get exported from Chat, installed in Code, uploaded to APIs, shared on registries, and copied into Obsidian vaults. Every boundary crossing is a chance for version confusion.</p>
+    <h2>Why this still exists</h2>
+    <p>Skills are the unit of reuse in the agent ecosystem. Most tools track source, registry, install, or deployment state. Skill Provenance tracks the actual multi-file bundle an agent is editing, which matters when SKILL.md, evals, scripts, packages, and deployed copies can drift independently.</p>
 
     <div class="why-grid">
       <div class="why-card">
@@ -611,24 +611,31 @@ CHANGELOG.md
       </thead>
       <tbody>
         <tr>
-          <td>Git tags</td>
-          <td>Yes</td>
+          <td>GitHub gh skill</td>
+          <td>Source/ref/tree</td>
           <td class="no">No</td>
-          <td class="no">No</td>
-          <td class="no">No</td>
+          <td class="no">Repo-bound</td>
+          <td>Partial</td>
         </tr>
         <tr>
-          <td>Filename suffixes</td>
-          <td class="no">Poorly</td>
+          <td>ClawHub / registries</td>
+          <td>Registry versions</td>
           <td class="no">No</td>
-          <td class="no">No</td>
-          <td class="no">No</td>
+          <td>Consumer package</td>
+          <td>Partial</td>
         </tr>
         <tr>
           <td>Skills API</td>
-          <td>Timestamps</td>
+          <td>Platform versions</td>
           <td class="no">No</td>
           <td class="no">Single surface</td>
+          <td class="no">No</td>
+        </tr>
+        <tr>
+          <td>Skillman</td>
+          <td>Pinned installs</td>
+          <td class="no">No</td>
+          <td class="no">Consumer-side</td>
           <td class="no">No</td>
         </tr>
         <tr>
@@ -652,7 +659,7 @@ CHANGELOG.md
       <h3>Claude Code (Plugin)</h3>
 <pre>/plugin marketplace add snapsynapse/skill-provenance
 /plugin install skill-provenance@snapsynapse-skill-provenance</pre>
-      <p class="note">Commands: <code>/skill-provenance:open</code>, <code>/skill-provenance:close</code>, <code>/skill-provenance:handoff</code>, <code>/skill-provenance:bootstrap</code></p>
+      <p class="note">Commands: <code>/skill-provenance:open</code>, <code>/skill-provenance:validate</code>, <code>/skill-provenance:close</code>, <code>/skill-provenance:handoff</code>, <code>/skill-provenance:bootstrap</code></p>
     </div>
 
     <div class="install-option">
@@ -724,7 +731,7 @@ Or use .agents/skills/ for the neutral cross-client path.</pre>
         <div class="label"><a href="https://clawhub.ai/snapsynapse/skill-provenance" target="_blank" rel="noopener">ClawHub</a> installs</div>
       </div>
       <div class="signal">
-        <div class="number warm">30</div>
+        <div class="number warm">38</div>
         <div class="label">evaluation scenarios</div>
       </div>
       <div class="signal">
@@ -743,7 +750,7 @@ Or use .agents/skills/ for the neutral cross-client path.</pre>
   <div class="container">
     <div class="footer-grid">
       <div class="footer-meta">
-        <p>Skill Provenance v4.9.0 &middot; <a href="https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE" target="_blank" rel="noopener license">MIT</a></p>
+        <p>Skill Provenance v4.10.0 &middot; <a href="https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE" target="_blank" rel="noopener license">MIT</a></p>
         <p>A <a href="https://paice.work/" target="_blank" rel="noopener">PAICE.work</a> project.</p>
         <p style="margin-top: 0.5rem;">See also: <a href="https://knowledgeascode.dev" target="_blank" rel="noopener">Knowledge as Code</a> &middot; <a href="https://gracefulboundaries.dev" target="_blank" rel="noopener">Graceful Boundaries</a></p>
       </div>

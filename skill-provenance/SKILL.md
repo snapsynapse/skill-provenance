@@ -1,8 +1,9 @@
 ---
 name: skill-provenance
 description: >
-  Version tracking for Agent Skills bundles and their associated files
-  across sessions, surfaces, and platforms. Use when creating, editing,
+  Portable provenance, integrity, and drift control for Agent Skills
+  bundles and their associated files across local folders, registries,
+  platform uploads, and multi-agent sessions. Use when creating, editing,
   versioning, validating, packaging, or handing off a skill bundle; when
   checking or updating MANIFEST.yaml, CHANGELOG.md, hashes, stale evals,
   or frontmatter mode; and when keeping version identity with the bundle
@@ -10,12 +11,12 @@ description: >
 metadata:
   skill_bundle: skill-provenance
   file_role: skill
-  version: 16
-  version_date: 2026-04-08
-  previous_version: 15
+  version: 17
+  version_date: 2026-05-19
+  previous_version: 16
   change_summary: >
-    No skill definition changes. Version bump for GitHub Pages site,
-    trust narrative reframe, new evals, and plugin system fix.
+    Added focused validation protocol guidance and clarified the
+    author-side trust-layer positioning for complementary ecosystem tools.
   author: PAICE.work PBC (paice.work)
   source: https://github.com/snapsynapse/skill-provenance
 ---
@@ -345,6 +346,25 @@ append-only changelog elsewhere.
 
 ## Session Protocol
 
+### Validating only
+
+When the user asks only to validate a bundle, run the hash and inventory
+check without doing the full open-session review or close-session update:
+
+1. Read `MANIFEST.yaml` and verify all listed files are present.
+2. Run `validate.sh` when available, or compute SHA-256 hashes for listed
+   files and compare them against the manifest.
+3. Report checked files, missing files, hash mismatches, skipped files,
+   and pass/fail status.
+4. Identify whether the copy appears to be a canonical source bundle,
+   strict-platform install copy, registry package, or ambiguous copy based
+   on its own manifest and local contents.
+5. Do not update hashes, bump versions, edit the changelog, create a
+   handoff note, or run the close protocol unless the user explicitly asks
+   for a mutation.
+
+This is an integrity check, not a trust anchor.
+
 ### Opening a session
 
 When a skill bundle is loaded into a new session:
@@ -459,12 +479,32 @@ Surface notes:
 General principle: the manifest and changelog stay authoritative, and
 transformed install or publish copies are derived artifacts, not silent
 edits to the canonical bundle.
+
+## Complementary Ecosystem Tools
+
+Skill Provenance complements source, registry, package-manager, and
+platform versioning rather than replacing them:
+
+- GitHub `gh skill` tracks source refs, tree SHAs, pinning, and upstream
+  updates for GitHub-hosted skills.
+- ClawHub and registries track discovery, publishing, install trust, and
+  registry versions.
+- Claude Skills API and other platform uploads track deployed surface
+  versions.
+- Skillman and package managers track consumer-side installs and locks.
+
+Those tools reduce risk, but they do not replace bundle-local staleness
+detection, changelogs, hashes, or cross-surface drift checks for the
+multi-file bundle an agent is editing.
+
 ## Trust and Audit
 
 Use the manifest, changelog, hashes, and optional deployment metadata to
 verify what belongs in the bundle, whether files still match their
 recorded state, what changed, and which installed or deployed copies may
 now be stale. If a bundle comes from an untrusted source, verify it first.
+
+This is an integrity check, not a trust anchor.
 
 
 ## File Naming

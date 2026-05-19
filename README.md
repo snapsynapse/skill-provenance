@@ -9,7 +9,8 @@
 
 # Skill Provenance
 
-Version identity and integrity verification for Agent Skills.
+Portable provenance, integrity, and drift control for Agent Skills across
+local folders, registries, platform uploads, and multi-agent sessions.
 
 ```
 Before                              After
@@ -23,8 +24,8 @@ evals.json
 
 Agent Skills move between sessions, surfaces, and platforms. Every
 boundary crossing is a chance for version confusion, silent drift, or
-worse — a modified bundle that no one can verify. Skill Provenance
-keeps version identity, staleness detection, and hash-based integrity
+modified bundle contents that no one can verify. Skill Provenance keeps
+version identity, staleness detection, and hash-based integrity
 verification *inside the bundle* so it survives every transition.
 
 **For authors:** Know what version you're working on, what's stale, and
@@ -37,12 +38,23 @@ in five places across three platforms.
 recorded state before installing it. SHA-256 hashes in the manifest
 catch tampering and accidental drift alike.
 
+## Why this still exists
+
+Most ecosystem tools track source, registry, install, or deployment state.
+Skill Provenance tracks the actual multi-file bundle an agent is editing.
+That matters when `SKILL.md`, evals, scripts, packages, and deployed
+copies can drift independently.
+
+It is the author-side layer that complements package managers, registries,
+and platform APIs:
+
 | Approach | Tracks versions | Detects staleness | Cross-session | Cross-platform | Integrity |
 |---|---|---|---|---|---|
-| **Git tags** | Yes | No | No (requires repo access) | No | No |
+| **GitHub `gh skill`** | Source/ref/tree | No | Repo-bound | Partial | Source pinning |
+| **ClawHub / registries** | Registry versions | No | Consumer package | Partial | Install trust |
+| **Claude Skills API** (`/v1/skills`) | Platform versions | No | Single surface | No | Deployment record |
 | **Filename suffixes** (`_v5`) | Poorly | No | No | No | No |
 | **Skillman** | Pins versions | No | Consumer-side only | No | No |
-| **Skills API** (`/v1/skills`) | Upload timestamps | No | Single surface only | No | No |
 | **Skill Provenance** | Yes (semver) | Yes | Yes (manifest travels) | Yes | Yes (SHA-256) |
 
 
@@ -54,8 +66,9 @@ catch tampering and accidental drift alike.
 /plugin install skill-provenance@snapsynapse-skill-provenance
 ```
 
-After install, four commands are available:
+After install, five commands are available:
 - `/skill-provenance:open` — verify bundle integrity at session start
+- `/skill-provenance:validate` — run the hash/inventory check only
 - `/skill-provenance:close` — update versions, hashes, changelog when done
 - `/skill-provenance:handoff` — generate a handoff note for the next session
 - `/skill-provenance:bootstrap` — add version tracking to an unversioned bundle
@@ -97,6 +110,9 @@ Then tell the agent:
 **When you need a commit message**, it can produce one inline by default, with a `git_commit.txt` file only when you explicitly want that convenience.
 
 **When you have deployed copies**, it can record optional deployment metadata in the manifest so API uploads, settings installs, and local directory copies can be traced without replacing platform-native version systems.
+
+**When you only need validation**, it runs the local hash and inventory
+check without doing the broader open-session review or changing files.
 
 
 ## Platform support
@@ -192,6 +208,7 @@ tells you whether a specific copy matches. Together they answer both
 ```
 .claude-plugin/plugin.json       <- Claude Code plugin manifest
 skills/open/SKILL.md             <- /skill-provenance:open (verify bundle on session start)
+skills/validate/SKILL.md         <- /skill-provenance:validate (hash/inventory check only)
 skills/close/SKILL.md            <- /skill-provenance:close (update versions on session end)
 skills/handoff/SKILL.md          <- /skill-provenance:handoff (generate handoff note)
 skills/bootstrap/SKILL.md        <- /skill-provenance:bootstrap (version an unversioned bundle)
@@ -202,7 +219,7 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 26 core evaluation scenarios
+  evals.json                     <- 30 core evaluation scenarios
   evals-distribution.json        <- 8 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
@@ -211,12 +228,12 @@ AGENTS.md                        <- Guide for agents working on this repo
 CONTRIBUTING.md                  <- How to contribute
 ```
 
-The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible ZIP wrapper around it. The `.claude-plugin/` directory and `skills/` make this repo double as a Claude Code plugin. Four focused skills (`open`, `close`, `handoff`, `bootstrap`) extract specific workflows from the monolithic SKILL.md. The symlink preserves `/skill-provenance:skill-provenance` as the full monolithic skill.
+The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible ZIP wrapper around it. The `.claude-plugin/` directory and `skills/` make this repo double as a Claude Code plugin. Five focused skills (`open`, `validate`, `close`, `handoff`, `bootstrap`) extract specific workflows from the monolithic SKILL.md. The symlink preserves `/skill-provenance:skill-provenance` as the full monolithic skill.
 
 
 ## Evals
 
-34 evaluation scenarios across two files: 26 core workflow evals in
+38 evaluation scenarios across two files: 30 core workflow evals in
 [evals.json](skill-provenance/evals.json) and 8 supplemental
 distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).
@@ -239,6 +256,13 @@ See the full [README.md](skill-provenance/README.md) inside the skill bundle for
 
 ## Related projects
 
+- **GitHub `gh skill`** — GitHub CLI support for installing, pinning, and
+  checking Agent Skills from GitHub source refs. Complements
+  skill-provenance by tracking source origin while this repo tracks
+  bundle-local file integrity and staleness.
+- **ClawHub / OpenClaw registries** — Skill discovery, publishing, install
+  trust, and registry version records. Complements skill-provenance by
+  distributing packages while this repo keeps authoring bundles auditable.
 - **[Skillman](https://github.com/pi0/skillman)** -- JS/TS skill manager (`npx skillman add`). Installs, updates, and organizes agent skills from npm and GitHub. Consumer-side; skill-provenance is author-side.
 - **[Skillman (Python)](https://github.com/chrisvoncsefalvay/skillman)** -- Python CLI that installs and locks agent skills from GitHub repos (`skills.toml` + `skills.lock`). Consumer-side package manager for Python toolchains.
 - **[Graceful Boundaries](https://github.com/snapsynapse/graceful-boundaries)** -- A specification for how services communicate operational limits to humans and autonomous agents. Also a PAICE.work project.

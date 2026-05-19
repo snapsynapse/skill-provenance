@@ -1,9 +1,10 @@
 bundle: skill-provenance
-bundle_version: 4.9.1
-bundle_date: 2026-04-23
+bundle_version: 4.10.0
+bundle_date: 2026-05-19
 description: >
-  Metaskill for version tracking across Agent Skills sessions, surfaces,
-  and platforms. Manifest, changelog, deployment notes, and portable
+  Metaskill for portable provenance, integrity, and drift control across
+  Agent Skills local folders, registries, platform uploads, and multi-agent
+  sessions. Manifest, changelog, deployment notes, hashes, and portable
   internal version markers prevent version confusion during iterative
   skill development and cross-surface deployment.
 
@@ -72,21 +73,21 @@ dependencies: []
 files:
   - path: SKILL.md
     role: skill
-    version: 16
-    hash: sha256:aa4e7bae1789c4d72a81dc39b089b85691bddebca79f6c30f291a110d2ded20b
-    note: Canonical skill definition with full provenance metadata in frontmatter. Exemplifies its own convention.
+    version: 17
+    hash: sha256:a807adcaf21e01a49de933b75ad818d701a19ae7b2b701fb89cb68e75d90860a
+    note: Canonical skill definition with validate-only protocol guidance, complementary-tool positioning, and full provenance metadata in frontmatter.
 
   - path: README.md
     role: reference
-    version: 18
-    hash: sha256:049c20087f441c1e3442b7b36c00645664e663bcaef08a1cb96dd86da592061e
-    note: Human-facing instructions, worked example, three-state bundle model, local validation, packaging, use case walkthroughs (untrusted bundle, team sharing), troubleshooting, references
+    version: 19
+    hash: sha256:e198a22786ab86eea0e3bccc61d35bced601051cf2637e17b21f4c742658aa1c
+    note: Human-facing instructions, worked example, three-state bundle model, local validation, complementary-tool guidance, trust model, packaging, use case walkthroughs, troubleshooting, references
 
   - path: evals.json
     role: evals
-    version: 10
-    hash: sha256:60c41bfa58d7b46579578a2856df9e5ecb82ca2715e0a44e4008fc82ecb9cd8f
-    note: 26 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation, API surface, dependencies, deployment drift, multi-surface installs, trust checks, redeploy events, deployment conflicts, hash mismatches, packaged subsets, Settings UI round-trip, Copilot/VS Code bootstrap, Cursor bootstrap, Cowork persistence
+    version: 11
+    hash: sha256:a4466f3d4b2bc2b2374db6e04099e1c243a2706c020573d5ad3fbde49b0e8765
+    note: 30 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation, API surface, dependencies, deployment drift, multi-surface installs, trust checks, redeploy events, deployment conflicts, hash mismatches, packaged subsets, Settings UI round-trip, Copilot/VS Code bootstrap, Cursor bootstrap, Cowork persistence, validate-only behavior, complementary-tool positioning, integrity trust model, derived-copy validation
 
   - path: evals-distribution.json
     role: evals
@@ -96,8 +97,8 @@ files:
 
   - path: CHANGELOG.md
     role: reference
-    version: 20
-    hash: sha256:87ffad1a707aab1fd385a1e335c27c83bb222714a0cece8799a8f79450470f26
+    version: 21
+    hash: sha256:da829769d92016405e6e2f9f37520acbc96506dfeaa8a12d293cd64194ed45aa
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh

@@ -1,8 +1,10 @@
 # Skill Provenance
 
-> Version identity and integrity verification for Agent Skills.
+> Portable provenance, integrity, and drift control for Agent Skills.
 
-Skill Provenance is a metaskill that keeps version identity, staleness detection, and hash-based integrity verification inside the skill bundle so it survives every session, surface, and platform transition.
+Skill Provenance is a metaskill that keeps version identity, staleness detection, and hash-based integrity verification inside the skill bundle so it survives local folders, registries, platform uploads, and multi-agent sessions.
+
+Most ecosystem tools track source, registry, install, or deployment state. Skill Provenance tracks the actual multi-file bundle an agent is editing, which matters when SKILL.md, evals, scripts, packages, and deployed copies can drift independently.
 
 ## Core concepts
 
@@ -11,6 +13,8 @@ Skill Provenance is a metaskill that keeps version identity, staleness detection
 - **SHA-256 hashes**: Every file's hash is recorded in the manifest for integrity verification
 - **Staleness detection**: When SKILL.md changes but evals.json doesn't, the changelog says so
 - **Cross-platform**: Works across Claude, Codex, Gemini CLI, Copilot, Perplexity, and any agent that reads markdown
+- **Complementary tooling**: Works alongside GitHub `gh skill`, ClawHub, Skillman, and platform APIs rather than replacing them
+- **Trust model**: Provides an integrity check, not a trust anchor
 
 ## Key files in a bundle
 

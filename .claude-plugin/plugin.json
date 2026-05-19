@@ -1,7 +1,7 @@
 {
   "name": "skill-provenance",
-  "description": "Version tracking and provenance verification for agent skills across sessions, surfaces, and platforms",
-  "version": "0.1.0",
+  "description": "Portable provenance, integrity, and drift control for agent skills across sessions, surfaces, and platforms",
+  "version": "0.2.0",
   "author": {
     "name": "PAICE.work PBC",
     "url": "https://paice.work"
@@ -11,6 +11,7 @@
   "license": "MIT",
   "skills": [
     "./skills/open",
+    "./skills/validate",
     "./skills/close",
     "./skills/handoff",
     "./skills/bootstrap"
