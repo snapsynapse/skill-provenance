@@ -7,6 +7,17 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 2026-05-21 — GuideCheck standard adoption (site, no bundle change)
+- .well-known/assistant-guide.txt: Added a Level 3 conforming
+  `assistant-guide.txt` under the GuideCheck Human-Verifiable Assistant
+  Guide profile (profile-version 0.2.0). Bounded task: fetch the bundle
+  and integrity-check it against MANIFEST.yaml. ASCII byte profile, 6963
+  bytes, two approval-gated action blocks.
+- index.html: Added a `<link rel="assistant-guide">` discovery aid to the
+  document head.
+- llms.txt: Listed the assistant guide under Links.
+- Bundle unchanged: bundle_version stays 4.10.0, MANIFEST.yaml untouched.
+
 ## 4.10.0 — 2026-05-19
 - skill-provenance/SKILL.md: Added validate-only protocol guidance and
   clarified how Skill Provenance complements source, registry,

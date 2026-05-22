@@ -31,6 +31,7 @@ Most ecosystem tools track source, registry, install, or deployment state. Skill
 - ClawHub: https://clawhub.ai/snapsynapse/skill-provenance
 - Skill definition: https://github.com/snapsynapse/skill-provenance/blob/main/skill-provenance/SKILL.md
 - Changelog: https://github.com/snapsynapse/skill-provenance/blob/main/CHANGELOG.md
+- Assistant guide (GuideCheck): https://skillprovenance.dev/.well-known/assistant-guide.txt
 - Agent Skills spec: https://agentskills.io
 
 ## Related patterns
