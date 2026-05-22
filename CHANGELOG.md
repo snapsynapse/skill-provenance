@@ -10,9 +10,12 @@ to limit package weight. Older history remains here in the repo root.
 ## 2026-05-21 — GuideCheck standard adoption (site, no bundle change)
 - .well-known/assistant-guide.txt: Added a Level 3 conforming
   `assistant-guide.txt` under the GuideCheck Human-Verifiable Assistant
-  Guide profile (profile-version 0.2.0). Bounded task: fetch the bundle
-  and integrity-check it against MANIFEST.yaml. ASCII byte profile, 6963
-  bytes, two approval-gated action blocks.
+  Guide profile (profile-version 0.2.0, guide-version 1.0.1). Bounded
+  task: fetch the bundle and integrity-check it against MANIFEST.yaml.
+  ASCII byte profile, 6878 bytes, two approval-gated action blocks.
+  guide-version 1.0.0 verified at Level 2: a negated mention of a
+  chained-guide phrase tripped the verifier prohibited-pattern check.
+  1.0.1 drops that sentence; the no-chaining property holds by absence.
 - index.html: Added a `<link rel="assistant-guide">` discovery aid to the
   document head.
 - llms.txt: Listed the assistant guide under Links.
