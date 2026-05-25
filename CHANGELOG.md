@@ -7,6 +7,29 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 2026-05-25 - GuideCheck 0.3.0 adoption and install-copy update
+- .well-known/assistant-guide.txt: Updated the published GuideCheck
+  guide from profile-version 0.2.0 to 0.3.0, bumped guide-version to
+  1.1.0, refreshed last-reviewed, added `manifest-url`, declared
+  `runner: argv` for every action, and corrected the validation command
+  to run `bash validate.sh` from the cloned bundle directory.
+- .well-known/assistant-guide-manifest.txt: Added the GuideCheck
+  Level 4 sidecar manifest with the guide hash, byte count,
+  immutable release URL, and source repository anchor.
+- llms.txt: Updated the assistant guide link to the recommended
+  GuideCheck reference form, listed the sidecar manifest, and documented
+  the assistant guide as a core concept.
+- README.md, index.html: Updated install instructions and public-facing
+  copy to point users to the GuideCheck pre-install integrity check before
+  installing from public sources.
+- SECURITY.md: Clarified that the GuideCheck assistant guide makes
+  pre-install verification reviewable but does not certify safety or trust.
+- skill-provenance/README.md: Added GuideCheck pre-install verification
+  guidance and ecosystem reference.
+- skill-provenance/CHANGELOG.md, skill-provenance/MANIFEST.yaml:
+  Released bundle patch 4.10.1 for the in-bundle README documentation
+  update and refreshed hashes.
+
 ## 2026-05-21 — GuideCheck standard adoption (site, no bundle change)
 - .well-known/assistant-guide.txt: Added a Level 3 conforming
   `assistant-guide.txt` under the GuideCheck Human-Verifiable Assistant

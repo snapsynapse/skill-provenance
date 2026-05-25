@@ -1,13 +1,13 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 19
-version_date: 2026-05-19
-previous_version: 18
+version: 20
+version_date: 2026-05-25
+previous_version: 19
 change_summary: >
-  Reframed the guide around author-side bundle provenance, added
-  complementary-tool guidance, and clarified validate-only and trust-model
-  behavior.
+  Added GuideCheck pre-install verification guidance and references,
+  including the public assistant-guide.txt flow for checking the bundle
+  before installation.
 ---
 
 # Skill Provenance - README
@@ -93,6 +93,12 @@ subset.
 
 The skill-provenance SKILL.md needs to be accessible in whatever surface
 you're working in. How you do that depends on the agent and surface:
+
+For public installs, first verify the bundle with the GuideCheck assistant
+guide at `https://skillprovenance.dev/.well-known/assistant-guide.txt`
+or by manually cloning the repo and running `./skill-provenance/validate.sh`.
+The assistant guide is a bounded pre-install integrity check. It does not
+install the skill and does not prove the bundle is safe to run.
 
 | Surface | How to load the skill |
 |---|---|
@@ -788,6 +794,7 @@ precedes API deployment and persists across it.
 
 - [Agent Skills open standard](https://agentskills.io/home) — cross-platform spec, adopted by Claude, GitHub Copilot, Cursor, Codex, and others
 - [Agent Skills GitHub](https://github.com/agentskills/agentskills) — specification source, reference library, validation tools (`skills-ref` for frontmatter validation)
+- [GuideCheck](https://guidecheck.org/) — Human-Verifiable Assistant Guide standard used by Skill Provenance's public pre-install verification guide
 - [Anthropic example skills](https://github.com/anthropics/skills) — official skill examples and templates
 - [GitHub Copilot skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) — GitHub's Agent Skills implementation
 - [OpenAI skills](https://github.com/openai/skills) — official skill catalog for Codex

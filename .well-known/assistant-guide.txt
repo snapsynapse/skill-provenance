@@ -3,16 +3,17 @@ Assistant Guide: Skill Provenance bundle fetch and integrity check
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.2.0
-guide-version: 1.0.1
+profile-version: 0.3.0
+guide-version: 1.1.0
 applies-to: skill-provenance >=4.0.0, <5.0.0
 canonical-url: https://skillprovenance.dev/.well-known/assistant-guide.txt
 repository-url: https://github.com/snapsynapse/skill-provenance
 source-path: /.well-known/assistant-guide.txt
-last-reviewed: 2026-05-21
+last-reviewed: 2026-05-25
 status: active
 recommended-verifier: https://guidecheck.org/verify
-verifier-conformance: human-verifiable-assistant-guide-verifier >=0.2.0, <0.3.0
+verifier-conformance: human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0
+manifest-url: https://skillprovenance.dev/.well-known/assistant-guide-manifest.txt
 [/assistant-guide-metadata]
 
 Task scope
@@ -70,6 +71,7 @@ id: check-git
 class: normal
 approval: not-required
 command: git --version
+runner: argv
 cwd: .
 notes: Confirms git is available. Read-only.
 [/action]
@@ -89,7 +91,7 @@ notes: Fetches the public bundle into a new skill-provenance directory.
 id: verify-integrity
 class: code-executing
 approval: required
-command: bash skill-provenance/validate.sh
+command: bash validate.sh
 runner: argv
 cwd: skill-provenance
 notes: Recomputes SHA-256 hashes and compares them to MANIFEST.yaml.

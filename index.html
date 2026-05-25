@@ -21,7 +21,7 @@
   <meta property="og:site_name" content="Skill Provenance">
   <meta property="og:locale" content="en_US">
   <meta property="article:published_time" content="2026-01-31T00:00:00Z">
-  <meta property="article:modified_time" content="2026-05-19T00:00:00Z">
+  <meta property="article:modified_time" content="2026-05-25T00:00:00Z">
   <meta property="article:author" content="Sam Rogers">
   <meta property="article:publisher" content="https://paice.work/">
   <meta property="article:section" content="Agent Skills">
@@ -47,7 +47,7 @@
     "headline": "Skill Provenance - Portable provenance for Agent Skills",
     "description": "Portable provenance, integrity, and drift control for Agent Skills across local folders, registries, platform uploads, and multi-agent sessions.",
     "datePublished": "2026-01-31",
-    "dateModified": "2026-05-19",
+    "dateModified": "2026-05-25",
     "author": {
       "@type": "Person",
       "name": "Sam Rogers",
@@ -78,7 +78,7 @@
       {
         "@type": "CreativeWork",
         "name": "Knowledge as Code",
-        "url": "https://knowledgeascode.dev/"
+        "url": "https://knowledge-as-code.com/"
       },
       {
         "@type": "CreativeWork",
@@ -654,7 +654,13 @@ CHANGELOG.md
 <section id="start">
   <div class="container">
     <h2>Quick start</h2>
-    <p>Install the skill, then tell the agent to use it.</p>
+    <p>Verify the public bundle when appropriate, install the skill, then tell the agent to use it.</p>
+
+    <div class="install-option">
+      <h3>Verify before install</h3>
+<pre>https://skillprovenance.dev/.well-known/assistant-guide.txt</pre>
+      <p class="note">This GuideCheck assistant guide fetches the public repo and runs the manifest integrity check. It does not install the skill.</p>
+    </div>
 
     <div class="install-option">
       <h3>Claude Code (Plugin)</h3>
@@ -742,7 +748,7 @@ Or use .agents/skills/ for the neutral cross-client path.</pre>
     </div>
 
     <aside class="canonical-note">
-      <strong>Canonical source.</strong> This page is the authoritative home for the Skill Provenance metaskill. Cross-posts on GitHub, ClawHub, and other registries may lag — always check the <a href="https://github.com/snapsynapse/skill-provenance/commits/main/skill-provenance/SKILL.md" target="_blank" rel="noopener">revision history</a> to verify which version you're reading.
+      <strong>Canonical source.</strong> This page is the authoritative home for the Skill Provenance metaskill. Cross-posts on GitHub, ClawHub, and other registries may lag. Use the <a href="https://skillprovenance.dev/.well-known/assistant-guide.txt" target="_blank" rel="noopener">GuideCheck assistant guide</a> for a bounded pre-install integrity check, and check the <a href="https://github.com/snapsynapse/skill-provenance/commits/main/skill-provenance/SKILL.md" target="_blank" rel="noopener">revision history</a> to verify which version you're reading.
     </aside>
   </div>
 </section>
@@ -751,15 +757,16 @@ Or use .agents/skills/ for the neutral cross-client path.</pre>
   <div class="container">
     <div class="footer-grid">
       <div class="footer-meta">
-        <p>Skill Provenance v4.10.0 &middot; <a href="https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE" target="_blank" rel="noopener license">MIT</a></p>
+        <p>Skill Provenance v4.10.1 &middot; <a href="https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE" target="_blank" rel="noopener license">MIT</a></p>
         <p>A <a href="https://paice.work/" target="_blank" rel="noopener">PAICE.work</a> project.</p>
-        <p style="margin-top: 0.5rem;">See also: <a href="https://knowledgeascode.dev" target="_blank" rel="noopener">Knowledge as Code</a> &middot; <a href="https://gracefulboundaries.dev" target="_blank" rel="noopener">Graceful Boundaries</a></p>
+        <p style="margin-top: 0.5rem;">See also: <a href="https://knowledge-as-code.com/" target="_blank" rel="noopener">Knowledge as Code</a> &middot; <a href="https://gracefulboundaries.dev/" target="_blank" rel="noopener">Graceful Boundaries</a></p>
       </div>
       <div class="footer-links">
         <a href="https://github.com/snapsynapse/skill-provenance" target="_blank" rel="noopener">GitHub</a>
         <a href="https://github.com/snapsynapse/skill-provenance/blob/main/skill-provenance/SKILL.md" target="_blank" rel="noopener">Skill</a>
         <a href="https://github.com/snapsynapse/skill-provenance/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
         <a href="https://github.com/snapsynapse/skill-provenance/commits/main/skill-provenance/SKILL.md" target="_blank" rel="noopener">Revisions</a>
+        <a href="https://skillprovenance.dev/.well-known/assistant-guide.txt" target="_blank" rel="noopener">Assistant Guide</a>
         <a href="https://clawhub.ai/snapsynapse/skill-provenance" target="_blank" rel="noopener">ClawHub</a>
         <a href="https://github.com/sponsors/snapsynapse" target="_blank" rel="noopener">Sponsor</a>
       </div>

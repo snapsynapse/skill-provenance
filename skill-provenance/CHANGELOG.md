@@ -7,6 +7,13 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 4.10.1 - 2026-05-25
+- README.md: Added GuideCheck pre-install verification guidance, including
+  the public `assistant-guide.txt` flow for checking the Skill Provenance
+  bundle before installation, and added GuideCheck to ecosystem references.
+- MANIFEST.yaml: Bumped bundle to 4.10.1, updated bundle_date, advanced
+  README.md and CHANGELOG.md per-file versions, and refreshed hashes.
+
 ## 4.10.0 — 2026-05-19
 - SKILL.md: Added validate-only protocol guidance and clarified how
   Skill Provenance complements source, registry, package-manager, and
@@ -61,13 +68,5 @@ Full release history lives in the source repository's top-level
 - .gitignore: Added `archive/` to exclusions. Historical material remains
   on disk and in git history but no longer ships with the repo.
 - MANIFEST.yaml: Bumped bundle to 4.8.0, advanced per-file revisions.
-
-## 4.7.3 — 2026-03-15
-- SKILL.md: Added provenance fields (skill_bundle, file_role, version,
-  version_date, previous_version, change_summary) to own metadata block
-  so the skill exemplifies its own convention. Changed author from
-  "Snap Synapse" to "Sam Rogers (snapsynapse.com)". Updated Origin section.
-- MANIFEST.yaml: Bumped bundle to 4.7.3, advanced SKILL.md to v14 with
-  updated hash and note.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.

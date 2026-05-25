@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 4.10.0
-bundle_date: 2026-05-19
+bundle_version: 4.10.1
+bundle_date: 2026-05-25
 description: >
   Metaskill for portable provenance, integrity, and drift control across
   Agent Skills local folders, registries, platform uploads, and multi-agent
@@ -79,9 +79,9 @@ files:
 
   - path: README.md
     role: reference
-    version: 19
-    hash: sha256:e198a22786ab86eea0e3bccc61d35bced601051cf2637e17b21f4c742658aa1c
-    note: Human-facing instructions, worked example, three-state bundle model, local validation, complementary-tool guidance, trust model, packaging, use case walkthroughs, troubleshooting, references
+    version: 20
+    hash: sha256:f8c89093739d9a392e9282bd532874f0055b23af19ceb5a5d881e77ce44213c0
+    note: Human-facing instructions, GuideCheck pre-install verification, worked example, three-state bundle model, local validation, complementary-tool guidance, trust model, packaging, use case walkthroughs, troubleshooting, references
 
   - path: evals.json
     role: evals
@@ -97,8 +97,8 @@ files:
 
   - path: CHANGELOG.md
     role: reference
-    version: 21
-    hash: sha256:da829769d92016405e6e2f9f37520acbc96506dfeaa8a12d293cd64194ed45aa
+    version: 22
+    hash: sha256:85426b0a422193f580443f4e85deded1e17286f296f3312037421c8c3e27f9ea
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh

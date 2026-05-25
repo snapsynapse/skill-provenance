@@ -30,6 +30,12 @@ authors and reviewers see whether a skill bundle still matches the state
 recorded by its manifest. It does not prove who wrote the bundle or whether
 the recorded state is safe.
 
+The public GuideCheck assistant guide at
+`https://skillprovenance.dev/.well-known/assistant-guide.txt` makes the
+pre-install verification instructions plain-text, bounded, and reviewable.
+It checks the public bundle against its manifest before install, but it
+does not certify that the bundle is safe or that the publisher is trusted.
+
 In scope:
 - Accidental drift between files and MANIFEST.yaml
 - Missing files listed in the manifest

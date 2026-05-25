@@ -60,6 +60,12 @@ and platform APIs:
 
 ## Quick install
 
+Before installing from a public source, use the GuideCheck assistant
+guide to verify the bundle fetch and manifest integrity:
+[https://skillprovenance.dev/.well-known/assistant-guide.txt](https://skillprovenance.dev/.well-known/assistant-guide.txt).
+The guide is a bounded, human-verifiable instruction surface; it checks
+the bundle before install, but does not install anything for you.
+
 **Claude Code (Plugin):**
 ```shell
 /plugin marketplace add snapsynapse/skill-provenance
@@ -149,6 +155,18 @@ ClawHub, GitHub repos, team installs, and registry packages. Before you
 install or run an unfamiliar skill, the manifest and hashes let you
 verify what you received.
 
+**Official assistant guide:**
+
+Skill Provenance publishes a GuideCheck `assistant-guide.txt` at
+[https://skillprovenance.dev/.well-known/assistant-guide.txt](https://skillprovenance.dev/.well-known/assistant-guide.txt).
+It is a plain-text, approval-gated guide for fetching this repository and
+running the local manifest integrity check. It is useful when you want an
+assistant to help verify the public bundle before you install it.
+
+Conformance is not safety. The guide and manifest confirm form and
+integrity, not publisher intent or runtime safety. Read the guide before
+approving actions.
+
 **Verifying a downloaded bundle:**
 
 ```bash
@@ -213,6 +231,8 @@ skills/close/SKILL.md            <- /skill-provenance:close (update versions on 
 skills/handoff/SKILL.md          <- /skill-provenance:handoff (generate handoff note)
 skills/bootstrap/SKILL.md        <- /skill-provenance:bootstrap (version an unversioned bundle)
 skills/skill-provenance/         <- Symlink to skill-provenance/ (monolithic skill)
+.well-known/assistant-guide.txt  <- GuideCheck assistant guide for bundle verification
+.well-known/assistant-guide-manifest.txt <- GuideCheck sidecar manifest
 skill-provenance.skill           <- Install this in Claude Settings -> Skills
 skill-provenance/                <- Canonical source bundle (metadata mode)
   SKILL.md                       <- The skill definition (what the agent reads)

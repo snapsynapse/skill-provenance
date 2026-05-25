@@ -15,6 +15,7 @@ Most ecosystem tools track source, registry, install, or deployment state. Skill
 - **Cross-platform**: Works across Claude, Codex, Gemini CLI, Copilot, Perplexity, and any agent that reads markdown
 - **Complementary tooling**: Works alongside GitHub `gh skill`, ClawHub, Skillman, and platform APIs rather than replacing them
 - **Trust model**: Provides an integrity check, not a trust anchor
+- **GuideCheck assistant guide**: Publishes a bounded pre-install verification guide at `/.well-known/assistant-guide.txt`
 
 ## Key files in a bundle
 
@@ -31,12 +32,13 @@ Most ecosystem tools track source, registry, install, or deployment state. Skill
 - ClawHub: https://clawhub.ai/snapsynapse/skill-provenance
 - Skill definition: https://github.com/snapsynapse/skill-provenance/blob/main/skill-provenance/SKILL.md
 - Changelog: https://github.com/snapsynapse/skill-provenance/blob/main/CHANGELOG.md
-- Assistant guide (GuideCheck): https://skillprovenance.dev/.well-known/assistant-guide.txt
+- [Assistant Guide](https://skillprovenance.dev/.well-known/assistant-guide.txt): bounded assistant install and integrity-check instructions
+- Assistant guide manifest: https://skillprovenance.dev/.well-known/assistant-guide-manifest.txt
 - Agent Skills spec: https://agentskills.io
 
 ## Related patterns
 
-- Knowledge as Code: https://knowledgeascode.dev/
+- Knowledge as Code: https://knowledge-as-code.com/
 - Graceful Boundaries: https://gracefulboundaries.dev/
 - PAICE.work Open Patterns: https://paice.work/
 
