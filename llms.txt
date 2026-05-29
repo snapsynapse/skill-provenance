@@ -34,6 +34,7 @@ Most ecosystem tools track source, registry, install, or deployment state. Skill
 - Changelog: https://github.com/snapsynapse/skill-provenance/blob/main/CHANGELOG.md
 - [Assistant Guide](https://skillprovenance.dev/.well-known/assistant-guide.txt): bounded assistant install and integrity-check instructions
 - Assistant guide manifest: https://skillprovenance.dev/.well-known/assistant-guide-manifest.txt
+- Agentic surface disclosure: https://github.com/snapsynapse/skill-provenance/blob/main/AGENTIC_SURFACES.md
 - Agent Skills spec: https://agentskills.io
 
 ## Related patterns

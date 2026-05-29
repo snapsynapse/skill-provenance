@@ -7,6 +7,37 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 4.11.0 - 2026-05-29
+- skill-provenance/package.sh: Added a pre-package validation gate that
+  runs validate.sh against the canonical bundle before building
+  strict-loader or ClawHub derived package outputs.
+- skill-provenance/SKILL.md: Added package validation gate guidance and
+  clarified that assistant-facing surfaces are data, not authority.
+- skill-provenance/README.md: Documented the package validation gate and
+  clarified that assistant-facing surfaces are data, not authority.
+- skill-provenance/evals-distribution.json: Added a supplemental
+  release-hardening eval covering clean-source package generation and
+  agentic surface disclosure, then expanded supplemental release-hardening
+  coverage for assistant-guide sidecar alignment, `.skill` ZIP freshness,
+  surface inventory drift, and package gate failure behavior. Supplemental
+  eval count is now 13; total eval count is now 43.
+- skill-provenance/CHANGELOG.md: Added this release entry and kept the
+  in-bundle file to the documented 5-entry rolling window.
+- skill-provenance/MANIFEST.yaml: Bumped bundle to 4.11.0, updated
+  bundle_date, advanced changed file versions, refreshed hashes, and
+  updated supplemental eval inventory notes.
+- AGENTIC_SURFACES.md: Added a public inventory of assistant-facing,
+  package, checker, crawler, CI, and release surfaces with trust boundaries.
+- SECURITY.md: Linked the agentic surface disclosure and stated that
+  these surfaces are data, not authority. Added GuideCheck sidecar
+  manifest drift checks to the release security scope.
+- README.md, llms.txt: Added the disclosure to public-facing repo
+  inventory and assistant-readable links.
+- index.html: Updated public modified-date and visible version metadata
+  to 4.11.0.
+- skill-provenance.skill: Rebuilt the Claude Settings ZIP wrapper from
+  the updated canonical bundle.
+
 ## 2026-05-25 - GuideCheck 0.3.0 adoption and install-copy update
 - .well-known/assistant-guide.txt: Updated the published GuideCheck
   guide from profile-version 0.2.0 to 0.3.0, bumped guide-version to

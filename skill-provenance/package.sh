@@ -76,6 +76,15 @@ else
   fail "neither shasum nor sha256sum found"
 fi
 
+validate_source_bundle() {
+  if [ ! -x "$BUNDLE_DIR/validate.sh" ]; then
+    fail "validate.sh is missing or not executable in $BUNDLE_DIR"
+  fi
+
+  echo "Verifying canonical bundle before packaging..."
+  "$BUNDLE_DIR/validate.sh" "$BUNDLE_DIR"
+}
+
 manifest_paths() {
   awk '
     /^[[:space:]]*-[[:space:]]*path:[[:space:]]*/ {
@@ -354,6 +363,8 @@ build_variant() {
   update_hashes "$dest_dir"
   echo "Built $mode package at $dest_dir"
 }
+
+validate_source_bundle
 
 if [ "$MODE" = "all" ]; then
   build_variant "strict" "$OUTPUT_PARENT/strict"

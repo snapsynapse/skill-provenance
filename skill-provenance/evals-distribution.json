@@ -154,6 +154,115 @@
         "Checks that the in-bundle changelog still satisfies the rolling 5-entry policy after adding the new release",
         "Flags mismatches between release metadata and changelog headings before packaging"
       ]
+    },
+    {
+      "id": 109,
+      "name": "derived_package_requires_clean_source",
+      "description": "Tests that derived package generation refuses to package a canonical bundle whose manifest no longer verifies.",
+      "prompt": "Before preparing strict-platform and ClawHub package outputs, confirm that the canonical source bundle is clean and that the repo discloses assistant-facing trust boundaries.",
+      "files": [
+        "MANIFEST.yaml",
+        "package.sh",
+        "validate.sh",
+        "README.md",
+        "../AGENTIC_SURFACES.md",
+        "../SECURITY.md"
+      ],
+      "expectations": [
+        "Runs validate.sh against the canonical bundle before building derived package outputs",
+        "Stops package generation if manifest hashes mismatch or listed files are missing",
+        "Does not treat generated strict or registry packages as canonical source bundles",
+        "Checks that assistant-facing surfaces are inventoried as data rather than authority",
+        "Flags release preparation as incomplete if the disclosure is missing after assistant-facing surfaces change"
+      ]
+    },
+    {
+      "id": 110,
+      "name": "assistant_guide_manifest_hash_alignment",
+      "description": "Tests that the GuideCheck sidecar manifest stays aligned with the public assistant guide before release.",
+      "prompt": "Please verify the GuideCheck assistant guide sidecar before release. The manifest should disclose the current guide hash, byte count, immutable release URL, and source anchor.",
+      "files": [
+        "../.well-known/assistant-guide.txt",
+        "../.well-known/assistant-guide-manifest.txt",
+        "../SECURITY.md",
+        "../CHANGELOG.md"
+      ],
+      "expectations": [
+        "Computes the SHA-256 hash of .well-known/assistant-guide.txt and compares it to guide-sha256",
+        "Computes the assistant guide byte count and compares it to guide-bytes",
+        "Checks that canonical-url, repository-url, immutable-release-url, profile, and profile-version are present",
+        "Flags the release as incomplete when guide content changes without sidecar manifest updates",
+        "Does not treat sidecar manifest alignment as proof that the guide is safe"
+      ]
+    },
+    {
+      "id": 111,
+      "name": "skill_zip_matches_canonical_bundle",
+      "description": "Tests that the Claude Settings .skill ZIP wrapper is rebuilt from the current canonical bundle after bundle file changes.",
+      "prompt": "Before publishing this bundle, verify that skill-provenance.skill contains the current canonical bundle files and not a stale ZIP from a prior release.",
+      "files": [
+        "MANIFEST.yaml",
+        "SKILL.md",
+        "README.md",
+        "evals.json",
+        "evals-distribution.json",
+        "CHANGELOG.md",
+        "validate.sh",
+        "package.sh",
+        "../skill-provenance.skill"
+      ],
+      "expectations": [
+        "Inspects the .skill ZIP file list and confirms it contains the canonical bundle directory",
+        "Confirms each manifest-listed canonical file is present in the archive under the expected path",
+        "Compares archived file contents or hashes against the current canonical bundle files",
+        "Flags stale ZIP artifacts when bundle files changed after the archive was built",
+        "Reports the .skill artifact digest for release notes when packaging is in scope"
+      ]
+    },
+    {
+      "id": 112,
+      "name": "agentic_surface_inventory_drift",
+      "description": "Tests that known assistant-facing and machine-readable repo surfaces are disclosed in the trust-boundary inventory.",
+      "prompt": "Review the repo's assistant-facing surfaces before release and confirm AGENTIC_SURFACES.md is complete.",
+      "files": [
+        "../AGENTIC_SURFACES.md",
+        "../llms.txt",
+        "../.well-known/assistant-guide.txt",
+        "../.well-known/assistant-guide-manifest.txt",
+        "../.claude-plugin/plugin.json",
+        "../.github/workflows/validate.yml",
+        "../robots.txt",
+        "../sitemap.xml",
+        "../index.html",
+        "SKILL.md",
+        "../skills/validate/SKILL.md"
+      ],
+      "expectations": [
+        "Scans for assistant-facing files, plugin metadata, public guides, CI checkers, crawler hints, landing metadata, and release artifacts",
+        "Checks that each discovered surface is named in AGENTIC_SURFACES.md or explicitly classified as out of scope",
+        "Verifies that the disclosure states surfaces are data rather than authority",
+        "Flags new surfaces that change trust boundaries, executable behavior, package paths, or public verification story",
+        "Does not allow README or llms.txt links to substitute for the disclosure inventory"
+      ]
+    },
+    {
+      "id": 113,
+      "name": "package_gate_blocks_dirty_manifest",
+      "description": "Tests that package.sh exits nonzero and creates no derived package when canonical bundle validation fails.",
+      "prompt": "Simulate a dirty canonical bundle and confirm package.sh refuses to produce strict or ClawHub outputs.",
+      "files": [
+        "MANIFEST.yaml",
+        "package.sh",
+        "validate.sh",
+        "README.md"
+      ],
+      "expectations": [
+        "Introduces or detects a controlled manifest mismatch in a disposable copy rather than damaging the source tree",
+        "Runs package.sh against that dirty copy and observes a nonzero exit before package output is created",
+        "Confirms strict and ClawHub package directories are absent or empty after the failed run",
+        "Restores or discards the dirty disposable copy after the negative test",
+        "Treats package creation after failed canonical validation as a release blocker"
+      ]
     }
   ]
 }

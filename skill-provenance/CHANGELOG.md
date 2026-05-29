@@ -7,6 +7,23 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 4.11.0 - 2026-05-29
+- package.sh: Added a pre-package validation gate that runs validate.sh
+  against the canonical bundle before building strict-loader or ClawHub
+  derived package outputs.
+- SKILL.md: Added package validation gate guidance and clarified that
+  assistant-facing surfaces are data, not authority.
+- README.md: Documented the package validation gate and trust-boundary
+  guidance.
+- evals-distribution.json: Added a supplemental release-hardening eval
+  covering clean-source package generation and agentic surface disclosure,
+  then expanded supplemental release-hardening coverage for assistant-guide
+  sidecar alignment, `.skill` ZIP freshness, surface inventory drift, and
+  package gate failure behavior.
+- MANIFEST.yaml: Bumped bundle to 4.11.0, updated bundle_date, advanced
+  SKILL.md, README.md, evals-distribution.json, CHANGELOG.md, and package.sh
+  per-file versions, and refreshed hashes.
+
 ## 4.10.1 - 2026-05-25
 - README.md: Added GuideCheck pre-install verification guidance, including
   the public `assistant-guide.txt` flow for checking the Skill Provenance
@@ -56,17 +73,5 @@ Full release history lives in the source repository's top-level
 - README.md (root): Reframed to lead with trust and integrity
   verification. Added audience hooks, Integrity column to comparison
   table, ProSkills.md and ClawHub installs badges.
-
-## 4.8.0 — 2026-03-23
-- Added Claude Code plugin infrastructure: `.claude-plugin/plugin.json`
-  manifest and `skills/skill-provenance` symlink so the repo doubles as a
-  Claude Code plugin without restructuring the existing bundle.
-- README.md (root): Added Claude Code plugin install as the first quick
-  install method. Updated example version from 4.2.1 to 4.7.3. Added
-  `.claude-plugin/` and `skills/` to repo structure diagram.
-- SKILL.md: Version bump only (v14 → v15). No definition changes.
-- .gitignore: Added `archive/` to exclusions. Historical material remains
-  on disk and in git history but no longer ships with the repo.
-- MANIFEST.yaml: Bumped bundle to 4.8.0, advanced per-file revisions.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.
