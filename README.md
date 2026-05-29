@@ -12,6 +12,18 @@
 Portable provenance, integrity, and drift control for Agent Skills across
 local folders, registries, platform uploads, and multi-agent sessions.
 
+## Who this is for
+
+Teams that build, distribute, or run Agent Skills across multiple surfaces and need to know a bundle is the version they trust and hasn't silently drifted.
+
+## What problem it solves
+
+Agent Skills move across local folders, registries, and platform uploads with no portable way to verify version, integrity, or drift. Skill Provenance makes a bundle's identity and integrity travel with it.
+
+## Canonical URL
+
+https://skillprovenance.dev/
+
 ```
 Before                              After
 ------                              -----
