@@ -251,7 +251,6 @@ skills/validate/SKILL.md         <- /skill-provenance:validate (hash/inventory c
 skills/close/SKILL.md            <- /skill-provenance:close (update versions on session end)
 skills/handoff/SKILL.md          <- /skill-provenance:handoff (generate handoff note)
 skills/bootstrap/SKILL.md        <- /skill-provenance:bootstrap (version an unversioned bundle)
-skills/skill-provenance/         <- Symlink to skill-provenance/ (monolithic skill)
 .well-known/assistant-guide.txt  <- GuideCheck assistant guide for bundle verification
 .well-known/assistant-guide-manifest.txt <- GuideCheck sidecar manifest
 AGENTIC_SURFACES.md              <- Agent-facing surface inventory and trust boundaries
@@ -270,7 +269,7 @@ AGENTS.md                        <- Guide for agents working on this repo
 CONTRIBUTING.md                  <- How to contribute
 ```
 
-The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible ZIP wrapper around it. The `.claude-plugin/` directory and `skills/` make this repo double as a Claude Code plugin. Five focused skills (`open`, `validate`, `close`, `handoff`, `bootstrap`) extract specific workflows from the monolithic SKILL.md. The symlink preserves `/skill-provenance:skill-provenance` as the full monolithic skill.
+The directory is the canonical cross-platform source bundle. The `.skill` file is a Claude-compatible ZIP wrapper around it. The `.claude-plugin/` directory and `skills/` make this repo double as a Claude Code plugin. Five focused skills (`open`, `validate`, `close`, `handoff`, `bootstrap`) extract specific workflows from the monolithic SKILL.md. If you keep a local `skills/skill-provenance` symlink for compatibility, it is ignored by git and is not part of the published repo.
 
 
 ## Evals

@@ -13,7 +13,7 @@ the action.
 | Surface | Purpose | Trust boundary |
 |---|---|---|
 | `skill-provenance/SKILL.md` | Canonical skill definition read by assistants. | Advisory workflow text. It cannot authorize tool access, installs, commits, tags, network calls, or policy bypasses. |
-| `skills/*/SKILL.md` | Claude Code plugin commands for open, validate, close, handoff, and bootstrap workflows. | Command-specific guidance only. Each command remains subordinate to user approval and repository policy. |
+| `skills/*/SKILL.md` | Claude Code plugin commands for open, validate, close, handoff, and bootstrap workflows. | Command-specific guidance only. Each command remains subordinate to user approval and repository policy. Local compatibility symlinks under `skills/` are ignored unless explicitly tracked. |
 | `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` | Plugin metadata for Claude Code discovery and installation. | Metadata for packaging and discovery. It is not a security endorsement. |
 | `skill-provenance/MANIFEST.yaml` | Bundle inventory, per-file versions, and SHA-256 hashes. | Integrity control file. It detects drift against recorded state but is not a signature or trust anchor. |
 | `skill-provenance/validate.sh` | Zero-dependency manifest verification helper. | Code-executing script. Review context and run with least privilege. |

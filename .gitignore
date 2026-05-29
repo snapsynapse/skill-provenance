@@ -6,6 +6,10 @@
 archive/
 build/
 
+# Local compatibility symlink for agents that expect a monolithic skill under skills/.
+# The canonical source remains ./skill-provenance/.
+skills/skill-provenance
+
 # --- baseline additions (automated audit 2026-04-21) ---
 .env
 .env.*
