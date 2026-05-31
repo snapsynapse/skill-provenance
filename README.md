@@ -205,6 +205,17 @@ That might be intentional (a fork with local edits) or a problem
 (corruption, tampering, incomplete download). Either way, you know
 before you install.
 
+**Checking release surfaces before publishing:**
+
+```bash
+./.github/scripts/release-surface-check.sh
+```
+
+This repo-level check confirms declared eval counts, the GuideCheck
+sidecar hash and byte metadata, and `skill-provenance.skill` contents all
+match the current source tree. It is a release-confidence check, not a
+trust anchor.
+
 **What the manifest tells you:**
 - Which files belong to the bundle (and which are missing)
 - What role each file plays (skill, evals, script, reference)
@@ -246,6 +257,7 @@ tells you whether a specific copy matches. Together they answer both
 
 ```
 .claude-plugin/plugin.json       <- Claude Code plugin manifest
+.github/scripts/release-surface-check.sh <- Release-surface drift check
 skills/open/SKILL.md             <- /skill-provenance:open (verify bundle on session start)
 skills/validate/SKILL.md         <- /skill-provenance:validate (hash/inventory check only)
 skills/close/SKILL.md            <- /skill-provenance:close (update versions on session end)

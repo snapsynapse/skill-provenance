@@ -7,8 +7,8 @@ A metaskill for version tracking across Agent Skills sessions, surfaces, and pla
 - `skill-provenance/SKILL.md` -- the skill definition (what agents read)
 - `skill-provenance/MANIFEST.yaml` -- file inventory with roles, versions, SHA-256 hashes
 - `skill-provenance/CHANGELOG.md` -- rolling recent history (last 5 entries)
-- `skill-provenance/evals.json` -- 22 core evaluation scenarios
-- `skill-provenance/evals-distribution.json` -- 4 supplemental distribution evals
+- `skill-provenance/evals.json` -- 30 core evaluation scenarios
+- `skill-provenance/evals-distribution.json` -- 13 supplemental distribution evals
 - `skill-provenance/validate.sh` -- local hash verification script
 - `skill-provenance/package.sh` -- derived copy generator (strict/ClawHub)
 - `CHANGELOG.md` -- full append-only repo history
@@ -59,5 +59,6 @@ Test locally: `claude --plugin-dir .`
 5. Rebuild the `.skill` ZIP:
    ```bash
    rm -f skill-provenance.skill
-   cd skill-provenance && zip -r ../skill-provenance.skill . -x '.*'
+   zip -r skill-provenance.skill skill-provenance/
    ```
+6. Run `./.github/scripts/release-surface-check.sh` to confirm eval-count declarations, GuideCheck sidecar metadata, and the `.skill` ZIP all match the current source.

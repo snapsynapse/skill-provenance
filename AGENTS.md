@@ -11,8 +11,8 @@ skill-provenance/                ← Canonical source bundle (DO NOT rename)
 ├── README.md                    ← Human-facing user guide (has internal version header)
 ├── MANIFEST.yaml                ← File inventory: roles, versions, SHA-256 hashes
 ├── CHANGELOG.md                 ← Recent in-bundle change history (last 5 entries)
-├── evals.json                   ← 22 core evaluation scenarios
-├── evals-distribution.json      ← 4 supplemental distribution evals
+├── evals.json                   ← 30 core evaluation scenarios
+├── evals-distribution.json      ← 13 supplemental distribution evals
 ├── validate.sh                  ← Bash script for local hash verification
 └── package.sh                   ← Bash script for derived strict/ClawHub outputs
 CHANGELOG.md                     ← Full append-only repo history
@@ -48,6 +48,9 @@ The `skill-provenance/` directory is the single source of truth. The `.skill` fi
    rm -f skill-provenance.skill
    zip -r skill-provenance.skill skill-provenance/
    ```
+7. Run `./.github/scripts/release-surface-check.sh` to confirm eval-count
+   declarations, GuideCheck sidecar metadata, and the `.skill` ZIP all
+   match the current source.
 
 
 ## Key rules

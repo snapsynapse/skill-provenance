@@ -7,6 +7,25 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 2026-05-31 - Release-surface hardening checks (repo only)
+- .github/scripts/release-surface-check.sh: Added a zero-dependency
+  release-surface drift checker for declared eval counts, GuideCheck
+  sidecar hash and byte metadata, and `skill-provenance.skill` freshness
+  against the canonical bundle.
+- .github/workflows/validate.yml: Replaced the shallow `.skill` structure
+  check with the release-surface checker so CI catches stale ZIP contents,
+  stale assistant-guide sidecar metadata, and stale eval-count declarations.
+- AGENTS.md, CLAUDE.md: Updated eval inventory counts to 30 core and 13
+  supplemental evals, standardized the `.skill` rebuild command, and added
+  the release-surface check to the repo workflow.
+- AGENTIC_SURFACES.md, README.md: Disclosed the new release-surface checker
+  as a code-executing release-confidence surface and listed it in the repo
+  inventory.
+- Bundle unchanged: `skill-provenance/MANIFEST.yaml`,
+  `skill-provenance/CHANGELOG.md`, and `skill-provenance.skill` stay at
+  4.11.0 because this change only affects repo-level release automation and
+  documentation outside the tracked bundle.
+
 ## 4.11.0 - 2026-05-29
 - skill-provenance/package.sh: Added a pre-package validation gate that
   runs validate.sh against the canonical bundle before building

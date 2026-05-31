@@ -31,15 +31,5 @@ jobs:
           ./skill-provenance/package.sh clawhub /tmp/build/clawhub
           echo "ClawHub build OK"
 
-      - name: Verify .skill ZIP structure
-        run: |
-          if [ -f skill-provenance.skill ]; then
-            unzip -t skill-provenance.skill
-            unzip -l skill-provenance.skill | grep -q "SKILL.md" || {
-              echo "ERROR: SKILL.md not found in .skill archive"
-              exit 1
-            }
-            echo ".skill ZIP structure OK"
-          else
-            echo "SKIP: no .skill file in repo root"
-          fi
+      - name: Verify release surfaces
+        run: ./.github/scripts/release-surface-check.sh

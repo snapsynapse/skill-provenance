@@ -25,7 +25,8 @@ the action.
 | `.well-known/assistant-guide-manifest.txt` | Sidecar hash and release metadata for the assistant guide. | Drift disclosure for the guide. It does not certify the guide as safe. |
 | `robots.txt` and `sitemap.xml` | Crawler policy and discovery metadata. | Public indexing hints only. |
 | `index.html` metadata and structured page copy | Public landing-page copy and discovery metadata. | Marketing and documentation surface. It is not normative security policy. |
-| `.github/workflows/validate.yml` | CI checker for manifest validation, derived package builds, and `.skill` ZIP structure. | Release-confidence automation. Passing CI supports review but does not certify safety, author identity, or runtime behavior. |
+| `.github/workflows/validate.yml` | CI checker for manifest validation, derived package builds, and release-surface drift checks. | Release-confidence automation. Passing CI supports review but does not certify safety, author identity, or runtime behavior. |
+| `.github/scripts/release-surface-check.sh` | CI and local release-surface drift checker for eval counts, GuideCheck sidecar metadata, and `.skill` ZIP freshness. | Code-executing release-confidence automation. It verifies declared release surfaces against local files but is not a trust anchor or safety certification. |
 | `skill-provenance.skill` | Claude Settings ZIP wrapper around the canonical bundle. | Release artifact. Verify against release provenance before installing. |
 ## Maintenance rule
 When adding or changing an assistant-facing surface, update this file if
