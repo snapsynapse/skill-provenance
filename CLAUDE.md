@@ -8,7 +8,7 @@ A metaskill for version tracking across Agent Skills sessions, surfaces, and pla
 - `skill-provenance/MANIFEST.yaml` -- file inventory with roles, versions, SHA-256 hashes
 - `skill-provenance/CHANGELOG.md` -- rolling recent history (last 5 entries)
 - `skill-provenance/evals.json` -- 30 core evaluation scenarios
-- `skill-provenance/evals-distribution.json` -- 13 supplemental distribution evals
+- `skill-provenance/evals-distribution.json` -- 15 supplemental distribution evals
 - `skill-provenance/validate.sh` -- local hash verification script
 - `skill-provenance/package.sh` -- derived copy generator (strict/ClawHub)
 - `CHANGELOG.md` -- full append-only repo history

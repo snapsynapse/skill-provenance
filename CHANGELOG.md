@@ -7,6 +7,23 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 4.12.0 - 2026-06-10
+- skill-provenance/evals-distribution.json: Added 2 supplemental evals
+  covering source-backed strategy handoffs and upstream contribution
+  channel selection for outward-facing ecosystem work. Supplemental eval
+  count is now 15; total eval count is now 45.
+- skill-provenance/CHANGELOG.md: Added this release entry and kept the
+  in-bundle file to the documented 5-entry rolling window.
+- skill-provenance/MANIFEST.yaml: Bumped bundle to 4.12.0, updated
+  bundle_date, advanced changed file versions, refreshed hashes, and
+  updated the supplemental eval inventory note.
+- README.md, AGENTS.md, CLAUDE.md: Updated declared supplemental and
+  total eval counts where applicable.
+- index.html: Updated visible release version, modified date, and eval
+  scenario count.
+- skill-provenance.skill: Rebuilt the Claude Settings ZIP wrapper from
+  the updated canonical bundle.
+
 ## 2026-05-31 - Release-surface hardening checks (repo only)
 - .github/scripts/release-surface-check.sh: Added a zero-dependency
   release-surface drift checker for declared eval counts, GuideCheck

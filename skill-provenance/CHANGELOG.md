@@ -7,6 +7,16 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 4.12.0 - 2026-06-10
+- evals-distribution.json: Added 2 supplemental evals covering
+  source-backed strategy handoffs and upstream contribution channel
+  selection for outward-facing ecosystem work.
+- MANIFEST.yaml: Bumped bundle to 4.12.0, updated bundle_date, advanced
+  evals-distribution.json and CHANGELOG.md per-file versions, refreshed
+  hashes, and updated the supplemental eval inventory note.
+- CHANGELOG.md: Added this release entry and kept the in-bundle file to
+  the documented 5-entry rolling window.
+
 ## 4.11.0 - 2026-05-29
 - package.sh: Added a pre-package validation gate that runs validate.sh
   against the canonical bundle before building strict-loader or ClawHub
@@ -53,25 +63,5 @@ Full release history lives in the source repository's top-level
   refreshed the supplemental eval inventory note.
 - CHANGELOG.md: Added this release entry and restored the in-bundle file
   to the documented 5-entry rolling window.
-
-## 4.9.0 — 2026-04-08
-- README.md (bundle): Added two use case walkthroughs — verifying a
-  downloaded/untrusted bundle, and sharing a skill across a team.
-- evals.json: Added 4 new evals (22 → 26 core, 30 total): Settings UI
-  .skill ZIP round-trip, Copilot/VS Code bootstrap, Cursor bootstrap,
-  Cowork filesystem persistence.
-- MANIFEST.yaml: Updated Gemini CLI and Perplexity Computer from
-  partial to pass. Bumped per-file versions for README.md, evals.json,
-  SKILL.md, and CHANGELOG.md.
-- SKILL.md: Version bump only (v15 → v16). No definition changes.
-- Plugin system: Added marketplace.json so `claude plugin marketplace
-  add` and `claude plugin install` commands work end-to-end. Added
-  explicit skills path to plugin.json.
-- GitHub Pages: Added skillprovenance.dev landing page with trust/
-  integrity narrative, credibility signals, and install instructions
-  for Claude Code, Settings UI, ClawHub, Codex, and Gemini CLI.
-- README.md (root): Reframed to lead with trust and integrity
-  verification. Added audience hooks, Integrity column to comparison
-  table, ProSkills.md and ClawHub installs badges.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.

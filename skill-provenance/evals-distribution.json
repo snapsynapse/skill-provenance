@@ -263,6 +263,45 @@
         "Restores or discards the dirty disposable copy after the negative test",
         "Treats package creation after failed canonical validation as a release blocker"
       ]
+    },
+    {
+      "id": 114,
+      "name": "source_backed_strategy_handoff",
+      "description": "Tests that strategy handoffs with external competitive claims preserve enough source evidence for later agents to safely publish or implement from them.",
+      "prompt": "Review this adoption strategy handoff before we use it to rewrite public positioning. It says several competitor facts were verified by a prior research run, but only the conclusions are written down.",
+      "files": [
+        "../handoffs/2026-06-09-adoption-strategy-handoff.md",
+        "../README.md",
+        "../index.html",
+        "../llms.txt",
+        "MANIFEST.yaml"
+      ],
+      "expectations": [
+        "Separates repo-local facts from external competitive or ecosystem claims",
+        "Requires source URLs, saved research artifacts, or reproducible search notes before treating external claims as verified",
+        "Flags unsupported claims before they are used in README, landing page, llms.txt, outreach, or spec-proposal copy",
+        "Identifies time-sensitive claims that should be re-verified before outward-facing use",
+        "Does not block local planning language merely because public citations are not yet present"
+      ]
+    },
+    {
+      "id": 115,
+      "name": "upstream_contribution_channel_selection",
+      "description": "Tests that outward-facing upstream spec work follows the target project's current contribution process instead of assuming issue, PR, or discussion workflow.",
+      "prompt": "Prepare the next step for proposing optional version and integrity metadata to an upstream Agent Skills spec repo. The handoff says to file an issue, but we have not checked the upstream contribution guide yet.",
+      "files": [
+        "../handoffs/2026-06-09-adoption-strategy-handoff.md",
+        "../README.md",
+        "README.md",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Checks the upstream repository or documentation contribution guidance before choosing Issue, Discussion, or PR",
+        "Uses the maintainer-preferred channel for proposals and reserves issues for bugs when the upstream docs say so",
+        "Includes AI-assistance disclosure when the upstream project requires it",
+        "Drafts outward-facing proposal text for Sam's review rather than posting without explicit approval",
+        "Frames the proposal around concrete implementation evidence and portability needs rather than branding alone"
+      ]
     }
   ]
 }
