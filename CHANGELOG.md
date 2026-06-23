@@ -7,6 +7,28 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 4.13.0 - 2026-06-23
+- skill-provenance/SKILL.md: Added optional `origin` metadata guidance for
+  derived, installed, registry, settings, or platform-export copies whose
+  selected source path needs to survive a packaging boundary.
+- skill-provenance/README.md: Documented the `origin` block, recommended
+  fields, and the boundary between origin receipts, deployment metadata,
+  package-manager lockfiles, and trust anchors.
+- skill-provenance/evals-distribution.json: Added a supplemental eval
+  covering duplicate source-path disambiguation for derived copies.
+  Supplemental eval count is now 16; total eval count is now 46.
+- skill-provenance/CHANGELOG.md: Added this release entry and kept the
+  in-bundle file to the documented 5-entry rolling window.
+- skill-provenance/MANIFEST.yaml: Bumped bundle to 4.13.0, updated
+  bundle_date, advanced changed file versions, refreshed hashes, and
+  updated origin/eval inventory notes.
+- README.md, AGENTS.md, CLAUDE.md: Updated declared supplemental and total
+  eval counts where applicable.
+- index.html: Updated visible release version, modified date, and eval
+  scenario count.
+- skill-provenance.skill: Rebuilt the Claude Settings ZIP wrapper from
+  the updated canonical bundle.
+
 ## 4.12.0 - 2026-06-10
 - skill-provenance/evals-distribution.json: Added 2 supplemental evals
   covering source-backed strategy handoffs and upstream contribution

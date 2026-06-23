@@ -11,12 +11,12 @@ description: >
 metadata:
   skill_bundle: skill-provenance
   file_role: skill
-  version: 18
-  version_date: 2026-05-29
-  previous_version: 17
+  version: 19
+  version_date: 2026-06-23
+  previous_version: 18
   change_summary: >
-    Added security-hardening guidance for package validation gates,
-    agentic surface disclosure, and data-not-authority trust boundaries.
+    Added optional origin metadata guidance for derived copies whose
+    selected source path must survive install or package boundaries.
   author: PAICE.work PBC (paice.work)
   source: https://github.com/snapsynapse/skill-provenance
 ---
@@ -201,6 +201,17 @@ deployments:
   perplexity:
     package_format: zip
 
+origin:
+  source_kind: git-repo
+  source: owner/repo
+  resolved_ref: main@abc123
+  selected_source_path: skills/my-skill
+  ignored_duplicate_source_paths:
+    - examples/agent-skills/my-skill
+    - .well-known/agent-skills/my-skill
+  derived_from_bundle_version: 5.1.0
+  target_surface: codex
+
 files:
   - path: SKILL.md
     role: skill
@@ -250,6 +261,12 @@ of the same bundle when you want traceability across surfaces. Keep
 `bundle_version` as the author-side semver source of truth. Platform-native
 versions (for example API timestamps) stay in `deployments`, not in
 `bundle_version`.
+
+**origin** is optional. Use it in derived strict-platform copies, registry
+packages, settings exports, or installed copies when the selected source
+path matters. It records which source path crossed the boundary and which
+lookalike duplicate paths were intentionally ignored. Do not use it as a
+package-manager lockfile, installer state machine, or trust anchor.
 
 **version: null** for source files. They are tracked for completeness but
 not versioned by this system.
@@ -377,6 +394,13 @@ Do not treat generated strict-loader, ClawHub, or `.skill` outputs as the
 canonical source bundle. They are derived artifacts whose own manifests
 must describe exactly the files they contain.
 
+When a derived copy is selected from a repo, registry package, archive, or
+platform export that contains multiple lookalike skills, preserve that
+selection in optional `origin` metadata if the user or installer provides
+the source facts. Record `selected_source_path` and any intentionally
+ignored duplicate paths, but leave consumer lockfile and update semantics
+to the package manager.
+
 ### Opening a session
 
 When a skill bundle is loaded into a new session:
@@ -477,6 +501,10 @@ Treat one skill as moving through three states:
   ZIP or ClawHub upload. It may omit development-only files, but its
   `MANIFEST.yaml` must describe exactly what the package contains. Update
   `deployments` only after a real publish, reinstall, or redeploy.
+- **Origin metadata:** A derived or installed copy may carry an optional
+  `origin` block to preserve source kind, source identifier, resolved ref,
+  selected source path, ignored duplicate paths, source bundle version, and
+  target surface. This is receipt metadata, not an installer or lockfile.
 
 Surface notes:
 - **Claude Chat:** Stateless upload/download boundary. Verify on open and

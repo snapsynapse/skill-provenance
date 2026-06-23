@@ -1,12 +1,12 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 21
-version_date: 2026-05-29
-previous_version: 20
+version: 22
+version_date: 2026-06-23
+previous_version: 21
 change_summary: >
-  Documented pre-package source validation and clarified assistant-facing
-  trust boundaries.
+  Documented optional origin metadata for derived copies selected from
+  repos, registries, archives, or platform exports with duplicate skill paths.
 ---
 
 # Skill Provenance - README
@@ -124,6 +124,12 @@ Treat the bundle as moving through three states:
 
 This keeps the canonical bundle stable while install and publish targets
 stay explicit and reproducible.
+
+Derived or installed copies can also carry optional `origin` metadata in
+`MANIFEST.yaml` when the selected source path matters. This is useful when
+one repo, archive, or registry package contains a canonical skill plus
+example, discovery, or platform-specific mirrors with the same logical
+skill name.
 
 ### Where to find and manage skills in Claude settings
 
@@ -429,6 +435,47 @@ When you deploy or reinstall a skill, update the manifest and changelog if
 you want traceability across those copies. When you edit locally without
 redeploying, the deployment metadata becomes a useful reminder that the
 deployed surface may be stale.
+
+### Origin metadata for derived copies
+
+Use optional `origin:` metadata when a derived or installed copy needs to
+remember which source path was selected. This is separate from
+`deployments:`: deployments describe where copies live now; origin
+describes what source path crossed the install or packaging boundary.
+
+Example:
+
+```yaml
+origin:
+  source_kind: git-repo
+  source: owner/repo
+  resolved_ref: main@abc123
+  selected_source_path: skills/context-receipts
+  ignored_duplicate_source_paths:
+    - examples/agent-skills/context-receipts
+    - .well-known/agent-skills/context-receipts
+  derived_from_bundle_version: 1.2.3
+  target_surface: codex
+```
+
+Recommended fields:
+- `source_kind`: `git-repo`, `registry`, `archive`, or `platform-export`
+- `source`: repo name, package identifier, or URL
+- `resolved_ref`: tag, commit, release asset hash, registry version, or
+  other immutable source reference when available
+- `selected_source_path`: path inside the source that was packaged or
+  installed
+- `ignored_duplicate_source_paths`: lookalike paths intentionally ignored
+  during selection
+- `derived_from_bundle_version`: source bundle version if known
+- `target_surface`: installed or packaged target such as `claude-code`,
+  `codex`, `gemini-cli`, `openclaw`, or `other`
+
+Keep this block optional and receipt-like. Skill Provenance does not
+choose between duplicate source paths by itself, manage installs, resolve
+updates, or replace package-manager lockfiles. It preserves the selection
+made by an installer, packager, or human when that selection matters for
+later audit.
 
 ### What if I forget to carry the manifest?
 
@@ -751,6 +798,10 @@ Source pinning and registry versioning reduce risk. They do not replace
 bundle-local staleness detection, changelogs, hashes, or cross-surface
 drift checks.
 
+Optional `origin` metadata can bridge the boundary between these systems
+by preserving the selected source path and ignored duplicate paths inside
+a derived copy. It is not a package-manager lockfile and should not be
+treated as proof that a source, installer, registry, or package is trusted.
 
 ## Relationship to the Agent Skills specification
 

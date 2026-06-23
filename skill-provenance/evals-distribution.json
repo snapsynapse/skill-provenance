@@ -302,6 +302,24 @@
         "Drafts outward-facing proposal text for Sam's review rather than posting without explicit approval",
         "Frames the proposal around concrete implementation evidence and portability needs rather than branding alone"
       ]
+    },
+    {
+      "id": 116,
+      "name": "derived_copy_origin_metadata",
+      "description": "Tests that derived or installed copies can preserve selected source path without turning Skill Provenance into an installer or package-manager lockfile.",
+      "prompt": "A repo has skills/context-receipts/SKILL.md plus examples/agent-skills/context-receipts/SKILL.md and .well-known/agent-skills/context-receipts/SKILL.md. I selected the canonical skills/context-receipts path for a Codex install. How should the derived copy preserve that choice?",
+      "files": [
+        "MANIFEST.yaml",
+        "SKILL.md",
+        "README.md"
+      ],
+      "expectations": [
+        "Recommends optional MANIFEST.yaml origin metadata for the derived or installed copy",
+        "Records source_kind, source, resolved_ref when known, selected_source_path, ignored_duplicate_source_paths, derived_from_bundle_version when known, and target_surface",
+        "Distinguishes origin metadata from deployments metadata: origin records what crossed the boundary, deployments records where copies live",
+        "States that Skill Provenance does not choose between duplicate source paths, manage installs, resolve updates, or replace package-manager lockfiles",
+        "Treats origin metadata as audit receipt data rather than a trust anchor"
+      ]
     }
   ]
 }

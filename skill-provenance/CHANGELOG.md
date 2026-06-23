@@ -7,6 +7,22 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 4.13.0 - 2026-06-23
+- SKILL.md: Added optional `origin` metadata guidance for derived,
+  installed, registry, settings, or platform-export copies whose selected
+  source path needs to survive a packaging boundary.
+- README.md: Documented the `origin` block, recommended fields, and the
+  boundary between origin receipts, deployment metadata, package-manager
+  lockfiles, and trust anchors.
+- evals-distribution.json: Added a supplemental eval covering duplicate
+  source-path disambiguation for derived copies. Supplemental eval count
+  is now 16; total eval count is now 46.
+- MANIFEST.yaml: Bumped bundle to 4.13.0, updated bundle_date, advanced
+  changed file versions, refreshed hashes, and updated origin/eval
+  inventory notes.
+- CHANGELOG.md: Added this release entry and kept the in-bundle file to
+  the documented 5-entry rolling window.
+
 ## 4.12.0 - 2026-06-10
 - evals-distribution.json: Added 2 supplemental evals covering
   source-backed strategy handoffs and upstream contribution channel
@@ -53,15 +69,5 @@ Full release history lives in the source repository's top-level
   and derived-copy validation.
 - MANIFEST.yaml: Bumped bundle to 4.10.0, updated bundle_date, advanced
   changed file versions, refreshed hashes, and updated eval inventory notes.
-
-## 4.9.1 — 2026-04-23
-- evals-distribution.json: Added 4 supplemental repo-integrity evals for
-  rolling changelog enforcement, declared eval-count verification,
-  repo-doc inventory drift checks, and release metadata alignment.
-- MANIFEST.yaml: Bumped bundle to 4.9.1, updated bundle_date, advanced
-  evals-distribution.json and CHANGELOG.md per-file versions, and
-  refreshed the supplemental eval inventory note.
-- CHANGELOG.md: Added this release entry and restored the in-bundle file
-  to the documented 5-entry rolling window.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.
