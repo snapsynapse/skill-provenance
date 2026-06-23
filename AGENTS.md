@@ -15,6 +15,7 @@ skill-provenance/                ← Canonical source bundle (DO NOT rename)
 ├── evals-distribution.json      ← 16 supplemental distribution evals
 ├── validate.sh                  ← Bash script for local hash verification
 └── package.sh                   ← Bash script for derived strict/ClawHub outputs
+action.yml                       ← GitHub Actions Marketplace wrapper for validate.sh
 CHANGELOG.md                     ← Full append-only repo history
 skill-provenance.skill           ← Claude Settings ZIP (rebuilt from the directory)
 ```

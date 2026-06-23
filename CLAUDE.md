@@ -11,6 +11,7 @@ A metaskill for version tracking across Agent Skills sessions, surfaces, and pla
 - `skill-provenance/evals-distribution.json` -- 16 supplemental distribution evals
 - `skill-provenance/validate.sh` -- local hash verification script
 - `skill-provenance/package.sh` -- derived copy generator (strict/ClawHub)
+- `action.yml` -- GitHub Actions Marketplace wrapper for bundle validation
 - `CHANGELOG.md` -- full append-only repo history
 - `AGENTS.md` -- detailed guide for agents working on this repo
 

@@ -113,6 +113,15 @@ directory bundle can be placed there when you want a neutral install path.
 **ClawHub:**
 `clawhub install skill-provenance`
 
+**GitHub Actions Marketplace:**
+```yaml
+steps:
+  - uses: actions/checkout@v4
+  - uses: snapsynapse/skill-provenance@v4.13.1
+    with:
+      bundle-path: skill-provenance
+```
+
 Then tell the agent:
 > "Use the skill-provenance skill to bootstrap this bundle."
 
@@ -256,7 +265,9 @@ tells you whether a specific copy matches. Together they answer both
 ## What's in this repo
 
 ```
+.github/workflows/validate.yml  <- CI workflow and local Action smoke test
 .claude-plugin/plugin.json       <- Claude Code plugin manifest
+action.yml                       <- GitHub Actions Marketplace wrapper
 .github/scripts/release-surface-check.sh <- Release-surface drift check
 skills/open/SKILL.md             <- /skill-provenance:open (verify bundle on session start)
 skills/validate/SKILL.md         <- /skill-provenance:validate (hash/inventory check only)

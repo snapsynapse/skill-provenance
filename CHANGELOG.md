@@ -7,6 +7,21 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 4.13.1 - 2026-06-23
+- action.yml: Added a root GitHub Actions Marketplace composite action
+  wrapper that runs `skill-provenance/validate.sh` against a configurable
+  bundle path.
+- .github/workflows/validate.yml: Switched the manifest validation step to
+  use the local action so the Marketplace wrapper is exercised in CI.
+- AGENTIC_SURFACES.md: Added the new GitHub Actions Marketplace surface
+  and its trust boundary.
+- README.md, AGENTS.md, CLAUDE.md: Documented the Marketplace action and
+  updated repo inventories.
+- Bundle unchanged: `skill-provenance/MANIFEST.yaml`,
+  `skill-provenance/CHANGELOG.md`, and `skill-provenance.skill` remain at
+  4.13.0 because this change only adds a repo-level GitHub Actions
+  distribution surface.
+
 ## 4.13.0 - 2026-06-23
 - skill-provenance/SKILL.md: Added optional `origin` metadata guidance for
   derived, installed, registry, settings, or platform-export copies whose

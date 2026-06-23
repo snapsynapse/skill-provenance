@@ -16,9 +16,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Verify bundle hashes
-        run: |
-          chmod +x skill-provenance/validate.sh
-          ./skill-provenance/validate.sh skill-provenance
+        uses: ./
+        with:
+          bundle-path: skill-provenance
 
       - name: Test strict package build
         run: |

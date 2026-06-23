@@ -1,0 +1,17 @@
+name: Skill Provenance Validate
+description: Validate an Agent Skill bundle against its Skill Provenance manifest.
+author: PAICE.work PBC
+branding:
+  icon: shield
+  color: green
+inputs:
+  bundle-path:
+    description: Path to the skill bundle directory containing MANIFEST.yaml.
+    required: false
+    default: skill-provenance
+runs:
+  using: composite
+  steps:
+    - name: Validate Skill Provenance manifest
+      shell: bash
+      run: '"$GITHUB_ACTION_PATH/skill-provenance/validate.sh" "${{ inputs.bundle-path }}"'
