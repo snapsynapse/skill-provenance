@@ -7,6 +7,31 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 5.0.0 - 2026-07-10
+- skill-provenance/validate.sh: Made manifest verification fail closed on
+  missing, malformed, or duplicate hash fields; added explicit
+  `hash: null` opt-outs; repaired missing or malformed hashes in update
+  mode; and kept inventory checks active for opted-out files.
+- action.yml: Transported caller-controlled `bundle-path` through an
+  environment variable instead of interpolating it into Bash source.
+- .github/scripts/action-security-check.sh,
+  .github/scripts/test-validate.sh, .github/workflows/validate.yml: Added
+  and enabled regression coverage for action input transport and validator
+  hash-state behavior.
+- skill-provenance/SKILL.md and skill-provenance/README.md: Defined and
+  documented the explicit hash contract and breaking fail-closed behavior.
+- skill-provenance/evals.json: Added 3 core security and recovery evals.
+- skill-provenance/evals-distribution.json: Added a composite-action shell
+  safety eval. Coverage is now 33 core and 17 supplemental, 50 total.
+- skill-provenance/MANIFEST.yaml and skill-provenance/CHANGELOG.md: Bumped
+  the canonical bundle to 5.0.0, advanced per-file versions, updated the
+  rolling history, and refreshed inventory metadata.
+- README.md, AGENTS.md, CLAUDE.md, AGENTIC_SURFACES.md, and index.html:
+  Updated eval counts, executable-surface disclosure, release version, and
+  public modified date.
+- skill-provenance.skill: Rebuilt the Claude Settings ZIP from the
+  canonical 5.0.0 bundle.
+
 ## 4.13.1 - 2026-06-23
 - action.yml: Added a root GitHub Actions Marketplace composite action
   wrapper that runs `skill-provenance/validate.sh` against a configurable

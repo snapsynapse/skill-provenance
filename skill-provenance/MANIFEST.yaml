@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 4.13.0
-bundle_date: 2026-06-23
+bundle_version: 5.0.0
+bundle_date: 2026-07-10
 description: >
   Metaskill for portable provenance, integrity, and drift control across
   Agent Skills local folders, registries, platform uploads, and multi-agent
@@ -73,39 +73,39 @@ dependencies: []
 files:
   - path: SKILL.md
     role: skill
-    version: 19
-    hash: sha256:7cbc23e6b6e769baf41e16ec363f3f2731287d83ab025c1ec923bf07f8738081
-    note: Canonical skill definition with validate-only protocol guidance, package validation gate guidance, agentic surface disclosure, complementary-tool positioning, optional origin metadata for derived copies, and full provenance metadata in frontmatter.
+    version: 20
+    hash: sha256:b2fddacaf2ab27976679b3329c98f466be74c1b54a15552d5108f0818e20211d
+    note: Canonical skill definition with fail-closed hash semantics, explicit null opt-outs, validate-only protocol guidance, package validation gates, origin metadata, and full provenance metadata in frontmatter.
 
   - path: README.md
     role: reference
-    version: 22
-    hash: sha256:a100f305a5875fae0dc7d2ae836e21646e3bb0f740d22bbd92a81818466b7177
-    note: Human-facing instructions, GuideCheck pre-install verification, worked example, three-state bundle model, origin metadata for derived copies, local validation, complementary-tool guidance, trust model, packaging, use case walkthroughs, troubleshooting, references
+    version: 23
+    hash: sha256:4cdc97bc14724083dde8743b5e26d428ec6fd94eae2e0310572932c09ef07fbf
+    note: Human-facing instructions for fail-closed validation, explicit null opt-outs, update repair, GuideCheck verification, origin metadata, packaging, trust model, and troubleshooting
 
   - path: evals.json
     role: evals
-    version: 11
-    hash: sha256:a4466f3d4b2bc2b2374db6e04099e1c243a2706c020573d5ad3fbde49b0e8765
-    note: 30 evals covering bootstrap, verify, save, conflict, optional handoff, cross-platform, frontmatter mode, compatibility block, Gemini CLI, Gemini Gems, git commit messaging, per-file handoff, local validation, API surface, dependencies, deployment drift, multi-surface installs, trust checks, redeploy events, deployment conflicts, hash mismatches, packaged subsets, Settings UI round-trip, Copilot/VS Code bootstrap, Cursor bootstrap, Cowork persistence, validate-only behavior, complementary-tool positioning, integrity trust model, derived-copy validation
+    version: 12
+    hash: sha256:e9090f14f61b8e9763a0a459047f3d570240c475fd00765e82b45da35890b6a3
+    note: 33 core evals including fail-closed missing or malformed hashes, explicit null opt-outs, update repair, and prior provenance, portability, deployment, validation, and trust workflows
 
   - path: evals-distribution.json
     role: evals
-    version: 6
-    hash: sha256:49bb6002bb161579d7935640132cc1b68a08d42c06c709efdf279fb5f487da24
-    note: 16 supplemental evals covering strict-platform copies, ClawHub package preparation, publish confirmation, registry installs versus canonical bundles, derived-copy origin metadata, and repo-integrity checks for changelog retention, eval counts, inventory drift, release metadata alignment, source validation before packaging, assistant-guide sidecar alignment, .skill ZIP freshness, agentic surface disclosure, package gate failure behavior, source-backed strategy handoffs, and upstream contribution channel selection
+    version: 7
+    hash: sha256:7978b9207a79ac23e4cd2ba7468e5de5d66d972f81eb2fcea08e56e6515247fb
+    note: 17 supplemental evals covering GitHub Action shell safety, strict-platform and ClawHub packaging, origin metadata, release integrity, surface disclosure, and source-backed ecosystem workflows
 
   - path: CHANGELOG.md
     role: reference
-    version: 25
-    hash: sha256:4aadc3bad93dbe8beee8ac66ccda3d7609361213aebb04d04efb13f437dad2bb
+    version: 26
+    hash: sha256:84a6547790e3d5cce71d94cbad1e61afb0828072c8221ed07ea1e111ae301890
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh
     role: script
-    version: 5
-    hash: sha256:333b6585a72818ae2d0196ef517bebf4e4b909e4a17405b526c6d1ec37be0406
-    note: Zero-dependency bash script for local hash verification and update against MANIFEST.yaml
+    version: 6
+    hash: sha256:b02781db6192e4e7c16e42a99d85ad7e0c3493bf89c811ede71f44d8de64cf08
+    note: Zero-dependency fail-closed hash verification and repair with explicit hash null opt-outs
 
   - path: package.sh
     role: script

@@ -1,12 +1,12 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 22
-version_date: 2026-06-23
-previous_version: 21
+version: 23
+version_date: 2026-07-10
+previous_version: 22
 change_summary: >
-  Documented optional origin metadata for derived copies selected from
-  repos, registries, archives, or platform exports with duplicate skill paths.
+  Documented fail-closed hash validation, explicit null opt-outs, and
+  update-mode repair for missing or malformed manifest hashes.
 ---
 
 # Skill Provenance - README
@@ -395,8 +395,9 @@ project, so the bundle stays put between sessions.
 3. **Commit with a message** that references the bundle version:
    `my-skill 5.1.0: added validation phase, updated checklist`
 4. **Optionally tag:** `git tag my-skill-5.1.0`
-5. The manifest hashes can be omitted in git since git handles integrity,
-   but version numbers and change summaries remain required.
+5. If git provides the integrity layer, set intentionally unpinned entries
+   to `hash: null`. Do not omit the hash field: absence is treated as an
+   invalid manifest so accidental truncation cannot pass validation.
 
 #### Any surface → ClawHub (publishing)
 
@@ -569,11 +570,16 @@ correct hashes already in place.
 ### Details
 
 The script reads `MANIFEST.yaml`, computes actual SHA-256 hashes for
-each file, and reports matches, mismatches, and missing files. Files
-without hashes in the manifest are skipped. `MANIFEST.yaml` itself is not
-self-listed, so the script treats it as the control file rather than a
-hash target. Exit code 0 means all hashes verified (or updated); exit code 1
-means missing files were found.
+each file, and reports matches, mismatches, invalid manifest entries, and
+missing files. Every entry must contain either a lowercase 64-character
+`sha256:` value or the explicit opt-out `hash: null`. Missing, malformed,
+or duplicate hash fields fail verification. Update mode repairs missing or
+malformed hashes for files that are present and preserves explicit null
+opt-outs. Null-hash entries are still checked for file presence.
+`MANIFEST.yaml` itself is not self-listed, so the script treats it as the
+control file rather than a hash target. Exit code 0 means all pinned hashes
+verified (or updated); exit code 1 means a mismatch, invalid entry, or
+missing file was found.
 
 Zero dependencies beyond `bash`, `shasum` or `sha256sum`, and `awk`.
 

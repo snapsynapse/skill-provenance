@@ -14,4 +14,6 @@ runs:
   steps:
     - name: Validate Skill Provenance manifest
       shell: bash
-      run: '"$GITHUB_ACTION_PATH/skill-provenance/validate.sh" "${{ inputs.bundle-path }}"'
+      env:
+        BUNDLE_PATH: ${{ inputs.bundle-path }}
+      run: '"$GITHUB_ACTION_PATH/skill-provenance/validate.sh" "$BUNDLE_PATH"'

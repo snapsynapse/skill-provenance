@@ -28,6 +28,7 @@ the action.
 | `.github/workflows/validate.yml` | CI checker for manifest validation, derived package builds, and release-surface drift checks. | Release-confidence automation. Passing CI supports review but does not certify safety, author identity, or runtime behavior. |
 | `action.yml` | GitHub Actions Marketplace metadata and composite action wrapper for `skill-provenance/validate.sh`. | Code-executing CI entrypoint. It validates a bundle manifest in the workflow workspace but does not certify trust or safety. |
 | `.github/scripts/release-surface-check.sh` | CI and local release-surface drift checker for eval counts, GuideCheck sidecar metadata, and `.skill` ZIP freshness. | Code-executing release-confidence automation. It verifies declared release surfaces against local files but is not a trust anchor or safety certification. |
+| `.github/scripts/action-security-check.sh` and `.github/scripts/test-validate.sh` | Regression checks for composite-action input transport and validator hash-state behavior. | Code-executing test helpers. They exercise bounded local fixtures and do not certify unrelated runtime safety. |
 | `skill-provenance.skill` | Claude Settings ZIP wrapper around the canonical bundle. | Release artifact. Verify against release provenance before installing. |
 ## Maintenance rule
 When adding or changing an assistant-facing surface, update this file if

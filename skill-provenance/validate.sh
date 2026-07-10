@@ -98,39 +98,56 @@ fi
 # Collect all path/hash pairs from MANIFEST.yaml
 declare -a paths=()
 declare -a expected_hashes=()
+declare -a hash_states=()
 current_path=""
 current_hash=""
+current_hash_state="missing"
+current_hash_count=0
+
+append_current_entry() {
+  if [ -z "$current_path" ]; then
+    return
+  fi
+  paths+=("$current_path")
+  expected_hashes+=("$current_hash")
+  if [ "$current_hash_count" -gt 1 ]; then
+    hash_states+=("duplicate")
+  else
+    hash_states+=("$current_hash_state")
+  fi
+}
 
 while IFS= read -r line; do
   if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*path:[[:space:]]*(.+)$ ]]; then
-    if [ -n "$current_path" ]; then
-      paths+=("$current_path")
-      expected_hashes+=("$current_hash")
-    fi
+    append_current_entry
     current_path="${BASH_REMATCH[1]}"
     current_hash=""
-  fi
-  if [[ "$line" =~ ^[[:space:]]*hash:[[:space:]]*sha256:([a-f0-9]+)$ ]]; then
-    current_hash="${BASH_REMATCH[1]}"
+    current_hash_state="missing"
+    current_hash_count=0
+  elif [ -n "$current_path" ] && [[ "$line" =~ ^[[:space:]]*hash:[[:space:]]*(.*)$ ]]; then
+    current_hash_count=$((current_hash_count + 1))
+    hash_value="${BASH_REMATCH[1]}"
+    if [ "$hash_value" = "null" ]; then
+      current_hash=""
+      current_hash_state="null"
+    elif [[ "$hash_value" =~ ^sha256:([a-f0-9]{64})$ ]]; then
+      current_hash="${BASH_REMATCH[1]}"
+      current_hash_state="valid"
+    else
+      current_hash=""
+      current_hash_state="malformed"
+    fi
   fi
 done < "$MANIFEST"
 # Last entry
-if [ -n "$current_path" ]; then
-  paths+=("$current_path")
-  expected_hashes+=("$current_hash")
-fi
+append_current_entry
 
 # Process each file
 for i in "${!paths[@]}"; do
   path="${paths[$i]}"
   expected="${expected_hashes[$i]}"
+  hash_state="${hash_states[$i]}"
   filepath="$BUNDLE_DIR/$path"
-
-  if [ -z "$expected" ]; then
-    echo "SKIP     $path (no hash in manifest)"
-    skipped=$((skipped + 1))
-    continue
-  fi
 
   if [ ! -f "$filepath" ]; then
     echo "MISSING  $path"
@@ -139,18 +156,37 @@ for i in "${!paths[@]}"; do
     continue
   fi
 
+  if [ "$hash_state" = "duplicate" ]; then
+    echo "INVALID  $path (multiple hash fields in manifest)"
+    errors=$((errors + 1))
+    continue
+  fi
+
+  if [ "$hash_state" = "null" ]; then
+    echo "SKIP     $path (hash explicitly set to null)"
+    skipped=$((skipped + 1))
+    continue
+  fi
+
   actual=$(sha256_hash "$filepath")
 
   if [ "$MODE" = "update" ]; then
-    if [ "$actual" != "$expected" ]; then
+    if [ "$hash_state" != "valid" ] || [ "$actual" != "$expected" ]; then
       printf '%s\t%s\n' "$path" "$actual" >> "$UPDATES_FILE"
-      echo "UPDATED  $path"
+      if [ "$hash_state" = "valid" ]; then
+        echo "UPDATED  $path"
+      else
+        echo "REPAIRED $path ($hash_state hash)"
+      fi
       updated=$((updated + 1))
     else
       echo "OK       $path"
     fi
   else
-    if [ "$actual" = "$expected" ]; then
+    if [ "$hash_state" != "valid" ]; then
+      echo "INVALID  $path ($hash_state hash; use hash: null for an intentional opt-out)"
+      errors=$((errors + 1))
+    elif [ "$actual" = "$expected" ]; then
       echo "OK       $path"
     else
       echo "MISMATCH $path"
@@ -171,20 +207,31 @@ if [ "$MODE" = "update" ] && [ "$updated" -gt 0 ]; then
       }
       close(updates_file)
       current_path = ""
+      replaced = 0
     }
     {
       line = $0
       if (line ~ /^[[:space:]]*-[[:space:]]*path:[[:space:]]*/) {
+        if (current_path != "" && (current_path in replacements) && !replaced) {
+          print "    hash: sha256:" replacements[current_path]
+        }
         current_path = line
         sub(/^[[:space:]]*-[[:space:]]*path:[[:space:]]*/, "", current_path)
+        replaced = 0
       }
       if (current_path != "" &&
           (current_path in replacements) &&
-          line ~ /^[[:space:]]*hash:[[:space:]]*sha256:[a-f0-9]+[[:space:]]*$/) {
-        sub(/sha256:[a-f0-9]+/, "sha256:" replacements[current_path], line)
-        current_path = ""
+          line ~ /^[[:space:]]*hash:[[:space:]]*/) {
+        match(line, /^[[:space:]]*/)
+        line = substr(line, RSTART, RLENGTH) "hash: sha256:" replacements[current_path]
+        replaced = 1
       }
       print line
+    }
+    END {
+      if (current_path != "" && (current_path in replacements) && !replaced) {
+        print "    hash: sha256:" replacements[current_path]
+      }
     }
   ' "$MANIFEST" > "$TEMP_MANIFEST"
   mv "$TEMP_MANIFEST" "$MANIFEST"
