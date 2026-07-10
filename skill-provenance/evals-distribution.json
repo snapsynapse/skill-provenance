@@ -320,6 +320,25 @@
         "States that Skill Provenance does not choose between duplicate source paths, manage installs, resolve updates, or replace package-manager lockfiles",
         "Treats origin metadata as audit receipt data rather than a trust anchor"
       ]
+    },
+    {
+      "id": 117,
+      "name": "github_action_bundle_path_shell_safety",
+      "description": "Tests that the composite GitHub Action passes caller-controlled bundle-path input as data and cannot execute embedded shell syntax.",
+      "prompt": "In a disposable GitHub Actions fixture, invoke the validation action with a bundle-path containing spaces, quotes, command separators, and a command that would create a sentinel file. Confirm the input cannot execute shell code.",
+      "files": [
+        "../action.yml",
+        "validate.sh",
+        "MANIFEST.yaml"
+      ],
+      "expectations": [
+        "Passes inputs.bundle-path through an environment variable or equivalently safe data channel rather than interpolating it into Bash source",
+        "Treats quotes, semicolons, command substitutions, and newlines in the input as literal path characters",
+        "Does not create the sentinel file or execute any injected command",
+        "Fails only with the expected invalid-path or missing-manifest result for the adversarial value",
+        "Still validates a legitimate bundle path containing spaces",
+        "Keeps GITHUB_ACTION_PATH safely quoted when invoking validate.sh"
+      ]
     }
   ]
 }

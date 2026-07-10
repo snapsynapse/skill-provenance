@@ -269,6 +269,8 @@ tells you whether a specific copy matches. Together they answer both
 .claude-plugin/plugin.json       <- Claude Code plugin manifest
 action.yml                       <- GitHub Actions Marketplace wrapper
 .github/scripts/release-surface-check.sh <- Release-surface drift check
+.github/scripts/action-security-check.sh <- Composite-action input safety regression
+.github/scripts/test-validate.sh <- Validator hash-state regression suite
 skills/open/SKILL.md             <- /skill-provenance:open (verify bundle on session start)
 skills/validate/SKILL.md         <- /skill-provenance:validate (hash/inventory check only)
 skills/close/SKILL.md            <- /skill-provenance:close (update versions on session end)
@@ -283,8 +285,8 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 30 core evaluation scenarios
-  evals-distribution.json        <- 16 supplemental packaging/deployment/integrity evals
+  evals.json                     <- 33 core evaluation scenarios
+  evals-distribution.json        <- 17 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
 CHANGELOG.md                     <- Full append-only repo history
@@ -297,8 +299,8 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-46 evaluation scenarios across two files: 30 core workflow evals in
-[evals.json](skill-provenance/evals.json) and 16 supplemental
+50 evaluation scenarios across two files: 33 core workflow evals in
+[evals.json](skill-provenance/evals.json) and 17 supplemental
 distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).
 

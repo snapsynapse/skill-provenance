@@ -33,3 +33,9 @@ jobs:
 
       - name: Verify release surfaces
         run: ./.github/scripts/release-surface-check.sh
+
+      - name: Verify action input transport
+        run: ./.github/scripts/action-security-check.sh
+
+      - name: Test validator hash states
+        run: ./.github/scripts/test-validate.sh

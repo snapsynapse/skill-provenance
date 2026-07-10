@@ -11,12 +11,12 @@ description: >
 metadata:
   skill_bundle: skill-provenance
   file_role: skill
-  version: 19
-  version_date: 2026-06-23
-  previous_version: 18
+  version: 20
+  version_date: 2026-07-10
+  previous_version: 19
   change_summary: >
-    Added optional origin metadata guidance for derived copies whose
-    selected source path must survive install or package boundaries.
+    Defined fail-closed manifest hash validation, explicit hash null
+    opt-outs, and update-mode repair for missing or malformed hashes.
   author: PAICE.work PBC (paice.work)
   source: https://github.com/snapsynapse/skill-provenance
 ---
@@ -254,7 +254,10 @@ not release identifiers.
 
 **hash** is sha256 of the file contents. This is how a new session verifies
 that the file it received matches what the manifest claims. Compute on save,
-verify on load.
+verify on load. Every tracked file must use either a complete lowercase
+`sha256:` value or an explicit `hash: null` opt-out. A missing or malformed
+hash is invalid. `validate.sh --update` repairs missing or malformed hashes
+when the corresponding file is present; it preserves explicit null opt-outs.
 
 **deployments** is optional. Use it to record deployed or installed copies
 of the same bundle when you want traceability across surfaces. Keep
@@ -373,6 +376,8 @@ check without doing the full open-session review or close-session update:
    files and compare them against the manifest.
 3. Report checked files, missing files, hash mismatches, skipped files,
    and pass/fail status.
+   Treat only `hash: null` as an intentional skip; missing, malformed, or
+   duplicate hash fields are manifest errors.
 4. Identify whether the copy appears to be a canonical source bundle,
    strict-platform install copy, registry package, or ambiguous copy based
    on its own manifest and local contents.

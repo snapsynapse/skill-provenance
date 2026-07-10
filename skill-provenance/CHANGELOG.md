@@ -7,6 +7,23 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 5.0.0 - 2026-07-10
+- validate.sh: Changed verification to fail closed on missing, malformed,
+  or duplicate hash fields; added explicit `hash: null` opt-outs; made
+  update mode repair missing or malformed hashes; and retained inventory
+  presence checks for opted-out files.
+- SKILL.md: Defined the explicit hash contract and fail-closed validation
+  behavior.
+- README.md: Documented explicit null opt-outs, update repair, and the
+  breaking change from implicit hash omission.
+- evals.json: Added 3 core scenarios for fail-closed verification,
+  explicit null semantics, and update repair. Core eval count is now 33.
+- evals-distribution.json: Added a GitHub Action input-safety scenario.
+  Supplemental eval count is now 17; total eval count is now 50.
+- MANIFEST.yaml: Bumped the bundle to 5.0.0, updated file versions and
+  inventory notes, and refreshed hashes.
+- CHANGELOG.md: Added this entry and retained the newest 5 releases.
+
 ## 4.13.0 - 2026-06-23
 - SKILL.md: Added optional `origin` metadata guidance for derived,
   installed, registry, settings, or platform-export copies whose selected
@@ -56,18 +73,5 @@ Full release history lives in the source repository's top-level
   bundle before installation, and added GuideCheck to ecosystem references.
 - MANIFEST.yaml: Bumped bundle to 4.10.1, updated bundle_date, advanced
   README.md and CHANGELOG.md per-file versions, and refreshed hashes.
-
-## 4.10.0 — 2026-05-19
-- SKILL.md: Added validate-only protocol guidance and clarified how
-  Skill Provenance complements source, registry, package-manager, and
-  platform versioning.
-- README.md: Reframed the guide around portable author-side provenance,
-  added a "Why this still exists" section, documented the validate command,
-  added complementary-tool guidance, and clarified the trust model.
-- evals.json: Added 4 core evals covering validate-only behavior,
-  complementary-tool positioning, integrity versus trust-anchor language,
-  and derived-copy validation.
-- MANIFEST.yaml: Bumped bundle to 4.10.0, updated bundle_date, advanced
-  changed file versions, refreshed hashes, and updated eval inventory notes.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.

@@ -583,6 +583,64 @@
         "Reports hash and missing-file status for the files listed in this manifest",
         "Recommends returning to the canonical source bundle before editing, repackaging, or republishing"
       ]
+    },
+    {
+      "id": 31,
+      "name": "missing_or_malformed_manifest_hash_fails_closed",
+      "description": "Tests that verify mode rejects implicit hash omissions and malformed SHA-256 values instead of silently skipping tracked entries.",
+      "prompt": "In a disposable copy, remove one tracked file's hash field and replace another with sha256:not-a-hash. Run verify-only validation and report whether the bundle passes.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Runs the negative test in a disposable copy and leaves the canonical bundle unchanged",
+        "Reports both the missing hash and malformed hash as manifest errors tied to their paths",
+        "Exits nonzero even when every present file would otherwise match",
+        "Does not count either invalid entry as an intentional skip",
+        "Does not print All hashes verified or otherwise report success",
+        "Accepts a canonical hash only when it is sha256 followed by exactly 64 lowercase hexadecimal characters"
+      ]
+    },
+    {
+      "id": 32,
+      "name": "explicit_null_hash_opt_out",
+      "description": "Tests that hash verification can be intentionally disabled only with an explicit hash: null marker and that the opt-out remains visible in validation results.",
+      "prompt": "A tracked source file is intentionally not hash-pinned and its manifest entry says hash: null. Validate the bundle and explain the result.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "sources/example.md"
+      ],
+      "expectations": [
+        "Recognizes hash: null as an explicit opt-out rather than a malformed or missing field",
+        "Reports the path as skipped with an explicit no-hash or opt-out reason",
+        "Does not treat version: null by itself as permission to omit the hash field",
+        "Continues validating every other manifest-listed file",
+        "Reports checked, skipped, and error counts accurately",
+        "Does not claim every file was hash-verified when one entry explicitly opted out"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "update_mode_repairs_missing_or_malformed_hashes",
+      "description": "Tests that update mode recovers missing and malformed hash entries when the corresponding files are available.",
+      "prompt": "In a disposable bundle, remove one tracked hash field and shorten another SHA-256 value, then run validate.sh --update followed by verify-only validation.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Runs against a disposable copy and leaves the canonical bundle unchanged",
+        "Recomputes and inserts a complete hash for each available file whose hash is missing or malformed",
+        "Writes sha256 followed by exactly 64 lowercase hexadecimal characters",
+        "Preserves explicit hash: null opt-outs rather than repairing them",
+        "A subsequent verify-only run checks all non-opted-out entries and exits successfully",
+        "Preserves unrelated manifest content and file ordering",
+        "Does not use update mode to conceal missing files"
+      ]
     }
   ]
 }
