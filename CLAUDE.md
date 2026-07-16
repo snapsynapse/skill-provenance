@@ -2,12 +2,14 @@
 
 A metaskill for version tracking across Agent Skills sessions, surfaces, and platforms. This is a skill bundle project, not a library.
 
+Canonical site: https://skillprovenance.dev/ | Repo: snapsynapse/skill-provenance (public, MIT). Ships as a Claude Code plugin and as a standalone `.skill` upload. Zero external dependencies by design (bash + shasum/sha256sum + awk + zip only).
+
 ## Key files
 
 - `skill-provenance/SKILL.md` -- the skill definition (what agents read)
 - `skill-provenance/MANIFEST.yaml` -- file inventory with roles, versions, SHA-256 hashes
 - `skill-provenance/CHANGELOG.md` -- rolling recent history (last 5 entries)
-- `skill-provenance/evals.json` -- 33 core evaluation scenarios
+- `skill-provenance/evals.json` -- 35 core evaluation scenarios
 - `skill-provenance/evals-distribution.json` -- 17 supplemental distribution evals
 - `skill-provenance/validate.sh` -- local hash verification script
 - `skill-provenance/package.sh` -- derived copy generator (strict/ClawHub)
@@ -63,3 +65,14 @@ Test locally: `claude --plugin-dir .`
    zip -r skill-provenance.skill skill-provenance/
    ```
 6. Run `./.github/scripts/release-surface-check.sh` to confirm eval-count declarations, GuideCheck sidecar metadata, and the `.skill` ZIP all match the current source.
+
+## CI
+
+`.github/workflows/validate.yml` runs on push/PR to `main`: verifies bundle hashes via the repo's own `action.yml`, test-builds the strict and ClawHub packages, runs `release-surface-check.sh`, `action-security-check.sh`, and `test-validate.sh`. All are bash scripts under `.github/scripts/` and `skill-provenance/`.
+
+## Current state (as of 2026-07-10 assessment)
+
+- Bundle version `5.0.0` (see `skill-provenance/MANIFEST.yaml`), released 2026-07-10.
+- Working tree clean, `main` up to date with `origin/main`, no open branches with unmerged work besides an already-merged `codex/mitigate-review-findings`.
+- Latest work hardened manifest validation (fail-closed on missing/malformed/duplicate hashes) and fixed action input transport (env var instead of Bash string interpolation) — both are security-hygiene fixes, not new features.
+- Roadmap (`ROADMAP.md`) lists a plugin v0.2.0 in progress (five focused skills: open/validate/close/handoff/bootstrap) plus deferred/not-yet-committed ideas: standalone `bin/` CLI, multi-bundle workspace support, MCP server, and an auto-hash PostToolUse hook (explicitly deferred pending a design that avoids silent manifest churn).

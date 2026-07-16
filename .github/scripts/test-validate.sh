@@ -63,4 +63,47 @@ printf 'bundle: test\nfiles:\n  - path: payload.txt\n    role: reference\n    ha
 expect_fail "$VALIDATOR" "$TEST_DIR"
 expect_fail "$VALIDATOR" --update "$TEST_DIR"
 
+# Attestation (validated_against) is informational only: it must never change
+# exit codes, whether the entry matches the current bundle_version or not.
+# Capture output before grepping: grep -q on a live pipe can SIGPIPE the
+# validator under pipefail and report a false failure.
+expect_output() {
+  pattern="$1"
+  shift
+  output="$("$@" 2>&1)" || true
+  if ! printf '%s\n' "$output" | grep -q "$pattern"; then
+    echo "FAIL: expected output matching '$pattern': $*" >&2
+    exit 1
+  fi
+}
+
+write_attest_manifest() {
+  printf 'bundle: test\nbundle_version: %s\nvalidated_against:\n  - bundle_version: %s\n    harness: Test Harness\n    model: test-model\n    date: 2026-07-16\n    result: pass\nfiles:\n  - path: payload.txt\n    role: reference\n    hash: sha256:%s\n' \
+    "$1" "$2" "$3" > "$TEST_DIR/MANIFEST.yaml"
+}
+
+# Matching attestation: reported, still exit 0
+write_attest_manifest "1.0.0" "1.0.0" "$valid_hash"
+expect_pass "$VALIDATOR" "$TEST_DIR"
+expect_output "ATTEST   bundle 1.0.0 validated against: Test Harness / test-model (pass, 2026-07-16)" "$VALIDATOR" "$TEST_DIR"
+
+# Stale attestation (no entry for current version): flagged, still exit 0
+write_attest_manifest "2.0.0" "1.0.0" "$valid_hash"
+expect_pass "$VALIDATOR" "$TEST_DIR"
+expect_output "ATTEST   stale: no validated_against entry for bundle 2.0.0 (latest recorded: 1.0.0)" "$VALIDATOR" "$TEST_DIR"
+
+# Stale attestation with a hash mismatch: integrity still gates (exit 1)
+printf 'tampered\n' > "$TEST_DIR/payload.txt"
+expect_fail "$VALIDATOR" "$TEST_DIR"
+printf 'payload\n' > "$TEST_DIR/payload.txt"
+
+# No validated_against block: no ATTEST output at all
+write_manifest "    hash: sha256:$valid_hash"
+expect_pass "$VALIDATOR" "$TEST_DIR"
+output="$("$VALIDATOR" "$TEST_DIR" 2>&1)" || true
+if printf '%s\n' "$output" | grep -q "ATTEST"; then
+  echo "FAIL: ATTEST output present without a validated_against block" >&2
+  exit 1
+fi
+
 echo "validate.sh hash-state regression tests passed"

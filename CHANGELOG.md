@@ -7,6 +7,32 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 5.1.0 - 2026-07-16
+- skill-provenance/MANIFEST.yaml: Added optional `validated_against`
+  attestation block. Entries bind a validation event (harness, model,
+  date, result, method) to the exact bundle_version they validated —
+  distinct from `compatibility.tested_on` design-time claims and from
+  integrity hashes. Recorded the first entry for this release.
+- skill-provenance/validate.sh: Added informational attestation reporting
+  after hash results: ATTEST lines for entries matching the current
+  bundle_version, and a stale flag when none match. Exit codes are
+  unchanged by attestation state — integrity gates, attestation informs.
+- skill-provenance/SKILL.md: Added `validated_against` to the manifest
+  schema example and a rules paragraph on the attestation/integrity
+  boundary.
+- skill-provenance/README.md: Added the "Attestation: validated_against"
+  section covering the two-guarantee distinction and stale semantics.
+- skill-provenance/evals.json: Added 2 core scenarios covering attestation
+  reporting and stale-attestation semantics. Core eval count is now 35;
+  total is 52.
+- .github/scripts/test-validate.sh: Added regression tests asserting that
+  attestation state (matching, stale, or absent) never changes validate.sh
+  exit codes and that ATTEST reporting renders in both cases.
+- README.md, AGENTS.md, CLAUDE.md: Updated eval-count declarations to 35
+  core / 52 total.
+- skill-provenance/MANIFEST.yaml: Bumped bundle to 5.1.0, advanced changed
+  file versions, refreshed hashes and inventory notes.
+
 ## 5.0.0 - 2026-07-10
 - skill-provenance/validate.sh: Made manifest verification fail closed on
   missing, malformed, or duplicate hash fields; added explicit

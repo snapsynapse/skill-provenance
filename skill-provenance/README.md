@@ -583,6 +583,69 @@ missing file was found.
 
 Zero dependencies beyond `bash`, `shasum` or `sha256sum`, and `awk`.
 
+## Attestation: validated_against
+
+A hash pin answers "are these the exact bytes I reviewed?" It cannot answer
+"does this bundle still do what I reviewed it for?" — the same pinned bytes
+can behave differently as harnesses and models move: one loader truncates
+where another doesn't, one runtime honors frontmatter the next ignores, a
+prompt-level rule that steered last quarter's model is inert on this
+quarter's. Those are two different guarantees, and they belong in two
+different fields.
+
+The optional `validated_against` block records the second one as
+attestation, without loading it onto the integrity pin:
+
+```yaml
+validated_against:
+  - bundle_version: 5.1.0
+    harness: Anthropic Claude Code
+    model: claude-fable-5
+    date: 2026-07-16
+    result: pass          # pass | partial | fail
+    method: validate.sh verify + regression suite
+    notes: >
+      Optional free-text detail about what was exercised.
+```
+
+Each entry is bound to the exact `bundle_version` it validated. That is the
+difference from `compatibility.tested_on`, which records design-time
+compatibility claims that float free of any particular release. An
+attestation for 5.0.0 says nothing about 5.1.0, and the tooling treats it
+that way.
+
+`validate.sh` reports attestation after the hash results:
+
+```
+OK       SKILL.md
+OK       evals.json
+
+ATTEST   bundle 5.1.0 validated against: Anthropic Claude Code / claude-fable-5 (pass, 2026-07-16)
+         attestation is informational; it never gates integrity
+```
+
+When no entry matches the current `bundle_version`, it flags staleness
+instead:
+
+```
+ATTEST   stale: no validated_against entry for bundle 5.1.0 (latest recorded: 5.0.0)
+         attestation is informational; it never gates integrity
+```
+
+The stale flag never changes the exit code. This is deliberate and is the
+core design rule: **integrity gates, attestation informs.** A hash mismatch
+means the bytes are not what the manifest claims, and validation fails. A
+stale attestation means nobody has re-validated these (still-correct) bytes
+on a current environment — the right response is to re-validate and record
+the result, not to reject a bundle whose integrity is intact. Loading
+environment claims onto the integrity field would let an attestation
+opinion veto a byte-level fact.
+
+Record a new entry whenever you validate a release on a harness/model pair
+you care about. Multiple entries per version are expected — that is the
+point: a consumer can distinguish a plain pin from one that is known-good
+on the environment they actually run.
+
 ## Derived package helper
 
 `package.sh` builds the two derived bundle states so you do not have to

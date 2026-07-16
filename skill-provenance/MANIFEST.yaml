@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 5.0.0
-bundle_date: 2026-07-10
+bundle_version: 5.1.0
+bundle_date: 2026-07-16
 description: >
   Metaskill for portable provenance, integrity, and drift control across
   Agent Skills local folders, registries, platform uploads, and multi-agent
@@ -70,24 +70,39 @@ compatibility:
 
 dependencies: []
 
+# Attestation records. Each entry binds a validation event to the exact
+# bundle_version it validated, unlike compatibility.tested_on which records
+# unbound design-time compatibility claims. Informational only: validate.sh
+# reports these but never gates on them. Integrity gates, attestation informs.
+validated_against:
+  - bundle_version: 5.1.0
+    harness: Anthropic Claude Code
+    model: claude-fable-5
+    date: 2026-07-16
+    result: pass
+    method: validate.sh verify + .github/scripts/test-validate.sh + release-surface-check.sh
+    notes: >
+      Full hash verification, validator regression suite, and release surface
+      checks run clean on this harness/model pair at release time.
+
 files:
   - path: SKILL.md
     role: skill
-    version: 20
-    hash: sha256:b2fddacaf2ab27976679b3329c98f466be74c1b54a15552d5108f0818e20211d
-    note: Canonical skill definition with fail-closed hash semantics, explicit null opt-outs, validate-only protocol guidance, package validation gates, origin metadata, and full provenance metadata in frontmatter.
+    version: 21
+    hash: sha256:a0f040bee0d3e97a2660c9312974768edf93bc04d7c176765196e54e564d72c4
+    note: Canonical skill definition with fail-closed hash semantics, explicit null opt-outs, optional validated_against attestation records, validate-only protocol guidance, package validation gates, origin metadata, and full provenance metadata in frontmatter.
 
   - path: README.md
     role: reference
-    version: 23
-    hash: sha256:4cdc97bc14724083dde8743b5e26d428ec6fd94eae2e0310572932c09ef07fbf
-    note: Human-facing instructions for fail-closed validation, explicit null opt-outs, update repair, GuideCheck verification, origin metadata, packaging, trust model, and troubleshooting
+    version: 24
+    hash: sha256:6f9c7fe197533b9a7efd78d0a3f1d6b7e921521f927d857bd65fd3de90829fe5
+    note: Human-facing instructions for fail-closed validation, explicit null opt-outs, update repair, validated_against attestation, GuideCheck verification, origin metadata, packaging, trust model, and troubleshooting
 
   - path: evals.json
     role: evals
-    version: 12
-    hash: sha256:e9090f14f61b8e9763a0a459047f3d570240c475fd00765e82b45da35890b6a3
-    note: 33 core evals including fail-closed missing or malformed hashes, explicit null opt-outs, update repair, and prior provenance, portability, deployment, validation, and trust workflows
+    version: 13
+    hash: sha256:4b468c60f52fbe81e1a65e15d1cf65ab5abdcff88dfa66bec2a3274b3ee9d8e2
+    note: 35 core evals including validated_against attestation reporting, stale-attestation semantics, fail-closed missing or malformed hashes, explicit null opt-outs, update repair, and prior provenance, portability, deployment, validation, and trust workflows
 
   - path: evals-distribution.json
     role: evals
@@ -97,15 +112,15 @@ files:
 
   - path: CHANGELOG.md
     role: reference
-    version: 26
-    hash: sha256:84a6547790e3d5cce71d94cbad1e61afb0828072c8221ed07ea1e111ae301890
+    version: 27
+    hash: sha256:65fc5508b7a4d83fd9beda8bd852430f4da5a915d3bbaaf5f42db9be5c42e3ab
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh
     role: script
-    version: 6
-    hash: sha256:b02781db6192e4e7c16e42a99d85ad7e0c3493bf89c811ede71f44d8de64cf08
-    note: Zero-dependency fail-closed hash verification and repair with explicit hash null opt-outs
+    version: 7
+    hash: sha256:ed9df41cc14fdaa1a51ae0024d236c43cd6c62202400436f5032e6741aace28d
+    note: Zero-dependency fail-closed hash verification and repair with explicit hash null opt-outs and informational validated_against attestation reporting
 
   - path: package.sh
     role: script

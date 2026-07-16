@@ -192,6 +192,15 @@ compatibility:
 dependencies: []
   # List skill names this bundle depends on. Omit or leave empty if none.
 
+validated_against:
+  # Optional attestation records, each bound to the exact bundle_version it
+  # validated. Informational only: validate.sh reports them, never gates on them.
+  - bundle_version: 5.1.0
+    harness: Anthropic Claude Code
+    model: Claude Opus 4.6
+    date: 2026-02-10
+    result: pass
+
 deployments:
   api:
     version: 1759178010641129
@@ -264,6 +273,17 @@ of the same bundle when you want traceability across surfaces. Keep
 `bundle_version` as the author-side semver source of truth. Platform-native
 versions (for example API timestamps) stay in `deployments`, not in
 `bundle_version`.
+
+**validated_against** is optional. Each entry attests that a specific
+`bundle_version` was validated on a specific harness and model, with a
+`result` of pass, partial, or fail. This is a different claim from
+`compatibility.tested_on` (design-time compatibility, not bound to a
+release) and a different concern from `hash` (integrity). Integrity gates:
+a hash mismatch fails validation. Attestation informs: validate.sh reports
+entries matching the current `bundle_version` and flags staleness when none
+match, but never changes its exit code over attestation. The same pinned
+bytes can behave differently as harnesses and models move, so a stale
+attestation means re-validate, not reject.
 
 **origin** is optional. Use it in derived strict-platform copies, registry
 packages, settings exports, or installed copies when the selected source

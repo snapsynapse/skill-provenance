@@ -641,6 +641,42 @@
         "Preserves unrelated manifest content and file ordering",
         "Does not use update mode to conceal missing files"
       ]
+    },
+    {
+      "id": 34,
+      "name": "validated_against_attestation_reporting",
+      "description": "Tests that an optional validated_against block is parsed and reported as attestation bound to the exact bundle_version, distinct from compatibility.tested_on.",
+      "prompt": "This bundle's MANIFEST.yaml has a validated_against entry whose bundle_version matches the current bundle_version. Run validate.sh and explain what the ATTEST output means, including how it differs from the tested_on compatibility list.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Runs validate.sh and reads the ATTEST line after the hash results",
+        "Explains that the entry attests the exact current bundle_version on a named harness and model",
+        "Distinguishes validated_against (release-bound attestation) from compatibility.tested_on (unbound design-time compatibility claims)",
+        "Distinguishes attestation from integrity: hashes answer whether the bytes match, attestation answers whether the bytes were validated on a given environment",
+        "Does not claim that a pass attestation guarantees behavior on other harnesses or models"
+      ]
+    },
+    {
+      "id": 35,
+      "name": "stale_attestation_is_informational_not_gating",
+      "description": "Tests that a stale or absent validated_against record is reported without changing validate.sh exit semantics, and that the agent recommends re-validation rather than rejection.",
+      "prompt": "In a disposable bundle copy, bump bundle_version in MANIFEST.yaml so no validated_against entry matches it, keep all file hashes correct, then run validate.sh and interpret the result.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Runs against a disposable copy and leaves the canonical bundle unchanged",
+        "Observes the ATTEST stale line naming the current bundle_version and the latest recorded attestation",
+        "Confirms exit code 0 because all hashes verify: attestation never gates integrity",
+        "Recommends re-validating on a current harness/model pair and recording a new validated_against entry, not rejecting the bundle",
+        "Does not move environment or attestation claims into hash fields or invent a failing exit code for staleness"
+      ]
     }
   ]
 }

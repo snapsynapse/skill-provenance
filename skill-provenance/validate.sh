@@ -10,6 +10,10 @@
 #   If no path given, uses the directory containing this script.
 #   MANIFEST.yaml is treated as the control file and is not self-hashed.
 #
+#   If the manifest carries an optional validated_against block, a summary
+#   is reported after the hash results. Attestation is informational only:
+#   it never changes the exit code. Integrity gates, attestation informs.
+#
 # Exit codes:
 #   0 = all files present and hashes match (verify) or updated (update)
 #   1 = mismatches or missing files found
@@ -237,6 +241,61 @@ if [ "$MODE" = "update" ] && [ "$updated" -gt 0 ]; then
   mv "$TEMP_MANIFEST" "$MANIFEST"
   TEMP_MANIFEST=""
 fi
+
+# Report optional validated_against attestation entries. Informational only:
+# nothing here touches $errors or the exit code. Integrity gates, attestation
+# informs — a stale or absent attestation is a signal to re-validate, not a
+# reason to fail the pin.
+report_attestation() {
+  awk '
+    !in_va && /^bundle_version:/ {
+      current = $0
+      sub(/^bundle_version:[[:space:]]*/, "", current)
+      sub(/[[:space:]]*(#.*)?$/, "", current)
+    }
+    /^validated_against:/ { in_va = 1; next }
+    in_va && /^[A-Za-z_]/ { in_va = 0 }
+    in_va && /^[[:space:]]*-[[:space:]]*bundle_version:/ {
+      n++
+      ver[n] = $0
+      sub(/^[[:space:]]*-[[:space:]]*bundle_version:[[:space:]]*/, "", ver[n])
+      sub(/[[:space:]]*(#.*)?$/, "", ver[n])
+      next
+    }
+    in_va && n > 0 && /^[[:space:]]*(harness|model|date|result):[[:space:]]*/ {
+      key = $0
+      sub(/^[[:space:]]*/, "", key)
+      val = key
+      sub(/:.*$/, "", key)
+      sub(/^[A-Za-z_]*:[[:space:]]*/, "", val)
+      sub(/[[:space:]]*$/, "", val)
+      field[n, key] = val
+      next
+    }
+    END {
+      if (n == 0) exit 0
+      print ""
+      matched = 0
+      for (i = 1; i <= n; i++) {
+        if (ver[i] == current) {
+          matched++
+          line = "ATTEST   bundle " ver[i] " validated against: " field[i, "harness"]
+          if (field[i, "model"] != "") line = line " / " field[i, "model"]
+          if (field[i, "result"] != "") line = line " (" field[i, "result"]
+          if (field[i, "date"] != "") line = line ", " field[i, "date"]
+          if (field[i, "result"] != "") line = line ")"
+          print line
+        }
+      }
+      if (matched == 0) {
+        print "ATTEST   stale: no validated_against entry for bundle " current " (latest recorded: " ver[n] ")"
+      }
+      print "         attestation is informational; it never gates integrity"
+    }
+  ' "$MANIFEST"
+}
+
+report_attestation
 
 echo ""
 if [ "$MODE" = "update" ]; then

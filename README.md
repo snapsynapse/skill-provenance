@@ -285,7 +285,7 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 33 core evaluation scenarios
+  evals.json                     <- 35 core evaluation scenarios
   evals-distribution.json        <- 17 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
@@ -299,7 +299,7 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-50 evaluation scenarios across two files: 33 core workflow evals in
+52 evaluation scenarios across two files: 35 core workflow evals in
 [evals.json](skill-provenance/evals.json) and 17 supplemental
 distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).

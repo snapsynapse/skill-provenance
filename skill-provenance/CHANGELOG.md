@@ -7,6 +7,26 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 5.1.0 - 2026-07-16
+- MANIFEST.yaml: Added optional `validated_against` attestation block.
+  Entries bind a validation event (harness, model, date, result, method)
+  to the exact bundle_version they validated — distinct from
+  `compatibility.tested_on` design-time claims and from integrity hashes.
+  Recorded the first entry for this release.
+- validate.sh: Added informational attestation reporting after hash
+  results: ATTEST lines for entries matching the current bundle_version,
+  and a stale flag when none match. Exit codes are unchanged by
+  attestation state — integrity gates, attestation informs.
+- SKILL.md: Added `validated_against` to the manifest schema example and
+  a rules paragraph on the attestation/integrity boundary.
+- README.md: Added the "Attestation: validated_against" section covering
+  the two-guarantee distinction and stale semantics.
+- evals.json: Added 2 core scenarios covering attestation reporting and
+  stale-attestation semantics. Core eval count is now 35; total is 52.
+- MANIFEST.yaml: Bumped bundle to 5.1.0, advanced changed file versions,
+  refreshed hashes and inventory notes.
+- CHANGELOG.md: Added this entry and retained the newest 5 releases.
+
 ## 5.0.0 - 2026-07-10
 - validate.sh: Changed verification to fail closed on missing, malformed,
   or duplicate hash fields; added explicit `hash: null` opt-outs; made
@@ -66,12 +86,5 @@ Full release history lives in the source repository's top-level
 - MANIFEST.yaml: Bumped bundle to 4.11.0, updated bundle_date, advanced
   SKILL.md, README.md, evals-distribution.json, CHANGELOG.md, and package.sh
   per-file versions, and refreshed hashes.
-
-## 4.10.1 - 2026-05-25
-- README.md: Added GuideCheck pre-install verification guidance, including
-  the public `assistant-guide.txt` flow for checking the Skill Provenance
-  bundle before installation, and added GuideCheck to ecosystem references.
-- MANIFEST.yaml: Bumped bundle to 4.10.1, updated bundle_date, advanced
-  README.md and CHANGELOG.md per-file versions, and refreshed hashes.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.
