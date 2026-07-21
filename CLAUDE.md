@@ -9,8 +9,8 @@ Canonical site: https://skillprovenance.dev/ | Repo: snapsynapse/skill-provenanc
 - `skill-provenance/SKILL.md` -- the skill definition (what agents read)
 - `skill-provenance/MANIFEST.yaml` -- file inventory with roles, versions, SHA-256 hashes
 - `skill-provenance/CHANGELOG.md` -- rolling recent history (last 5 entries)
-- `skill-provenance/evals.json` -- 35 core evaluation scenarios
-- `skill-provenance/evals-distribution.json` -- 17 supplemental distribution evals
+- `skill-provenance/evals.json` -- 37 core evaluation scenarios
+- `skill-provenance/evals-distribution.json` -- 18 supplemental distribution evals
 - `skill-provenance/validate.sh` -- local hash verification script
 - `skill-provenance/package.sh` -- derived copy generator (strict/ClawHub)
 - `action.yml` -- GitHub Actions Marketplace wrapper for bundle validation
@@ -29,7 +29,7 @@ This repo doubles as a Claude Code plugin. The plugin structure:
 - `skills/bootstrap/SKILL.md` -- `/skill-provenance:bootstrap` (version an unversioned bundle)
 - `skills/skill-provenance` -- symlink to `skill-provenance/` for the monolithic skill
 
-The four focused skills extract specific workflows from the monolithic SKILL.md.
+The five focused skills extract specific workflows from the monolithic SKILL.md.
 The symlink preserves `/skill-provenance:skill-provenance` as the full monolithic skill.
 
 Test locally: `claude --plugin-dir .`
@@ -70,9 +70,13 @@ Test locally: `claude --plugin-dir .`
 
 `.github/workflows/validate.yml` runs on push/PR to `main`: verifies bundle hashes via the repo's own `action.yml`, test-builds the strict and ClawHub packages, runs `release-surface-check.sh`, `action-security-check.sh`, and `test-validate.sh`. All are bash scripts under `.github/scripts/` and `skill-provenance/`.
 
-## Current state (as of 2026-07-10 assessment)
+## Current state (as of 2026-07-21 assessment)
 
-- Bundle version `5.0.0` (see `skill-provenance/MANIFEST.yaml`), released 2026-07-10.
-- Working tree clean, `main` up to date with `origin/main`, no open branches with unmerged work besides an already-merged `codex/mitigate-review-findings`.
-- Latest work hardened manifest validation (fail-closed on missing/malformed/duplicate hashes) and fixed action input transport (env var instead of Bash string interpolation) — both are security-hygiene fixes, not new features.
-- Roadmap (`ROADMAP.md`) lists a plugin v0.2.0 in progress (five focused skills: open/validate/close/handoff/bootstrap) plus deferred/not-yet-committed ideas: standalone `bin/` CLI, multi-bundle workspace support, MCP server, and an auto-hash PostToolUse hook (explicitly deferred pending a design that avoids silent manifest churn).
+- Bundle source is prepared for `6.0.0` manifest-boundary hardening. It is
+  not committed, tagged, pushed, or published without explicit release
+  authorization.
+- Validation fails closed on unsafe or ambiguous paths, duplicates, missing
+  inventories, and symlink components. Packaging revalidates through the
+  same policy at each derived-package boundary.
+- Roadmap priorities are the standalone verifier/bootstrap path, refreshed
+  ecosystem evidence, portfolio dogfooding, signatures, and registry interop.

@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 5.1.0
-bundle_date: 2026-07-16
+bundle_version: 6.0.0
+bundle_date: 2026-07-21
 description: >
   Metaskill for portable provenance, integrity, and drift control across
   Agent Skills local folders, registries, platform uploads, and multi-agent
@@ -84,46 +84,57 @@ validated_against:
     notes: >
       Full hash verification, validator regression suite, and release surface
       checks run clean on this harness/model pair at release time.
+  - bundle_version: 6.0.0
+    harness: OpenAI Codex desktop
+    model: GPT-5
+    date: 2026-07-21
+    result: pass
+    method: validate.sh verify + adversarial regression suite + derived package validation + release-surface-check.sh
+    notes: >
+      Path traversal, ambiguous grammar, duplicate entry, symlink component,
+      null-opt-out reporting, 1000-entry resource, strict package, and ClawHub
+      package checks passed under Bash 5.3 and macOS system Bash 3.2.
+      Attestation remains informational.
 
 files:
   - path: SKILL.md
     role: skill
-    version: 21
-    hash: sha256:a0f040bee0d3e97a2660c9312974768edf93bc04d7c176765196e54e564d72c4
-    note: Canonical skill definition with fail-closed hash semantics, explicit null opt-outs, optional validated_against attestation records, validate-only protocol guidance, package validation gates, origin metadata, and full provenance metadata in frontmatter.
+    version: 22
+    hash: sha256:19e52672b9342548e81c6d85536272ef46bb454ab630f8b20ffab63a8a1cec4e
+    note: Canonical skill definition with constrained manifest path grammar, symlink and duplicate-path rejection, fail-closed hash semantics, optional validated_against attestation records, package validation gates, origin metadata, and full provenance metadata in frontmatter.
 
   - path: README.md
     role: reference
-    version: 24
-    hash: sha256:6f9c7fe197533b9a7efd78d0a3f1d6b7e921521f927d857bd65fd3de90829fe5
-    note: Human-facing instructions for fail-closed validation, explicit null opt-outs, update repair, validated_against attestation, GuideCheck verification, origin metadata, packaging, trust model, and troubleshooting
+    version: 25
+    hash: sha256:43fe61f0c1d7af3f5f0f019863dab0e60c937d7f568a4f965d57f2a8c259dc7e
+    note: Human-facing instructions for constrained manifest paths, symlink and duplicate rejection, fail-closed validation, update repair, validated_against attestation, packaging, trust model, and troubleshooting
 
   - path: evals.json
     role: evals
-    version: 13
-    hash: sha256:4b468c60f52fbe81e1a65e15d1cf65ab5abdcff88dfa66bec2a3274b3ee9d8e2
-    note: 35 core evals including validated_against attestation reporting, stale-attestation semantics, fail-closed missing or malformed hashes, explicit null opt-outs, update repair, and prior provenance, portability, deployment, validation, and trust workflows
+    version: 14
+    hash: sha256:053127bc60dbffa330c7e7452378754c27f6f14898d148c62beb42fdc65a00c6
+    note: 37 core evals including unsafe and ambiguous path rejection, duplicate paths, symlinks, validated_against attestation, fail-closed hashes, update repair, and prior provenance, portability, deployment, validation, and trust workflows
 
   - path: evals-distribution.json
     role: evals
-    version: 7
-    hash: sha256:7978b9207a79ac23e4cd2ba7468e5de5d66d972f81eb2fcea08e56e6515247fb
-    note: 17 supplemental evals covering GitHub Action shell safety, strict-platform and ClawHub packaging, origin metadata, release integrity, surface disclosure, and source-backed ecosystem workflows
+    version: 8
+    hash: sha256:29bd03e67b392520fea2174952ea5a517e600ab4bc4360e0f8e1440df5dd1d86
+    note: 18 supplemental evals covering package-boundary manifest safety, GitHub Action shell safety, strict-platform and ClawHub packaging, origin metadata, release integrity, surface disclosure, and source-backed ecosystem workflows
 
   - path: CHANGELOG.md
     role: reference
-    version: 27
-    hash: sha256:65fc5508b7a4d83fd9beda8bd852430f4da5a915d3bbaaf5f42db9be5c42e3ab
+    version: 28
+    hash: sha256:2bbcdaed5665422cf160e9fe72b2b06b43dceb66a70e8015de2e63db46637157
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh
     role: script
-    version: 7
-    hash: sha256:ed9df41cc14fdaa1a51ae0024d236c43cd6c62202400436f5032e6741aace28d
-    note: Zero-dependency fail-closed hash verification and repair with explicit hash null opt-outs and informational validated_against attestation reporting
+    version: 8
+    hash: sha256:761ca40f57adac003fdda3a6520e8e342f4afbc5fa6127b1a5127db70118071b
+    note: Zero-dependency constrained manifest parsing, path and symlink boundary enforcement, fail-closed hash verification and repair, explicit null opt-outs, and informational validated_against reporting
 
   - path: package.sh
     role: script
-    version: 3
-    hash: sha256:95f23c54b1f8a260c13cb71df353c1ce5ca17f6504efdce53808d42b46756b6b
-    note: Zero-dependency bash script for derived strict-platform copies and ClawHub upload packages
+    version: 4
+    hash: sha256:161e5d2773d5a53080b1c159e394893a821054b900a7ddc01623c9f79326b9ea
+    note: Zero-dependency derived-package builder that revalidates canonical manifest policy at each strict-platform and ClawHub package boundary

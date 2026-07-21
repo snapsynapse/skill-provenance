@@ -44,15 +44,17 @@ description (see the `SKILL_v4.md` → `SKILL.md`/`MANIFEST.yaml` snippet in
 - Assistant guide (pre-install verification): https://skillprovenance.dev/.well-known/assistant-guide.txt
 - Releases: https://github.com/snapsynapse/skill-provenance/releases
 
-## Current status (as of 2026-07-12 assessment)
+## Current status (as of 2026-07-21 assessment)
 
-- Bundle version 5.0.0, released 2026-07-10. Repo clean, `main` in sync with
-  origin, CI green.
-- Most recent work was hardening (manifest validation fail-closed, secure
-  action input transport) rather than new-feature work — the core surface
-  (open/validate/close/handoff/bootstrap skills, validate.sh, package.sh) is
-  stable.
-- Roadmap items not yet started: standalone `bin/` CLI, multi-bundle
-  workspace support, MCP server, auto-hash PostToolUse hook.
-- Health verdict: healthy / low-activity-but-maintained. See root
-  `CLAUDE.md` for full agent-facing build/test/convention guidance.
+- Bundle source is prepared for 6.0.0 manifest-boundary hardening. It is not
+  committed, tagged, pushed, or published until the release workflow is
+  explicitly authorized.
+- The validator now fails closed on unsafe or ambiguous paths, duplicate
+  entries, manifest-listed symlinks, and unsupported inventory syntax.
+  Packaging reuses that validator policy at each derived-package boundary.
+- Coverage is 37 core and 18 supplemental evals, 55 total, plus executable
+  validator, action-input, packaging, and release-surface regression checks.
+- Current adoption work remains the standalone verifier/bootstrap path,
+  refreshed ecosystem evidence, dogfooding, badges, and targeted interop.
+- Health verdict: healthy and actively maintained. See root `CLAUDE.md` for
+  full agent-facing build, test, and release conventions.

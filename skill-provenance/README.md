@@ -1,12 +1,12 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 23
-version_date: 2026-07-10
-previous_version: 22
+version: 25
+version_date: 2026-07-21
+previous_version: 24
 change_summary: >
-  Documented fail-closed hash validation, explicit null opt-outs, and
-  update-mode repair for missing or malformed manifest hashes.
+  Documented constrained manifest paths, symlink and duplicate rejection,
+  structural update behavior, and package-boundary validation.
 ---
 
 # Skill Provenance - README
@@ -576,6 +576,18 @@ missing files. Every entry must contain either a lowercase 64-character
 or duplicate hash fields fail verification. Update mode repairs missing or
 malformed hashes for files that are present and preserves explicit null
 opt-outs. Null-hash entries are still checked for file presence.
+
+The file inventory intentionally uses a constrained line-oriented YAML
+subset rather than general YAML. `files:` begins at column 1, each entry is
+`  - path: <unquoted-relative-path>`, and its hash field is
+`    hash: <value>`. Paths must be unique, normalized, relative paths.
+Absolute paths, `.` or `..` components, empty components, trailing slashes,
+backslashes, surrounding whitespace, inline comments, YAML quotes, anchors,
+aliases, tags, and symlinks in any path component fail validation before
+any file is read. Update mode does not repair or partially rewrite a structurally
+invalid manifest. This small grammar keeps the zero-dependency Bash parser
+portable and prevents parser ambiguity from becoming filesystem access.
+
 `MANIFEST.yaml` itself is not self-listed, so the script treats it as the
 control file rather than a hash target. Exit code 0 means all pinned hashes
 verified (or updated); exit code 1 means a mismatch, invalid entry, or
@@ -663,8 +675,9 @@ hand-edit frontmatter or MANIFEST entries:
 ```
 
 What it does:
-- Verifies the canonical bundle with `validate.sh` before building any
-  derived package and stops if manifest drift or missing files are found.
+- Verifies the canonical bundle with `validate.sh` at each derived-package
+  boundary and stops if manifest structure, path safety, symlink policy,
+  uniqueness, inventory presence, or hashes fail.
 - `strict`: copies the full tracked bundle, strips the SKILL.md
   `metadata` block, switches the derived manifest to
   `frontmatter_mode: minimal`, removes deployment records, and recomputes

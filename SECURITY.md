@@ -59,6 +59,9 @@ In scope:
 - Accidental drift between files and MANIFEST.yaml
 - Missing files listed in the manifest
 - SHA-256 hash mismatches
+- Unsafe, ambiguous, absolute, or duplicate manifest paths
+- Symlinks in manifest path components that could resolve outside the bundle
+- Parser divergence within the documented constrained manifest grammar
 - GuideCheck assistant guide sidecar hash or byte-count drift
 - Stale bundle artifacts such as evals or scripts that lag SKILL.md
 - Unclear session handoff state
@@ -69,3 +72,19 @@ Out of scope:
 - Cryptographic signing or attestations
 - Malware scanning
 - Runtime sandboxing
+
+## Manifest filesystem boundary
+
+`validate.sh` treats manifest file paths as untrusted input. Its accepted
+inventory grammar is deliberately smaller than general YAML: normalized,
+unique, unquoted relative paths and explicitly indented hash fields.
+Absolute paths, parent traversal, dot or empty components, backslashes,
+YAML path syntax, and symlinks in any path component fail closed before
+hashing. `package.sh`
+delegates this decision to `validate.sh` at each package boundary rather
+than maintaining a second parser policy.
+
+Residual boundary: the manifest is still not a trust anchor. A publisher
+who controls both payload and manifest can replace both, and local
+filesystem state can change after validation. Use immutable transport,
+source control, signatures, or sandboxing when those threats matter.

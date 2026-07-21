@@ -11,12 +11,12 @@ description: >
 metadata:
   skill_bundle: skill-provenance
   file_role: skill
-  version: 20
-  version_date: 2026-07-10
-  previous_version: 19
+  version: 22
+  version_date: 2026-07-21
+  previous_version: 21
   change_summary: >
-    Defined fail-closed manifest hash validation, explicit hash null
-    opt-outs, and update-mode repair for missing or malformed hashes.
+    Defined the constrained inventory grammar and fail-closed rejection of
+    unsafe paths, duplicate entries, and symlink components.
   author: PAICE.work PBC (paice.work)
   source: https://github.com/snapsynapse/skill-provenance
 ---
@@ -294,7 +294,16 @@ package-manager lockfile, installer state machine, or trust anchor.
 **version: null** for source files. They are tracked for completeness but
 not versioned by this system.
 
-**Paths are relative** to the bundle root. No absolute paths.
+**File paths use a constrained, fail-closed grammar.** The inventory must
+use a top-level `files:` line, entries formatted exactly as
+`  - path: <unquoted-relative-path>`, and hash fields formatted as
+`    hash: <value>`. Paths must be unique, normalized, and relative to the
+bundle root. Reject absolute paths, `.` or `..` components, empty path
+components, trailing slashes, backslashes, surrounding whitespace, inline
+comments, YAML quotes, anchors, aliases, or tags. Symlinks in any path
+component are invalid rather than followed. These rules intentionally define a small
+line-oriented YAML subset so the zero-dependency parser does not silently
+disagree with a general YAML implementation.
 
 **MANIFEST.yaml is not listed in `files`.** Self-hashing is recursive. Treat
 the manifest as the bundle's control file and verify it via git, transport
@@ -411,9 +420,11 @@ This is an integrity check, not a trust anchor.
 
 Before building a strict-platform install copy, registry package, or
 settings ZIP, verify the canonical source bundle first. The included
-`package.sh` helper runs `validate.sh` against the canonical bundle before
-creating derived outputs and must stop if the manifest reports missing
-files or hash mismatches.
+`package.sh` helper runs `validate.sh` against the canonical bundle at each
+derived-package boundary and must stop if the manifest reports invalid
+structure, unsafe paths, symlinks, duplicate paths, missing files, or hash
+mismatches. `validate.sh` remains the single parser and policy authority so
+validation and packaging cannot drift into separate grammars.
 
 Do not treat generated strict-loader, ClawHub, or `.skill` outputs as the
 canonical source bundle. They are derived artifacts whose own manifests
@@ -432,14 +443,16 @@ When a skill bundle is loaded into a new session:
 
 1. Read `MANIFEST.yaml` first.
 2. Verify all listed files are present. Report any missing files.
-3. For files with hashes, verify hashes match. Flag mismatches. In
+3. Reject invalid inventory structure, unsafe or duplicate paths, and
+   symlinks in any path component before reading or hashing a listed file.
+4. For files with hashes, verify hashes match. Flag mismatches. In
    local environments, users can run `validate.sh` before uploading
    for reliable hash verification without LLM computation.
-4. Read `CHANGELOG.md` to understand recent changes.
-5. Check for staleness: if any file's version is lower than the bundle
+5. Read `CHANGELOG.md` to understand recent changes.
+6. Check for staleness: if any file's version is lower than the bundle
    version, or if `deployments` clearly show a deployed copy behind the
    local bundle, flag it and ask the user whether it needs updating.
-6. If `MANIFEST.yaml` is missing, treat the bundle as unversioned. Offer
+7. If `MANIFEST.yaml` is missing, treat the bundle as unversioned. Offer
    to create one by inventorying the files and asking the user for version
    context.
 

@@ -9,6 +9,10 @@
 #
 #   If no path given, uses the directory containing this script.
 #   MANIFEST.yaml is treated as the control file and is not self-hashed.
+#   The files inventory uses a constrained line-oriented grammar: `files:` at
+#   column 1, `  - path: <unquoted-relative-path>`, and `    hash: <value>`.
+#   General YAML path syntax, absolute or non-normalized paths, duplicate paths,
+#   and manifest-listed symlinks fail closed.
 #
 #   If the manifest carries an optional validated_against block, a summary
 #   is reported after the hash results. Attestation is informational only:
@@ -93,6 +97,7 @@ errors=0
 checked=0
 skipped=0
 updated=0
+manifest_errors=0
 
 if [ "$MODE" = "update" ]; then
   UPDATES_FILE=$(mktemp "${TMPDIR:-/tmp}/skill-provenance-updates.XXXXXX")
@@ -103,10 +108,55 @@ fi
 declare -a paths=()
 declare -a expected_hashes=()
 declare -a hash_states=()
+declare -a path_states=()
 current_path=""
 current_hash=""
 current_hash_state="missing"
 current_hash_count=0
+current_path_state="valid"
+in_files=0
+files_section_count=0
+file_entry_count=0
+
+classify_path() {
+  local candidate="$1"
+
+  case "$candidate" in
+    ""|" "*|*" "|*'#'*|\"*|\'*|\&*|\**|\!*|\|*|\>*|\[*|\{*|\%*|\@*|\`*)
+      echo "unsupported"
+      return
+      ;;
+    /*|.|./*|*/.|*/./*|..|../*|*/..|*/../*|*//*|*/|*\\*)
+      echo "unsafe"
+      return
+      ;;
+  esac
+
+  if [[ "$candidate" == *$'\t'* ]] || [[ "$candidate" == *$'\r'* ]]; then
+    echo "unsupported"
+    return
+  fi
+
+  echo "valid"
+}
+
+path_has_symlink_component() {
+  local candidate="$1"
+  local component=""
+  local current="$BUNDLE_DIR"
+  local old_ifs="$IFS"
+  declare -a components=()
+
+  IFS='/' read -r -a components <<< "$candidate"
+  IFS="$old_ifs"
+  for component in "${components[@]}"; do
+    current="$current/$component"
+    if [ -L "$current" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
 
 append_current_entry() {
   if [ -z "$current_path" ]; then
@@ -114,6 +164,8 @@ append_current_entry() {
   fi
   paths+=("$current_path")
   expected_hashes+=("$current_hash")
+  path_states+=("$current_path_state")
+  file_entry_count=$((file_entry_count + 1))
   if [ "$current_hash_count" -gt 1 ]; then
     hash_states+=("duplicate")
   else
@@ -122,13 +174,48 @@ append_current_entry() {
 }
 
 while IFS= read -r line; do
-  if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*path:[[:space:]]*(.+)$ ]]; then
+  if [ "$line" = "files:" ]; then
+    append_current_entry
+    current_path=""
+    in_files=1
+    files_section_count=$((files_section_count + 1))
+    if [ "$files_section_count" -gt 1 ]; then
+      echo "INVALID  manifest (duplicate files section)"
+      manifest_errors=$((manifest_errors + 1))
+    fi
+    continue
+  fi
+
+  if [ "$in_files" -eq 1 ] &&
+     [[ "$line" =~ ^[^[:space:]#] ]] &&
+     ! [[ "$line" =~ ^[[:space:]]*-[[:space:]]*path: ]] &&
+     ! [[ "$line" =~ ^[[:space:]]*hash: ]]; then
+    append_current_entry
+    current_path=""
+    in_files=0
+  fi
+
+  if [ "$in_files" -eq 1 ] && [[ "$line" =~ ^\ \ -\ path:\ (.+)$ ]]; then
     append_current_entry
     current_path="${BASH_REMATCH[1]}"
     current_hash=""
     current_hash_state="missing"
     current_hash_count=0
-  elif [ -n "$current_path" ] && [[ "$line" =~ ^[[:space:]]*hash:[[:space:]]*(.*)$ ]]; then
+    current_path_state="$(classify_path "$current_path")"
+
+    for ((existing_i = 0; existing_i < ${#paths[@]}; existing_i++)); do
+      existing_path="${paths[$existing_i]}"
+      if [ "$existing_path" = "$current_path" ]; then
+        current_path_state="duplicate"
+        break
+      fi
+    done
+  elif [ "$in_files" -eq 1 ] && [[ "$line" =~ ^[[:space:]]*-[[:space:]]*path: ]]; then
+    append_current_entry
+    echo "INVALID  manifest (file path entries must use exactly: two spaces, '- path: ', then an unquoted path)"
+    manifest_errors=$((manifest_errors + 1))
+    current_path=""
+  elif [ -n "$current_path" ] && [[ "$line" =~ ^\ \ \ \ hash:\ (.*)$ ]]; then
     current_hash_count=$((current_hash_count + 1))
     hash_value="${BASH_REMATCH[1]}"
     if [ "$hash_value" = "null" ]; then
@@ -141,17 +228,56 @@ while IFS= read -r line; do
       current_hash=""
       current_hash_state="malformed"
     fi
+  elif [ -n "$current_path" ] && [[ "$line" =~ ^[[:space:]]*hash: ]]; then
+    echo "INVALID  $current_path (hash fields must use exactly four spaces, 'hash: ', then a value)"
+    manifest_errors=$((manifest_errors + 1))
+    current_hash_state="malformed"
   fi
 done < "$MANIFEST"
 # Last entry
 append_current_entry
 
+if [ "$files_section_count" -eq 0 ]; then
+  echo "INVALID  manifest (missing files section)"
+  manifest_errors=$((manifest_errors + 1))
+elif [ "$file_entry_count" -eq 0 ]; then
+  echo "INVALID  manifest (files section has no valid path entries)"
+  manifest_errors=$((manifest_errors + 1))
+fi
+
 # Process each file
-for i in "${!paths[@]}"; do
+for ((i = 0; i < ${#paths[@]}; i++)); do
   path="${paths[$i]}"
   expected="${expected_hashes[$i]}"
   hash_state="${hash_states[$i]}"
+  path_state="${path_states[$i]}"
+
+  case "$path_state" in
+    unsafe)
+      echo "INVALID  $path (path must be normalized and relative, without '.', '..', empty, trailing-slash, or backslash components)"
+      errors=$((errors + 1))
+      continue
+      ;;
+    unsupported)
+      echo "INVALID  $path (unsupported path scalar; use an unquoted path without comments or surrounding whitespace)"
+      errors=$((errors + 1))
+      continue
+      ;;
+    duplicate)
+      echo "INVALID  $path (duplicate path entry in manifest)"
+      errors=$((errors + 1))
+      continue
+      ;;
+  esac
+
   filepath="$BUNDLE_DIR/$path"
+
+  if path_has_symlink_component "$path"; then
+    echo "INVALID  $path (manifest paths may not contain symlink components)"
+    errors=$((errors + 1))
+    checked=$((checked + 1))
+    continue
+  fi
 
   if [ ! -f "$filepath" ]; then
     echo "MISSING  $path"
@@ -202,7 +328,9 @@ for i in "${!paths[@]}"; do
   checked=$((checked + 1))
 done
 
-if [ "$MODE" = "update" ] && [ "$updated" -gt 0 ]; then
+errors=$((errors + manifest_errors))
+
+if [ "$MODE" = "update" ] && [ "$updated" -gt 0 ] && [ "$errors" -eq 0 ]; then
   awk -v updates_file="$UPDATES_FILE" '
     BEGIN {
       while ((getline line < updates_file) > 0) {
@@ -212,30 +340,44 @@ if [ "$MODE" = "update" ] && [ "$updated" -gt 0 ]; then
       close(updates_file)
       current_path = ""
       replaced = 0
+      in_files = 0
+    }
+    function flush_missing_hash() {
+      if (current_path != "" &&
+          (current_path in replacements) &&
+          !replaced) {
+        print "    hash: sha256:" replacements[current_path]
+      }
     }
     {
       line = $0
-      if (line ~ /^[[:space:]]*-[[:space:]]*path:[[:space:]]*/) {
-        if (current_path != "" && (current_path in replacements) && !replaced) {
-          print "    hash: sha256:" replacements[current_path]
-        }
+      if (line == "files:") {
+        in_files = 1
+        print line
+        next
+      }
+      if (in_files && line ~ /^[^[:space:]#]/) {
+        flush_missing_hash()
+        current_path = ""
+        replaced = 0
+        in_files = 0
+      }
+      if (in_files && line ~ /^  - path: /) {
+        flush_missing_hash()
         current_path = line
-        sub(/^[[:space:]]*-[[:space:]]*path:[[:space:]]*/, "", current_path)
+        sub(/^  - path: /, "", current_path)
         replaced = 0
       }
-      if (current_path != "" &&
+      if (in_files && current_path != "" &&
           (current_path in replacements) &&
-          line ~ /^[[:space:]]*hash:[[:space:]]*/) {
-        match(line, /^[[:space:]]*/)
-        line = substr(line, RSTART, RLENGTH) "hash: sha256:" replacements[current_path]
+          line ~ /^    hash: /) {
+        line = "    hash: sha256:" replacements[current_path]
         replaced = 1
       }
       print line
     }
     END {
-      if (current_path != "" && (current_path in replacements) && !replaced) {
-        print "    hash: sha256:" replacements[current_path]
-      }
+      flush_missing_hash()
     }
   ' "$MANIFEST" > "$TEMP_MANIFEST"
   mv "$TEMP_MANIFEST" "$MANIFEST"
@@ -301,7 +443,7 @@ echo ""
 if [ "$MODE" = "update" ]; then
   echo "Checked $checked files, skipped $skipped, updated $updated"
   if [ "$errors" -gt 0 ]; then
-    echo "Missing files: $errors"
+    echo "Errors: $errors"
     exit 1
   fi
   if [ "$updated" -gt 0 ]; then
@@ -314,5 +456,9 @@ else
   if [ "$errors" -gt 0 ]; then
     exit 1
   fi
-  echo "All hashes verified."
+  if [ "$skipped" -gt 0 ]; then
+    echo "All pinned hashes verified; $skipped explicit hash opt-out(s) were not hashed."
+  else
+    echo "All hashes verified."
+  fi
 fi

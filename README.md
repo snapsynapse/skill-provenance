@@ -117,7 +117,7 @@ directory bundle can be placed there when you want a neutral install path.
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: snapsynapse/skill-provenance@v4.13.1
+  - uses: snapsynapse/skill-provenance@v6.0.0
     with:
       bundle-path: skill-provenance
 ```
@@ -285,8 +285,8 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 35 core evaluation scenarios
-  evals-distribution.json        <- 17 supplemental packaging/deployment/integrity evals
+  evals.json                     <- 37 core evaluation scenarios
+  evals-distribution.json        <- 18 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
 CHANGELOG.md                     <- Full append-only repo history
@@ -299,8 +299,8 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-52 evaluation scenarios across two files: 35 core workflow evals in
-[evals.json](skill-provenance/evals.json) and 17 supplemental
+55 evaluation scenarios across two files: 37 core workflow evals in
+[evals.json](skill-provenance/evals.json) and 18 supplemental
 distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).
 

@@ -339,6 +339,26 @@
         "Still validates a legitimate bundle path containing spaces",
         "Keeps GITHUB_ACTION_PATH safely quoted when invoking validate.sh"
       ]
+    },
+    {
+      "id": 118,
+      "name": "package_gate_enforces_manifest_filesystem_boundary",
+      "description": "Tests that every derived package build delegates path, duplicate, and symlink policy to the canonical validator immediately before copying files.",
+      "prompt": "In separate disposable source bundles, add a parent-traversal path, a duplicate path, and a manifest-listed symlink, then attempt strict, ClawHub, and all-mode package builds.",
+      "files": [
+        "MANIFEST.yaml",
+        "package.sh",
+        "validate.sh",
+        "README.md"
+      ],
+      "expectations": [
+        "Runs package tests only in disposable copies and does not alter the canonical bundle",
+        "Observes validate.sh reject each unsafe inventory before package files are copied",
+        "Confirms strict, ClawHub, and all-mode builds exit nonzero and leave no completed derived bundle for an invalid source",
+        "Confirms all mode revalidates the canonical source at each derived-package boundary",
+        "Keeps validate.sh as the single parser and policy authority instead of duplicating a second manifest grammar in package.sh",
+        "Still builds both variants from a clean canonical manifest"
+      ]
     }
   ]
 }

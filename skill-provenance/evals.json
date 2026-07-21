@@ -677,6 +677,44 @@
         "Recommends re-validating on a current harness/model pair and recording a new validated_against entry, not rejecting the bundle",
         "Does not move environment or attestation claims into hash fields or invent a failing exit code for staleness"
       ]
+    },
+    {
+      "id": 36,
+      "name": "unsafe_or_ambiguous_manifest_paths_fail_closed",
+      "description": "Tests that the constrained inventory grammar rejects paths that could escape the bundle or be parsed differently by general YAML tooling.",
+      "prompt": "In disposable bundle copies, validate manifests containing ../secret.txt, nested/../payload.txt, an absolute path, a quoted path, an inline path comment, and a YAML anchor. Explain the result.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Runs every negative case in a disposable copy and leaves the canonical bundle unchanged",
+        "Rejects absolute paths and any dot, parent, empty, trailing-slash, or backslash path component before reading the target",
+        "Rejects quoted, commented, anchored, aliased, tagged, or incorrectly indented path scalars as unsupported grammar",
+        "Exits nonzero in verify and update modes and does not partially rewrite a structurally invalid manifest",
+        "Explains that the accepted file inventory is a constrained line-oriented YAML subset rather than general YAML",
+        "Still accepts a normalized nested relative path containing ordinary internal spaces or a colon"
+      ]
+    },
+    {
+      "id": 37,
+      "name": "duplicate_paths_and_symlinks_fail_closed",
+      "description": "Tests that one manifest path has one authoritative record and that hashing cannot silently follow a manifest-listed symlink.",
+      "prompt": "In disposable bundles, list the same payload path twice, then replace a listed regular file with a symlink to a file outside the bundle. Run validate.sh in verify and update modes.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Rejects the second occurrence of a duplicate path even when both hashes are identical",
+        "Rejects a manifest-listed symlink before hashing or resolving its target",
+        "Exits nonzero in both verify and update modes",
+        "Does not repair, normalize, dereference, or silently choose an authoritative duplicate entry",
+        "Distinguishes manifest inventory duplicates from optional origin metadata that records intentionally ignored lookalike source paths",
+        "Leaves ordinary unique regular-file entries unaffected"
+      ]
     }
   ]
 }

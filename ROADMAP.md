@@ -1,19 +1,26 @@
 # Roadmap
 
-## Now (plugin v0.2.0)
+## Now
 
-- Five focused plugin skills: open, validate, close, handoff, bootstrap
-- Dedicated validate command for hash and inventory checks without the
-  full open-session protocol
-- Monolithic skill preserved via symlink
-- Marketplace submission
+- Publish the prepared 6.0.0 manifest-boundary hardening release after
+  review: constrained inventory grammar, path containment, duplicate-path
+  rejection, symlink rejection, and package-boundary revalidation.
+- Ship a standalone zero-install verifier and bootstrap path for authors
+  who do not use the Claude Code plugin.
+- Refresh the July 2026 ecosystem evidence before publishing the State of
+  Skill Versioning report or reusing competitive claims.
+- Confirm the GitHub Actions Marketplace listing and document the supported
+  stable action reference.
+- Dogfood manifests across portfolio skills and add a verified-adopters loop.
 
 ## Later
 
-- **Optional `bin/` CLI**: Standalone shell commands for hash verification
-  outside Claude Code sessions.
 - **Multi-bundle workspace support**: Track multiple skill bundles in a
   monorepo with a single plugin instance.
+- **Detached manifest signatures**: Add an optional interoperable trust layer
+  without turning the zero-dependency integrity checker into a PKI client.
+- **Registry and package-manager interop**: Preserve portable bundle identity
+  while leaving install resolution and consumer lockfiles to their owners.
 
 ## Not Yet
 

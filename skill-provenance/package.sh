@@ -87,9 +87,11 @@ validate_source_bundle() {
 
 manifest_paths() {
   awk '
-    /^[[:space:]]*-[[:space:]]*path:[[:space:]]*/ {
+    /^files:$/ { in_files = 1; next }
+    in_files && /^[^[:space:]#]/ { in_files = 0 }
+    in_files && /^  - path: / {
       line = $0
-      sub(/^[[:space:]]*-[[:space:]]*path:[[:space:]]*/, "", line)
+      sub(/^  - path: /, "", line)
       print line
     }
   ' "$MANIFEST"
@@ -234,10 +236,17 @@ rewrite_manifest() {
         next
       }
 
-      if ($0 ~ /^[[:space:]]*-[[:space:]]*path:[[:space:]]*/) {
+      if ($0 ~ /^[^[:space:]#]/) {
+        flush_entry()
+        in_files = 0
+        print
+        next
+      }
+
+      if ($0 ~ /^  - path: /) {
         flush_entry()
         path = $0
-        sub(/^[[:space:]]*-[[:space:]]*path:[[:space:]]*/, "", path)
+        sub(/^  - path: /, "", path)
         entry = $0 ORS
         keep_entry = include_path(path)
         next
@@ -269,9 +278,17 @@ update_hashes() {
 
   declare -a paths=()
   declare -a expected_hashes=()
+  local in_files=0
 
   while IFS= read -r line; do
-    if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*path:[[:space:]]*(.+)$ ]]; then
+    if [ "$line" = "files:" ]; then
+      in_files=1
+      continue
+    fi
+    if [ "$in_files" -eq 1 ] && [[ "$line" =~ ^[^[:space:]#] ]]; then
+      in_files=0
+    fi
+    if [ "$in_files" -eq 1 ] && [[ "$line" =~ ^\ \ -\ path:\ (.+)$ ]]; then
       if [ -n "$current_path" ]; then
         paths+=("$current_path")
         expected_hashes+=("$current_hash")
@@ -280,7 +297,7 @@ update_hashes() {
       current_hash=""
       continue
     fi
-    if [[ "$line" =~ ^[[:space:]]*hash:[[:space:]]*sha256:([a-f0-9]+)$ ]]; then
+    if [ "$in_files" -eq 1 ] && [[ "$line" =~ ^\ \ \ \ hash:\ sha256:([a-f0-9]+)$ ]]; then
       current_hash="${BASH_REMATCH[1]}"
     fi
   done < "$manifest_file"
@@ -290,7 +307,7 @@ update_hashes() {
     expected_hashes+=("$current_hash")
   fi
 
-  for i in "${!paths[@]}"; do
+  for ((i = 0; i < ${#paths[@]}; i++)); do
     path="${paths[$i]}"
     expected="${expected_hashes[$i]}"
     [ -n "$expected" ] || continue
@@ -308,16 +325,23 @@ update_hashes() {
       }
       close(updates_file)
       current_path = ""
+      in_files = 0
     }
     {
       line = $0
-      if (line ~ /^[[:space:]]*-[[:space:]]*path:[[:space:]]*/) {
-        current_path = line
-        sub(/^[[:space:]]*-[[:space:]]*path:[[:space:]]*/, "", current_path)
+      if (line == "files:") {
+        in_files = 1
+      } else if (in_files && line ~ /^[^[:space:]#]/) {
+        in_files = 0
+        current_path = ""
       }
-      if (current_path != "" &&
+      if (in_files && line ~ /^  - path: /) {
+        current_path = line
+        sub(/^  - path: /, "", current_path)
+      }
+      if (in_files && current_path != "" &&
           (current_path in replacements) &&
-          line ~ /^[[:space:]]*hash:[[:space:]]*sha256:[a-f0-9]+[[:space:]]*$/) {
+          line ~ /^    hash: sha256:[a-f0-9]+[[:space:]]*$/) {
         sub(/sha256:[a-f0-9]+/, "sha256:" replacements[current_path], line)
         current_path = ""
       }
@@ -343,6 +367,11 @@ build_variant() {
       ;;
   esac
 
+  # Keep validate.sh as the single parser and policy authority. Re-run it at
+  # each package boundary so `all` mode cannot build a later variant from a
+  # source bundle that changed after the first variant was produced.
+  validate_source_bundle
+
   if [ -e "$variant_parent" ]; then
     fail "output path already exists: $variant_parent"
   fi
@@ -363,8 +392,6 @@ build_variant() {
   update_hashes "$dest_dir"
   echo "Built $mode package at $dest_dir"
 }
-
-validate_source_bundle
 
 if [ "$MODE" = "all" ]; then
   build_variant "strict" "$OUTPUT_PARENT/strict"
