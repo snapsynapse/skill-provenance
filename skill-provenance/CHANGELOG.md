@@ -15,16 +15,24 @@ Full release history lives in the source repository's top-level
   mode no longer partially rewrites structurally invalid manifests. Verify
   summaries no longer call explicitly opted-out files hash-verified. Array
   iteration remains compatible with macOS system Bash 3.2 under nounset.
+  Malformed attestation records are now reported without counting as current
+  evidence or changing integrity exit codes.
 - package.sh: Revalidates the canonical source at each derived-package
-  boundary and keeps validate.sh as the single manifest-policy authority.
+  boundary and delegates derived hash updates back to validate.sh, removing
+  its duplicate hash-rewrite implementation.
 - SKILL.md: Defined the normative inventory grammar, filesystem boundary,
-  symlink policy, package delegation rule, and current internal version header.
+  symlink policy, exact package inventory, evidence-based staleness rule,
+  attestation record contract, package delegation, and internal version header.
 - README.md: Documented accepted path syntax, rejected path states, update
-  behavior, package-boundary validation, and current internal version header.
-- evals.json: Added 2 core scenarios covering unsafe or ambiguous paths,
-  duplicate entries, and symlinks. Core eval count is now 37.
-- evals-distribution.json: Added a packaging-boundary scenario. Supplemental
-  eval count is now 18; total eval count is now 55.
+  behavior, exact archive-to-manifest agreement, malformed attestation
+  warnings, package-boundary validation, and internal version header.
+- evals.json: Added 4 core scenarios covering unsafe or ambiguous paths,
+  duplicates, symlinks, files-section scoping, and malformed attestations;
+  corrected stale version-domain and partial-package assumptions; refreshed
+  Gemini and Copilot compatibility guidance. Core eval count is now 39.
+- evals-distribution.json: Added package-boundary coverage and merged the
+  redundant dirty-source package eval into its canonical-source gate.
+  Supplemental eval count is now 17; total eval count is now 56.
 - MANIFEST.yaml: Bumped the bundle to 6.0.0, advanced changed file versions,
   refreshed hashes and inventory notes, and recorded release validation.
 - CHANGELOG.md: Added this entry and retained the newest 5 releases.

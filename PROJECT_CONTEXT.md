@@ -52,7 +52,7 @@ description (see the `SKILL_v4.md` → `SKILL.md`/`MANIFEST.yaml` snippet in
 - The validator now fails closed on unsafe or ambiguous paths, duplicate
   entries, manifest-listed symlinks, and unsupported inventory syntax.
   Packaging reuses that validator policy at each derived-package boundary.
-- Coverage is 37 core and 18 supplemental evals, 55 total, plus executable
+- Coverage is 39 core and 17 supplemental evals, 56 total, plus executable
   validator, action-input, packaging, and release-surface regression checks.
 - Current adoption work remains the standalone verifier/bootstrap path,
   refreshed ecosystem evidence, dogfooding, badges, and targeted interop.

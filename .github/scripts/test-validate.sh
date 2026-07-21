@@ -229,7 +229,15 @@ expect_output "ATTEST   bundle 1.0.0 validated against: Test Harness / test-mode
 # Stale attestation (no entry for current version): flagged, still exit 0
 write_attest_manifest "2.0.0" "1.0.0" "$valid_hash"
 expect_pass "$VALIDATOR" "$TEST_DIR"
-expect_output "ATTEST   stale: no validated_against entry for bundle 2.0.0 (latest recorded: 1.0.0)" "$VALIDATOR" "$TEST_DIR"
+expect_output "ATTEST   stale: no valid validated_against entry for bundle 2.0.0 (last recorded: 1.0.0)" "$VALIDATOR" "$TEST_DIR"
+
+# Malformed attestation records remain informational, but are not presented as
+# valid current-version evidence.
+printf 'bundle: test\nbundle_version: 1.0.0\nvalidated_against:\n  - bundle_version: 1.0.0\n    model: test-model\n    date: 2026/07/16\n    result: maybe\nfiles:\n  - path: payload.txt\n    role: reference\n    hash: sha256:%s\n' \
+  "$valid_hash" > "$TEST_DIR/MANIFEST.yaml"
+expect_pass "$VALIDATOR" "$TEST_DIR"
+expect_output "ATTEST   malformed record 1 (invalid or missing: harness result date)" "$VALIDATOR" "$TEST_DIR"
+expect_output "ATTEST   stale: no valid validated_against entry for bundle 1.0.0 (last recorded: 1.0.0)" "$VALIDATOR" "$TEST_DIR"
 
 # Stale attestation with a hash mismatch: integrity still gates (exit 1)
 printf 'tampered\n' > "$TEST_DIR/payload.txt"

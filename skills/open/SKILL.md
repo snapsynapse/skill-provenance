@@ -28,19 +28,19 @@ on a skill bundle — a directory containing `SKILL.md` and optionally
 2. **Verify all listed files are present.** Report any files listed in the
    manifest but missing from disk.
 
-3. **Verify hashes.** For each file with a `hash` field, compute
-   `sha256sum` and compare. Flag mismatches. If `validate.sh` exists in
-   the bundle, mention that the user can also run it directly for faster
-   local verification.
+3. **Verify structure and hashes.** Prefer the bundle's `validate.sh` when
+   available so constrained path grammar, duplicate inventory entries,
+   symlink components, missing or malformed hashes, and explicit `hash: null`
+   opt-outs are handled consistently. Otherwise compute SHA-256 manually for
+   every manifest-listed pinned file and report reduced assurance.
 
 4. **Read CHANGELOG.md.** Summarize the most recent 2-3 entries so the
    user knows what changed recently.
 
-5. **Check for staleness.** Compare per-file `version` fields against
-   `bundle_version`. If any versioned file has a version that appears
-   behind the bundle version, or if the changelog mentions files that
-   were "not updated" in a recent entry, flag them and ask whether they
-   need attention this session.
+5. **Check for staleness.** Use hash drift, recent changelog dependency
+   notes, internal-header conflicts, `validated_against`, and deployment
+   records. Never compare per-file revision integers numerically with bundle
+   semver; they are separate version domains.
 
 6. **Check deployment drift.** If the manifest has a `deployments` section,
    note any deployed copies whose version appears behind the current
@@ -59,6 +59,8 @@ on a skill bundle — a directory containing `SKILL.md` and optionally
    - Bundle name and version
    - File count: present / expected
    - Hash check: pass / N mismatches
+   - Structural errors and explicit hash opt-outs
+   - Matching, stale, or malformed attestation records when present
    - Stale files (if any)
    - Deployment drift (if any)
    - Recommended first action for this session

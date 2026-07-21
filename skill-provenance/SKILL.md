@@ -11,12 +11,12 @@ description: >
 metadata:
   skill_bundle: skill-provenance
   file_role: skill
-  version: 22
+  version: 23
   version_date: 2026-07-21
-  previous_version: 21
+  previous_version: 22
   change_summary: >
-    Defined the constrained inventory grammar and fail-closed rejection of
-    unsafe paths, duplicate entries, and symlink components.
+    Reconciled exact package inventory, staleness evidence, and malformed
+    attestation semantics with the 6.0.0 validation contract.
   author: PAICE.work PBC (paice.work)
   source: https://github.com/snapsynapse/skill-provenance
 ---
@@ -284,6 +284,9 @@ entries matching the current `bundle_version` and flags staleness when none
 match, but never changes its exit code over attestation. The same pinned
 bytes can behave differently as harnesses and models move, so a stale
 attestation means re-validate, not reject.
+Each record requires `bundle_version`, `harness`, an ISO `YYYY-MM-DD` date,
+and `result: pass`, `partial`, or `fail`. Malformed records are reported but
+do not count as matching evidence.
 
 **origin** is optional. Use it in derived strict-platform copies, registry
 packages, settings exports, or installed copies when the selected source
@@ -349,10 +352,10 @@ Claude Code provides a `${CLAUDE_SKILL_DIR}` variable for bundle-relative
 paths. Other platforms may not. Direct relative paths like
 `./validate.sh` work when the working directory is the bundle root.
 
-The `.skill` ZIP only carries the skill definition and its references.
-Bundles can still track evals, scripts, rendered outputs, and handoff
-notes outside the archive. The manifest remains the complete inventory,
-not just the package inventory.
+An authored `.skill` ZIP should carry every file listed by its enclosed
+manifest. A deliberately reduced install package is valid only when its own
+derived manifest lists exactly that reduced inventory. Never place a canonical
+manifest in an archive that omits manifest-listed evals, scripts, or references.
 
 
 ## Changelog
@@ -449,9 +452,10 @@ When a skill bundle is loaded into a new session:
    local environments, users can run `validate.sh` before uploading
    for reliable hash verification without LLM computation.
 5. Read `CHANGELOG.md` to understand recent changes.
-6. Check for staleness: if any file's version is lower than the bundle
-   version, or if `deployments` clearly show a deployed copy behind the
-   local bundle, flag it and ask the user whether it needs updating.
+6. Check for staleness using hash drift, changelog dependency notes,
+   conflicting internal metadata, `validated_against`, and deployment
+   records. Never order per-file revision integers against bundle semver;
+   they are separate version domains.
 7. If `MANIFEST.yaml` is missing, treat the bundle as unversioned. Offer
    to create one by inventorying the files and asking the user for version
    context.

@@ -99,42 +99,42 @@ validated_against:
 files:
   - path: SKILL.md
     role: skill
-    version: 22
-    hash: sha256:19e52672b9342548e81c6d85536272ef46bb454ab630f8b20ffab63a8a1cec4e
-    note: Canonical skill definition with constrained manifest path grammar, symlink and duplicate-path rejection, fail-closed hash semantics, optional validated_against attestation records, package validation gates, origin metadata, and full provenance metadata in frontmatter.
+    version: 23
+    hash: sha256:cffb5bf706c914813d3950be5c86d5d048b2b72bd6d2d1fb828fc6ca05410750
+    note: Canonical skill definition with constrained manifest grammar, exact package inventory, evidence-based staleness, malformed-attestation warnings, package validation gates, origin metadata, and full provenance metadata in frontmatter
 
   - path: README.md
     role: reference
-    version: 25
-    hash: sha256:43fe61f0c1d7af3f5f0f019863dab0e60c937d7f568a4f965d57f2a8c259dc7e
-    note: Human-facing instructions for constrained manifest paths, symlink and duplicate rejection, fail-closed validation, update repair, validated_against attestation, packaging, trust model, and troubleshooting
+    version: 26
+    hash: sha256:4ead7376384ca04c968509392f917462348ec8acb1b92574d4325389a7df6011
+    note: Human-facing instructions for constrained manifest paths, exact package inventory, fail-closed validation, update repair, malformed and stale attestation, packaging, trust model, and troubleshooting
 
   - path: evals.json
     role: evals
-    version: 14
-    hash: sha256:053127bc60dbffa330c7e7452378754c27f6f14898d148c62beb42fdc65a00c6
-    note: 37 core evals including unsafe and ambiguous path rejection, duplicate paths, symlinks, validated_against attestation, fail-closed hashes, update repair, and prior provenance, portability, deployment, validation, and trust workflows
+    version: 15
+    hash: sha256:fcd3c550dc39b791993acbe990fd6ea0b272d92ea4415c1bf8be14f1d775f0cc
+    note: 39 core evals including files-section scope, malformed attestation, exact package inventory, unsafe paths, duplicates, symlinks, fail-closed hashes, and prior provenance, portability, deployment, validation, and trust workflows
 
   - path: evals-distribution.json
     role: evals
-    version: 8
-    hash: sha256:29bd03e67b392520fea2174952ea5a517e600ab4bc4360e0f8e1440df5dd1d86
-    note: 18 supplemental evals covering package-boundary manifest safety, GitHub Action shell safety, strict-platform and ClawHub packaging, origin metadata, release integrity, surface disclosure, and source-backed ecosystem workflows
+    version: 9
+    hash: sha256:b53948f070b012533ad851e508e0d8640a2e79d00286d78368bee90ea783e624
+    note: 17 supplemental evals after consolidating dirty-source package gating, covering package-boundary safety, GitHub Action shell safety, derived packaging, origin metadata, release integrity, surface disclosure, and source-backed ecosystem workflows
 
   - path: CHANGELOG.md
     role: reference
-    version: 28
-    hash: sha256:2bbcdaed5665422cf160e9fe72b2b06b43dceb66a70e8015de2e63db46637157
+    version: 29
+    hash: sha256:0622bbc982356fb5da15ee5fa2bfaa43a19258b5fbc2f350c8925580554f8d07
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh
     role: script
-    version: 8
-    hash: sha256:761ca40f57adac003fdda3a6520e8e342f4afbc5fa6127b1a5127db70118071b
-    note: Zero-dependency constrained manifest parsing, path and symlink boundary enforcement, fail-closed hash verification and repair, explicit null opt-outs, and informational validated_against reporting
+    version: 9
+    hash: sha256:cac9624665345d317fd37edf183defd5553f8a2afaed736c07f58f597ae55c05
+    note: Zero-dependency constrained manifest parsing, path and symlink enforcement, fail-closed hash verification and repair, explicit null opt-outs, and non-gating malformed, stale, or matching validated_against reporting
 
   - path: package.sh
     role: script
-    version: 4
-    hash: sha256:161e5d2773d5a53080b1c159e394893a821054b900a7ddc01623c9f79326b9ea
-    note: Zero-dependency derived-package builder that revalidates canonical manifest policy at each strict-platform and ClawHub package boundary
+    version: 5
+    hash: sha256:6bcdd97f4c0b02782c4bc7e429c3d83007ac2e8803c7f15110ac775f867b6439
+    note: Zero-dependency derived-package builder that delegates both derived hash updates and boundary verification to canonical validate.sh

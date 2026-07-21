@@ -59,20 +59,17 @@ instead.
    For files that cannot safely carry frontmatter (`.json`, `.sh`,
    binaries), the manifest tracks their version — no modification needed.
 
-4. **Determine frontmatter mode.** Ask the user about their target
-   platforms:
-   - If targeting only Claude Code / agentskills.io-compatible clients:
-     use `frontmatter_mode: metadata` (includes the metadata block).
-   - If targeting Codex, Gemini CLI, or other strict platforms: use
-     `frontmatter_mode: minimal` (name + description only in SKILL.md;
-     manifest is the sole version record).
-   - If unsure: default to `metadata` — it's more expressive and can
-     always be stripped later with a packaging script.
+4. **Determine frontmatter mode.** Maintain the canonical source in
+   `frontmatter_mode: metadata` when richer provenance is useful. For Codex,
+   Gemini CLI, or another strict loader, derive a minimal-frontmatter install
+   copy rather than weakening the canonical source in place. If the user
+   explicitly wants one strict-only bundle, `minimal` is valid.
 
 5. **Generate MANIFEST.yaml.** Include:
    - `bundle`, `bundle_version`, `bundle_date`, `description`
    - `compatibility` section based on user's target platforms
-   - `files` list with `path`, `role`, `version`, `hash` (SHA-256), `note`
+   - Exactly one top-level `files:` list using unquoted normalized relative
+     paths and a `sha256:` hash or explicit `hash: null` for every entry
    - Leave `deployments` empty unless the user mentions existing installs.
 
 6. **Generate CHANGELOG.md.** Create a single entry summarizing known

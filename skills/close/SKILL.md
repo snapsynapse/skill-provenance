@@ -20,10 +20,11 @@ bundle and before committing, packaging, or handing off.
 
 ## Protocol
 
-1. **Identify changed files.** Compare the current state of each file
-   against its hash in `MANIFEST.yaml`. If `validate.sh --update` exists,
-   the user can run it for reliable hash recomputation. Otherwise, compute
-   SHA-256 for each file and compare against the manifest.
+1. **Validate before mutation.** Run verify-only `validate.sh` first when
+   available. Resolve structural grammar, unsafe or duplicate paths, symlink
+   components, and missing files before updating hashes. Hash mismatches and
+   missing or malformed hashes may then be repaired with an explicit
+   `validate.sh --update` workflow; `hash: null` remains an intentional opt-out.
 
 2. **Update internal version headers.** For each changed file that carries
    YAML frontmatter with version metadata:
@@ -51,10 +52,13 @@ bundle and before committing, packaging, or handing off.
      dependent file was not updated (e.g., SKILL.md changed but evals.json
      wasn't updated to match), say so in the entry.
 
-5. **Deliver.** Provide the user with the changed files plus updated
+5. **Final validation.** Run verify-only validation after all version,
+   changelog, and hash updates. Do not package or commit a failing bundle.
+
+6. **Deliver.** Provide the user with the changed files plus updated
    `MANIFEST.yaml` and `CHANGELOG.md`.
 
-6. **Git commit message.** If the bundle is in a git repo, provide a
+7. **Git commit message.** If the bundle is in a git repo, provide a
    ready-to-use commit message:
 
    ```

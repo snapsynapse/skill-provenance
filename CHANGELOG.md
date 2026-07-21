@@ -14,10 +14,11 @@ to limit package weight. Older history remains here in the repo root.
   indentation, missing inventories, and symlinks in any path component before
   filesystem reads. Prevented update mode from partially rewriting an
   invalid manifest and corrected success summaries so explicit null-hash
-  opt-outs are not described as hash-verified.
+  opt-outs are not described as hash-verified. Added non-gating warnings for
+  malformed attestation records and excluded them from current evidence.
 - skill-provenance/package.sh: Revalidated the canonical source at every
-  derived-package boundary while keeping validate.sh as the single parser
-  and policy authority.
+  derived-package boundary and delegated derived hash updates to validate.sh,
+  removing the duplicate hash-rewrite implementation.
 - .github/scripts/test-validate.sh: Added executable regression fixtures for
   traversal, absolute paths, dot and empty components, backslashes, YAML
   quoting/comments/anchors/aliases/tags, malformed indentation, missing
@@ -25,17 +26,23 @@ to limit package weight. Older history remains here in the repo root.
   section isolation, and macOS system Bash 3.2 compatibility.
 - skill-provenance/SKILL.md, skill-provenance/README.md, SECURITY.md, and
   AGENTIC_SURFACES.md: Documented the manifest filesystem boundary, accepted
-  grammar, package delegation, trust boundary, residual risks, and reconciled
-  internal file-version headers with the manifest.
+  grammar, exact package inventory, evidence-based staleness, malformed
+  attestation semantics, package delegation, trust boundary, residual risks,
+  and reconciled internal file-version headers with the manifest.
 - skill-provenance/evals.json and skill-provenance/evals-distribution.json:
-  Added 2 core and 1 supplemental scenarios. Coverage is now 37 core and 18
-  supplemental, 55 total.
+  Added 4 core scenarios, added and consolidated package-boundary coverage,
+  corrected stale package and version-domain assumptions, and refreshed
+  platform paths. Coverage is now 39 core and 17 supplemental, 56 total.
 - skill-provenance/MANIFEST.yaml and skill-provenance/CHANGELOG.md: Prepared
   bundle 6.0.0, advanced per-file versions, refreshed hashes and rolling
   history, and recorded release validation.
 - README.md, AGENTS.md, CLAUDE.md, PROJECT_CONTEXT.md, ROADMAP.md, index.html,
   and sitemap.xml: Updated release metadata, eval counts, current project
   state, roadmap priorities, action example, and public modified dates.
+- skills/open/SKILL.md, skills/validate/SKILL.md,
+  skills/bootstrap/SKILL.md, and skills/close/SKILL.md: Synchronized focused
+  plugin workflows with constrained grammar, exact hash opt-outs,
+  evidence-based staleness, derived strict packaging, and final validation.
 - skill-provenance.skill: Rebuilt the Claude Settings ZIP from the canonical
   6.0.0 bundle.
 

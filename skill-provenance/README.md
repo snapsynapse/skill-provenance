@@ -1,12 +1,12 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 25
+version: 26
 version_date: 2026-07-21
-previous_version: 24
+previous_version: 25
 change_summary: >
-  Documented constrained manifest paths, symlink and duplicate rejection,
-  structural update behavior, and package-boundary validation.
+  Documented exact package inventory, malformed attestation warnings, and
+  the consolidated 6.0.0 validation and packaging contract.
 ---
 
 # Skill Provenance - README
@@ -76,14 +76,11 @@ If a loader only accepts `.zip` or `.md`, rename the archive from
 `.skill` to `.zip` before uploading. This is the tested path for
 Perplexity Computer. The contents stay identical.
 
-**What doesn't fit in .skill:** Some skill projects include evals,
-generation scripts, rendered outputs (.docx, .pdf), and optional handoff
-notes.
-The `.skill` format only carries the skill definition and its references.
-These extra files travel separately (uploaded to conversations, stored
-in working directories, or committed to git). The manifest tracks all
-files regardless — it's the complete inventory, not just the packaged
-subset.
+**Package inventory:** An authored `.skill` ZIP should contain every file
+listed by its enclosed manifest, including evals and scripts when the manifest
+tracks them. A deliberately reduced consumer package is valid only when it has
+its own derived manifest describing exactly the files in that package. Never
+ship a canonical manifest alongside only a subset of its listed files.
 
 
 ## Quick start
@@ -640,11 +637,14 @@ When no entry matches the current `bundle_version`, it flags staleness
 instead:
 
 ```
-ATTEST   stale: no validated_against entry for bundle 5.1.0 (latest recorded: 5.0.0)
+ATTEST   stale: no valid validated_against entry for bundle 5.1.0 (last recorded: 5.0.0)
          attestation is informational; it never gates integrity
 ```
 
-The stale flag never changes the exit code. This is deliberate and is the
+Records require a non-empty `bundle_version` and `harness`, a date in
+`YYYY-MM-DD` form, and `result: pass`, `partial`, or `fail`. Malformed records
+are reported and do not count as current-version evidence. Attestation warnings
+never change the exit code. This is deliberate and is the
 core design rule: **integrity gates, attestation informs.** A hash mismatch
 means the bytes are not what the manifest claims, and validation fails. A
 stale attestation means nobody has re-validated these (still-correct) bytes

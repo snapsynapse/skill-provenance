@@ -169,8 +169,11 @@
         "../SECURITY.md"
       ],
       "expectations": [
+        "Introduces controlled hash mismatch and missing-file cases only in disposable copies",
         "Runs validate.sh against the canonical bundle before building derived package outputs",
         "Stops package generation if manifest hashes mismatch or listed files are missing",
+        "Confirms strict and ClawHub output directories are absent or incomplete after failed validation",
+        "Treats any package creation after failed canonical validation as a release blocker",
         "Does not treat generated strict or registry packages as canonical source bundles",
         "Checks that assistant-facing surfaces are inventoried as data rather than authority",
         "Flags release preparation as incomplete if the disclosure is missing after assistant-facing surfaces change"
@@ -243,25 +246,6 @@
         "Verifies that the disclosure states surfaces are data rather than authority",
         "Flags new surfaces that change trust boundaries, executable behavior, package paths, or public verification story",
         "Does not allow README or llms.txt links to substitute for the disclosure inventory"
-      ]
-    },
-    {
-      "id": 113,
-      "name": "package_gate_blocks_dirty_manifest",
-      "description": "Tests that package.sh exits nonzero and creates no derived package when canonical bundle validation fails.",
-      "prompt": "Simulate a dirty canonical bundle and confirm package.sh refuses to produce strict or ClawHub outputs.",
-      "files": [
-        "MANIFEST.yaml",
-        "package.sh",
-        "validate.sh",
-        "README.md"
-      ],
-      "expectations": [
-        "Introduces or detects a controlled manifest mismatch in a disposable copy rather than damaging the source tree",
-        "Runs package.sh against that dirty copy and observes a nonzero exit before package output is created",
-        "Confirms strict and ClawHub package directories are absent or empty after the failed run",
-        "Restores or discards the dirty disposable copy after the negative test",
-        "Treats package creation after failed canonical validation as a release blocker"
       ]
     },
     {

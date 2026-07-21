@@ -68,14 +68,6 @@ if [ ! -f "$MANIFEST" ]; then
   fail "MANIFEST.yaml not found in $BUNDLE_DIR"
 fi
 
-if command -v shasum >/dev/null 2>&1; then
-  sha256_hash() { shasum -a 256 "$1" | awk '{print $1}'; }
-elif command -v sha256sum >/dev/null 2>&1; then
-  sha256_hash() { sha256sum "$1" | awk '{print $1}'; }
-else
-  fail "neither shasum nor sha256sum found"
-fi
-
 validate_source_bundle() {
   if [ ! -x "$BUNDLE_DIR/validate.sh" ]; then
     fail "validate.sh is missing or not executable in $BUNDLE_DIR"
@@ -262,97 +254,6 @@ rewrite_manifest() {
   mv "$temp_file" "$manifest_file"
 }
 
-update_hashes() {
-  local bundle_dir="$1"
-  local manifest_file="$bundle_dir/MANIFEST.yaml"
-  local updates_file
-  local temp_manifest
-  local current_path=""
-  local current_hash=""
-  local path=""
-  local expected=""
-  local actual=""
-
-  updates_file="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-updates.XXXXXX")"
-  temp_manifest="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-manifest.XXXXXX")"
-
-  declare -a paths=()
-  declare -a expected_hashes=()
-  local in_files=0
-
-  while IFS= read -r line; do
-    if [ "$line" = "files:" ]; then
-      in_files=1
-      continue
-    fi
-    if [ "$in_files" -eq 1 ] && [[ "$line" =~ ^[^[:space:]#] ]]; then
-      in_files=0
-    fi
-    if [ "$in_files" -eq 1 ] && [[ "$line" =~ ^\ \ -\ path:\ (.+)$ ]]; then
-      if [ -n "$current_path" ]; then
-        paths+=("$current_path")
-        expected_hashes+=("$current_hash")
-      fi
-      current_path="${BASH_REMATCH[1]}"
-      current_hash=""
-      continue
-    fi
-    if [ "$in_files" -eq 1 ] && [[ "$line" =~ ^\ \ \ \ hash:\ sha256:([a-f0-9]+)$ ]]; then
-      current_hash="${BASH_REMATCH[1]}"
-    fi
-  done < "$manifest_file"
-
-  if [ -n "$current_path" ]; then
-    paths+=("$current_path")
-    expected_hashes+=("$current_hash")
-  fi
-
-  for ((i = 0; i < ${#paths[@]}; i++)); do
-    path="${paths[$i]}"
-    expected="${expected_hashes[$i]}"
-    [ -n "$expected" ] || continue
-    actual="$(sha256_hash "$bundle_dir/$path")"
-    if [ "$actual" != "$expected" ]; then
-      printf '%s\t%s\n' "$path" "$actual" >> "$updates_file"
-    fi
-  done
-
-  awk -v updates_file="$updates_file" '
-    BEGIN {
-      while ((getline line < updates_file) > 0) {
-        split(line, fields, "\t")
-        replacements[fields[1]] = fields[2]
-      }
-      close(updates_file)
-      current_path = ""
-      in_files = 0
-    }
-    {
-      line = $0
-      if (line == "files:") {
-        in_files = 1
-      } else if (in_files && line ~ /^[^[:space:]#]/) {
-        in_files = 0
-        current_path = ""
-      }
-      if (in_files && line ~ /^  - path: /) {
-        current_path = line
-        sub(/^  - path: /, "", current_path)
-      }
-      if (in_files && current_path != "" &&
-          (current_path in replacements) &&
-          line ~ /^    hash: sha256:[a-f0-9]+[[:space:]]*$/) {
-        sub(/sha256:[a-f0-9]+/, "sha256:" replacements[current_path], line)
-        current_path = ""
-      }
-      print line
-    }
-  ' "$manifest_file" > "$temp_manifest"
-
-  mv "$temp_manifest" "$manifest_file"
-  rm -f "$updates_file"
-}
-
 build_variant() {
   local mode="$1"
   local output_parent="$2"
@@ -389,7 +290,8 @@ build_variant() {
       ;;
   esac
 
-  update_hashes "$dest_dir"
+  "$BUNDLE_DIR/validate.sh" --update "$dest_dir"
+  "$BUNDLE_DIR/validate.sh" "$dest_dir"
   echo "Built $mode package at $dest_dir"
 }
 

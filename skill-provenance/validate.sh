@@ -397,11 +397,15 @@ report_attestation() {
     }
     /^validated_against:/ { in_va = 1; next }
     in_va && /^[A-Za-z_]/ { in_va = 0 }
-    in_va && /^[[:space:]]*-[[:space:]]*bundle_version:/ {
+    in_va && /^[[:space:]]*-[[:space:]]*/ {
       n++
-      ver[n] = $0
-      sub(/^[[:space:]]*-[[:space:]]*bundle_version:[[:space:]]*/, "", ver[n])
-      sub(/[[:space:]]*(#.*)?$/, "", ver[n])
+      if ($0 ~ /^[[:space:]]*-[[:space:]]*bundle_version:/) {
+        ver[n] = $0
+        sub(/^[[:space:]]*-[[:space:]]*bundle_version:[[:space:]]*/, "", ver[n])
+        sub(/[[:space:]]*(#.*)?$/, "", ver[n])
+      } else {
+        invalid_start[n] = 1
+      }
       next
     }
     in_va && n > 0 && /^[[:space:]]*(harness|model|date|result):[[:space:]]*/ {
@@ -419,7 +423,20 @@ report_attestation() {
       print ""
       matched = 0
       for (i = 1; i <= n; i++) {
-        if (ver[i] == current) {
+        bad = ""
+        if (invalid_start[i] || ver[i] == "") bad = bad " bundle_version"
+        if (field[i, "harness"] == "") bad = bad " harness"
+        if (field[i, "result"] != "pass" &&
+            field[i, "result"] != "partial" &&
+            field[i, "result"] != "fail") bad = bad " result"
+        if (field[i, "date"] !~ /^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) bad = bad " date"
+        if (bad != "") {
+          invalid[i] = 1
+          print "ATTEST   malformed record " i " (invalid or missing:" bad ")"
+        }
+      }
+      for (i = 1; i <= n; i++) {
+        if (!invalid[i] && ver[i] == current) {
           matched++
           line = "ATTEST   bundle " ver[i] " validated against: " field[i, "harness"]
           if (field[i, "model"] != "") line = line " / " field[i, "model"]
@@ -430,7 +447,9 @@ report_attestation() {
         }
       }
       if (matched == 0) {
-        print "ATTEST   stale: no validated_against entry for bundle " current " (latest recorded: " ver[n] ")"
+        last = ver[n]
+        if (last == "") last = "unknown"
+        print "ATTEST   stale: no valid validated_against entry for bundle " current " (last recorded: " last ")"
       }
       print "         attestation is informational; it never gates integrity"
     }

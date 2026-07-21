@@ -27,7 +27,7 @@
     {
       "id": 2,
       "name": "open_session_verify_bundle",
-      "description": "Tests the session-opening protocol. Given a versioned bundle with one missing file and one stale file, the skill should flag both issues.",
+      "description": "Tests the session-opening protocol. Given a versioned bundle with a missing file, hash drift, and a changelog dependency warning, the skill should flag each issue without comparing unrelated version domains.",
       "prompt": "I'm starting a new session with this skill bundle. Please verify what I've uploaded and tell me what needs attention.",
       "files": [
         "MANIFEST.yaml",
@@ -38,7 +38,8 @@
       "expectations": [
         "Skill reads MANIFEST.yaml first",
         "Reports that generate.js is listed in manifest but missing from uploads",
-        "Reports that evals.json version (2) is lower than bundle version (3) and flags it as potentially stale",
+        "Reports evals.json as potentially stale because its hash drifted or the changelog identifies an unmet dependency",
+        "Does not compare per-file revision integers numerically with bundle semver",
         "Does not silently proceed past the missing file",
         "Asks the user how to proceed with the discrepancies",
         "Presents issues clearly without unnecessary alarm"
@@ -168,8 +169,8 @@
     {
       "id": 9,
       "name": "gemini_cli_compatibility",
-      "description": "Tests bootstrapping a bundle targeting Gemini CLI, which requires SKILL.md frontmatter limited to name and description. The skill should use frontmatter_mode: minimal and provide Gemini CLI installation guidance.",
-      "prompt": "I want to version this skill bundle for use with Gemini CLI. SKILL.md has name and description only. This is the first version — call it 1.0.0. I want to install it to ~/.gemini/skills/ when we're done.",
+      "description": "Tests bootstrapping a bundle targeting Gemini CLI with minimal frontmatter and current project or user installation guidance.",
+      "prompt": "I want to version this skill bundle for use with Gemini CLI. SKILL.md has name and description only. This is the first version — call it 1.0.0. I may install it at project or user scope when we're done.",
       "files": [
         "SKILL.md",
         "references/setup-guide.md"
@@ -179,7 +180,8 @@
         "SKILL.md frontmatter is unchanged — no metadata block added",
         "SKILL.md version is tracked only in MANIFEST.yaml, not in the file itself",
         "compatibility.designed_for can describe CLI-oriented surfaces or capabilities without requiring a vendor-specific single target",
-        "Install guidance references ~/.gemini/skills/ directory structure",
+        "Install guidance uses a currently documented Gemini CLI project or user skill location, including .agents/skills when appropriate",
+        "Treats platform path guidance as time-sensitive compatibility information",
         "CHANGELOG.md is created with a 1.0.0 bootstrap entry",
         "Manifest and changelog are generated normally alongside the skill files"
       ]
@@ -414,8 +416,8 @@
     },
     {
       "id": 22,
-      "name": "packaged_subset_vs_canonical_bundle",
-      "description": "Tests awareness that a .skill or .zip installable package may contain only the packaged subset while the canonical source bundle tracks additional files.",
+      "name": "incomplete_package_manifest_mismatch",
+      "description": "Tests that an installable archive is incomplete when its enclosed manifest lists canonical files that the archive omits.",
       "prompt": "I opened a .skill ZIP that has SKILL.md, README.md, and references, but MANIFEST.yaml says the canonical bundle also includes evals and scripts that are not in this package. Is something wrong?",
       "files": [
         "MANIFEST.yaml",
@@ -424,11 +426,11 @@
         "README.md"
       ],
       "expectations": [
-        "Explains the difference between an installable packaged subset and the canonical source bundle",
-        "Does not silently treat the package as complete if the manifest expects additional tracked files",
-        "Flags the missing tracked files clearly and asks how the user wants to proceed",
-        "Explains that some files may travel separately even when the installed skill loads correctly",
-        "Uses the manifest as the authoritative inventory rather than the archive contents alone"
+        "Uses the enclosed manifest as the authoritative inventory rather than the archive contents alone",
+        "Flags every manifest-listed file missing from the archive",
+        "Does not call the package complete merely because its SKILL.md can load",
+        "Explains that a deliberately reduced package needs its own derived manifest listing exactly that reduced inventory",
+        "Recommends rebuilding from canonical source rather than silently ignoring the mismatch"
       ]
     },
     {
@@ -445,8 +447,8 @@
       "expectations": [
         "Reads MANIFEST.yaml and checks all listed files against the imported contents",
         "Verifies hashes for files present in the import",
-        "Notes any files listed in the manifest that are absent from the .skill ZIP (e.g., evals, scripts) and explains they may travel separately from the installable package",
-        "Does not treat a packaged subset as a corruption or integrity failure",
+        "Treats any manifest-listed file absent from the .skill ZIP as an integrity failure",
+        "Does not excuse missing evals or scripts as separately transported when the enclosed manifest lists them",
         "Confirms the bundle version and changelog are intact",
         "Explains that .skill is a standard ZIP and can be renamed to .zip for platforms that require it"
       ]
@@ -454,7 +456,7 @@
     {
       "id": 24,
       "name": "copilot_vscode_skill_bootstrap",
-      "description": "Tests bootstrapping a versioned bundle for use with GitHub Copilot in VS Code, which discovers skills in .github/skills/ or ~/.agents/skills/.",
+      "description": "Tests bootstrapping a versioned bundle for GitHub Copilot using a currently documented project or personal Agent Skills location.",
       "prompt": "I want to version this skill for GitHub Copilot in VS Code. The skill lives in .github/skills/my-skill/ with SKILL.md and a references/ folder. This is version 1.0.0.",
       "files": [
         "SKILL.md",
@@ -466,7 +468,8 @@
         "Does not add platform-specific frontmatter fields that Copilot would reject",
         "CHANGELOG.md is created with a 1.0.0 bootstrap entry",
         "Manifest paths are relative to the skill directory, not the repo root",
-        "Notes that the same bundle can be installed to ~/.agents/skills/ for personal scope"
+        "Recognizes documented project locations such as .github/skills, .claude/skills, or .agents/skills and personal locations such as ~/.copilot/skills or ~/.agents/skills",
+        "Treats platform path guidance as time-sensitive compatibility information"
       ]
     },
     {
@@ -672,7 +675,7 @@
       ],
       "expectations": [
         "Runs against a disposable copy and leaves the canonical bundle unchanged",
-        "Observes the ATTEST stale line naming the current bundle_version and the latest recorded attestation",
+        "Observes the ATTEST stale line naming the current bundle_version and the last recorded attestation",
         "Confirms exit code 0 because all hashes verify: attestation never gates integrity",
         "Recommends re-validating on a current harness/model pair and recording a new validated_against entry, not rejecting the bundle",
         "Does not move environment or attestation claims into hash fields or invent a failing exit code for staleness"
@@ -714,6 +717,44 @@
         "Does not repair, normalize, dereference, or silently choose an authoritative duplicate entry",
         "Distinguishes manifest inventory duplicates from optional origin metadata that records intentionally ignored lookalike source paths",
         "Leaves ordinary unique regular-file entries unaffected"
+      ]
+    },
+    {
+      "id": 38,
+      "name": "manifest_files_section_scope_and_cardinality",
+      "description": "Tests that the constrained inventory has exactly one top-level files section and ignores path-shaped metadata outside that section.",
+      "prompt": "In disposable copies, validate manifests with no files section, two files sections, and origin metadata containing selected_source_path plus a nested path key. Then run update mode.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Rejects a missing files section and a duplicate files section",
+        "Requires at least one valid file entry in the sole files section",
+        "Treats path-shaped origin, deployment, and attestation metadata outside files as inert metadata rather than inventory",
+        "Does not hash, reject, or rewrite out-of-section path-shaped metadata",
+        "Refuses partial update when files-section structure is invalid",
+        "Preserves valid out-of-section metadata byte-for-byte during a successful hash update"
+      ]
+    },
+    {
+      "id": 39,
+      "name": "malformed_attestation_is_visible_but_non_gating",
+      "description": "Tests that malformed validated_against records are visible without being confused with integrity failures or valid current attestations.",
+      "prompt": "In a disposable clean bundle, add current-version validated_against records with a missing harness, invalid result value, or malformed date. Run validate.sh and explain the outcome.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Reports each recognized malformed record with its record number and invalid or missing fields",
+        "Accepts result only as pass, partial, or fail and date only as YYYY-MM-DD",
+        "Does not present a malformed current-version record as a valid matching attestation",
+        "Still reports that no valid current-version attestation exists",
+        "Keeps attestation informational so a hash-clean bundle exits zero",
+        "Still exits nonzero when an independent inventory or hash integrity error exists"
       ]
     }
   ]
