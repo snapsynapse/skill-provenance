@@ -7,6 +7,18 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 6.3.0 - 2026-09-05
+- evals.json: Added a core scenario that separates verified adoption from
+  distribution, interest, owner confirmation, and unknown evidence.
+- evals-distribution.json: Added three supplemental scenarios covering release
+  artifact subject classification, truthful citation metadata before a DOI
+  exists, and per-control OpenSSF Scorecard evidence discipline, and required
+  archive checks to reject unexpected non-bundle files. Coverage is now 42
+  core, 21 supplemental, and 63 total.
+- MANIFEST.yaml: Bumped the bundle to 6.3.0, advanced changed file revisions,
+  refreshed eval inventory notes, and refreshed hashes.
+- CHANGELOG.md: Added this entry and retained the newest 5 releases.
+
 ## 6.2.0 - 2026-08-28
 - SKILL.md: Added direct routing for no-plugin verification and portable
   bootstrap work while keeping the canonical workflow concise.
@@ -94,23 +106,6 @@ Full release history lives in the source repository's top-level
   stale-attestation semantics. Core eval count is now 35; total is 52.
 - MANIFEST.yaml: Bumped bundle to 5.1.0, advanced changed file versions,
   refreshed hashes and inventory notes.
-- CHANGELOG.md: Added this entry and retained the newest 5 releases.
-
-## 5.0.0 - 2026-07-10
-- validate.sh: Changed verification to fail closed on missing, malformed,
-  or duplicate hash fields; added explicit `hash: null` opt-outs; made
-  update mode repair missing or malformed hashes; and retained inventory
-  presence checks for opted-out files.
-- SKILL.md: Defined the explicit hash contract and fail-closed validation
-  behavior.
-- README.md: Documented explicit null opt-outs, update repair, and the
-  breaking change from implicit hash omission.
-- evals.json: Added 3 core scenarios for fail-closed verification,
-  explicit null semantics, and update repair. Core eval count is now 33.
-- evals-distribution.json: Added a GitHub Action input-safety scenario.
-  Supplemental eval count is now 17; total eval count is now 50.
-- MANIFEST.yaml: Bumped the bundle to 5.0.0, updated file versions and
-  inventory notes, and refreshed hashes.
 - CHANGELOG.md: Added this entry and retained the newest 5 releases.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.

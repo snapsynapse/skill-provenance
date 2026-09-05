@@ -45,18 +45,17 @@ description (see the `SKILL_v4.md` → `SKILL.md`/`MANIFEST.yaml` snippet in
 - Assistant guide (pre-install verification): https://skillprovenance.dev/.well-known/assistant-guide.txt
 - Releases: https://github.com/snapsynapse/skill-provenance/releases
 
-## Current status (as of 2026-08-28 release)
+## Current status (as of 2026-09-05 release)
 
-- Stable public bundle release is 6.2.0. It adds a standalone verifier,
-  portable bootstrap prompt, refreshed ecosystem evidence, and explicit
-  bundle-versus-GuideCheck tag-family guidance.
+- Stable public bundle release is 6.3.0. It adds citation metadata, verified
+  adoption classification, release-artifact boundaries, and expanded evals.
 - The validator now fails closed on unsafe or ambiguous paths, duplicate
   entries, manifest-listed symlinks, and unsupported inventory syntax.
   Packaging reuses that validator policy at each derived-package boundary.
-- Coverage is 41 core and 18 supplemental evals, 59 total, plus executable
+- Coverage is 42 core and 21 supplemental evals, 63 total, plus executable
   validator, action-input, packaging, and release-surface regression checks.
 - The GitHub Marketplace validation action is publicly listed and the stable
-  action reference is `snapsynapse/skill-provenance@v6.2.0`.
+  action reference is `snapsynapse/skill-provenance@v6.3.0`.
 - GitHub Agent Skill validation and exact-tag preview pass, and `gh skill
   search skill-provenance` returns this repository. The GitHub release carries
   the validated `.skill` archive.
@@ -64,6 +63,10 @@ description (see the `SKILL_v4.md` → `SKILL.md`/`MANIFEST.yaml` snippet in
   the canonical GitHub release.
 - Current adoption work is portfolio dogfooding, verified-adopter evidence,
   GitHub Agent Skill publication, and targeted registry/toolmaker interop.
+- Root `CITATION.cff` supplies citation metadata without claiming a DOI.
+  `docs/adoption-evidence.md` defines verified adoption and records the current
+  qualifying count. `docs/release-provenance.md` classifies canonical, stable,
+  derived, repository-entry, and registry surfaces.
 - Health verdict: healthy and actively maintained. See root `CLAUDE.md` for
   full agent-facing build, test, and release conventions.
 
@@ -80,6 +83,9 @@ description (see the `SKILL_v4.md` → `SKILL.md`/`MANIFEST.yaml` snippet in
 | Agent-facing and executable trust boundaries | `AGENTIC_SURFACES.md` |
 | Search policy and provider action ledger | `ops/search-indexing.md` and dated `ops/search/` evidence |
 | Dated ecosystem observations | `docs/`; each note must preserve its source and measurement boundary |
+| Adoption classification and ledger | `docs/adoption-evidence.md` |
+| Release artifact classification | `docs/release-provenance.md` |
+| Read-only trust-control evidence | `audits/`; each record states whether it is official or local |
 
 Root documentation and `skill-provenance/references/` are maintained
 references. `docs/` contains dated evidence notes, `ops/` contains operational

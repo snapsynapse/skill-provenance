@@ -11,8 +11,8 @@ skill-provenance/                ← Canonical source bundle (DO NOT rename)
 ├── README.md                    ← Human-facing user guide (has internal version header)
 ├── MANIFEST.yaml                ← File inventory: roles, versions, SHA-256 hashes
 ├── CHANGELOG.md                 ← Recent in-bundle change history (last 5 entries)
-├── evals.json                   ← 41 core evaluation scenarios
-├── evals-distribution.json      ← 18 supplemental distribution evals
+├── evals.json                   ← 42 core evaluation scenarios
+├── evals-distribution.json      ← 21 supplemental distribution evals
 ├── validate.sh                  ← Bash script for local hash verification
 ├── package.sh                   ← Bash script for derived strict/ClawHub outputs
 └── references/standalone-verification.md ← No-plugin verify/bootstrap path

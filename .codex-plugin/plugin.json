@@ -1,6 +1,6 @@
 {
   "name": "skill-provenance",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "Version, validate, bootstrap, package, verify, and hand off portable Agent Skill bundles.",
   "author": {
     "name": "PAICE.work PBC",

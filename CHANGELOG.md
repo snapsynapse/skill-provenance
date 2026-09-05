@@ -7,11 +7,53 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
-## Unreleased - 2026-08-28
+## Unreleased - 2026-09-05
 - README.md, index.html, llms.txt, search-audit.config.json, PROJECT_CONTEXT.md,
   CLAUDE.md, and ROADMAP.md: Synchronized stable install links, release state,
   GitHub Agent Skill discovery status, and post-release adoption work after
   v6.2.0 publication. The immutable v6.2.0 bundle and archive are unchanged.
+- CITATION.cff, docs/adoption-evidence.md,
+  .github/ISSUE_TEMPLATE/compatibility-report.yml, and README.md: Added
+  citation metadata plus a reproducible compatibility and verified-adoption
+  evidence path without treating distribution or interest as production use.
+- docs/release-provenance.md, audits/openssf-scorecard-2026-09-05.json,
+  PROJECT_CONTEXT.md, and ROADMAP.md: Classified release artifacts, recorded a
+  read-only per-control trust baseline, and routed signing, attestations,
+  governance, DOI publication, and OpenSSF programs to later gated work.
+- .github/scripts/release-surface-check.sh and ROADMAP.md: Closed the observed
+  release-check gap by requiring exact archive inventory agreement, including
+  rejection of ignored operating-system metadata; the candidate archive was
+  cleaned before release.
+
+## 6.3.0 - 2026-09-05
+- CITATION.cff, docs/adoption-evidence.md,
+  .github/ISSUE_TEMPLATE/compatibility-report.yml, and README.md: Added
+  citation metadata plus a reproducible compatibility and verified-adoption
+  evidence path without treating distribution or interest as production use.
+- docs/release-provenance.md, audits/openssf-scorecard-2026-09-05.json,
+  PROJECT_CONTEXT.md, and ROADMAP.md: Classified release artifacts, recorded a
+  read-only per-control trust baseline, and routed signing, attestations,
+  governance, DOI publication, and OpenSSF programs to later gated work.
+- .github/scripts/release-surface-check.sh: Required exact `.skill` archive
+  inventory agreement so ignored or incidental files cannot pass the release
+  gate merely because every required file is present.
+- skill-provenance/evals.json: Added a core verified-adoption evidence
+  scenario that keeps distribution, interest, private confirmation, and
+  unknown evidence distinct.
+- skill-provenance/evals-distribution.json: Added three supplemental scenarios
+  for release artifact subjects, citation metadata without an unresolved DOI,
+  and per-control Scorecard evidence discipline, and strengthened archive
+  inventory evaluation to reject unexpected non-bundle files. Coverage is now
+  42 core and 21 supplemental scenarios, 63 total.
+- skill-provenance/MANIFEST.yaml and skill-provenance/CHANGELOG.md: Prepared
+  bundle 6.3.0, advanced changed file revisions, refreshed hashes and rolling
+  history, and retained the newest five portable release entries.
+- README.md, AGENTS.md, CLAUDE.md, PROJECT_CONTEXT.md, index.html, llms.txt,
+  sitemap.xml, search-audit.config.json, CITATION.cff, and
+  .codex-plugin/plugin.json: Updated evaluation counts, version metadata,
+  stable-release references, and dated search surfaces for 6.3.0.
+- skill-provenance.skill: Rebuilt the Claude Settings ZIP from the canonical
+  6.3.0 bundle.
 
 ## 6.2.0 - 2026-08-28
 - skill-provenance/SKILL.md, skill-provenance/README.md, and

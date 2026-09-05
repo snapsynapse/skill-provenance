@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use Skill Provenance, please cite the software using this metadata."
+title: "Skill Provenance"
+type: software
+version: 6.3.0
+date-released: 2026-08-28
+authors:
+  - family-names: Rogers
+    given-names: Sam
+    affiliation: "PAICE.work PBC"
+repository-code: "https://github.com/snapsynapse/skill-provenance"
+url: "https://skillprovenance.dev/"
+license: MIT
+keywords:
+  - agent skills
+  - provenance
+  - integrity verification
+  - versioning
+  - drift detection
+abstract: >-
+  Skill Provenance is a portable protocol and metaskill for version identity,
+  SHA-256 integrity verification, and drift control across Agent Skill bundles,
+  registries, platform uploads, and multi-agent sessions.

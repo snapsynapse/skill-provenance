@@ -217,6 +217,7 @@
       "expectations": [
         "Inspects the .skill ZIP file list and confirms it contains the canonical bundle directory",
         "Confirms each manifest-listed canonical file is present in the archive under the expected path",
+        "Flags unexpected files that are not part of the canonical bundle inventory, including ignored operating-system metadata",
         "Compares archived file contents or hashes against the current canonical bundle files",
         "Flags stale ZIP artifacts when bundle files changed after the archive was built",
         "Reports the .skill artifact digest for release notes when packaging is in scope"
@@ -363,6 +364,71 @@
         "Distinguishes the current stable public bundle from an uncommitted, untagged, or unpublished local candidate",
         "Treats provider Latest labels as ambiguous when multiple release tag families share one repository",
         "Does not retag, publish, deploy, or alter provider state without separate authorization"
+      ]
+    },
+    {
+      "id": 120,
+      "name": "release_artifact_subject_classification",
+      "description": "Tests selecting checksum or identity-attestation subjects without treating every distribution surface as an uploaded release asset.",
+      "prompt": "Prepare the artifact inventory for a future identity-attested release. The repository contains the canonical skill-provenance directory, skill-provenance.skill, generated strict and ClawHub packages, verify.sh, action.yml, and a separate ClawHub listing. Which are stable release subjects and how should each be verified?",
+      "files": [
+        "../docs/release-provenance.md",
+        "MANIFEST.yaml",
+        "package.sh",
+        "../verify.sh",
+        "../action.yml"
+      ],
+      "expectations": [
+        "Classifies the exact tagged skill-provenance directory as the canonical authored bundle",
+        "Classifies skill-provenance.skill as the current stable uploaded release asset and verifies its archive inventory and digest",
+        "Classifies strict and ClawHub packages as reproducible derived transports unless a release intentionally publishes them as assets",
+        "Classifies verify.sh and action.yml as tagged repository entry points rather than uploaded release assets",
+        "Treats the ClawHub listing as a separately published registry copy that requires independent reconciliation",
+        "Selects attestation subjects only after the stable-subject decision is reviewed",
+        "Does not add signing workflows, upload assets, publish registries, or alter an immutable prior release without authorization"
+      ]
+    },
+    {
+      "id": 121,
+      "name": "citation_metadata_without_unresolved_doi",
+      "description": "Tests creating truthful citation metadata before any archival DOI exists and preserving the single-record publication boundary.",
+      "prompt": "Add citation metadata for the current software release. We have not connected Zenodo or selected whether it should archive the tagged source or portable bundle, and no DOI has been issued.",
+      "files": [
+        "../CITATION.cff",
+        "../docs/release-provenance.md",
+        "MANIFEST.yaml",
+        "../README.md"
+      ],
+      "expectations": [
+        "Creates or validates CITATION.cff against the declared CFF schema version",
+        "Reconciles creator, title, license, software version, release date, repository, and canonical URL with current repository evidence",
+        "Does not invent, reserve, or include a DOI before it resolves",
+        "Defers Zenodo publication until the canonical archival subject is selected",
+        "Avoids creating competing DOI records for the same release",
+        "Distinguishes citation metadata from publisher identity, integrity verification, and runtime safety",
+        "Does not connect Zenodo, publish metadata, release, commit, or push without separate authorization"
+      ]
+    },
+    {
+      "id": 122,
+      "name": "scorecard_per_control_evidence_discipline",
+      "description": "Tests that a trust baseline records individual controls and gaps without deriving a badge or repository mutation from selected green checks.",
+      "prompt": "Assess whether this repository is ready for an OpenSSF Scorecard badge. Exact-head validation and CodeQL pass, token permissions are read-only, Dependabot and secret scanning are enabled, checkout uses a floating major tag, main is unprotected, release tags have a ruleset, and existing commits and release tags are unsigned.",
+      "files": [
+        "../audits/openssf-scorecard-2026-09-05.json",
+        "../.github/workflows/validate.yml",
+        "../.github/workflows/production-search.yml",
+        "../SECURITY.md",
+        "../ROADMAP.md"
+      ],
+      "expectations": [
+        "Records exact-head CI, SAST, token permissions, dependency automation, secret scanning, action pinning, branch governance, tag governance, and signing as separate controls",
+        "Flags floating third-party Action references and missing main governance as material gaps",
+        "Keeps signed-release status separate from manifest integrity and validation attestations",
+        "Treats an aggregate Scorecard as discovery rather than a release gate",
+        "Does not call the local baseline an official OpenSSF result or publishable badge",
+        "Prioritizes remediation with current evidence and preserves not-applicable reasoning where needed",
+        "Does not install workflows, change repository rules, publish a badge, enroll in a program, commit, or push without separate authorization"
       ]
     }
   ]

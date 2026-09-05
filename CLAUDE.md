@@ -9,8 +9,8 @@ Canonical site: https://skillprovenance.dev/ | Repo: snapsynapse/skill-provenanc
 - `skill-provenance/SKILL.md` -- the skill definition (what agents read)
 - `skill-provenance/MANIFEST.yaml` -- file inventory with roles, versions, SHA-256 hashes
 - `skill-provenance/CHANGELOG.md` -- rolling recent history (last 5 entries)
-- `skill-provenance/evals.json` -- 41 core evaluation scenarios
-- `skill-provenance/evals-distribution.json` -- 18 supplemental distribution evals
+- `skill-provenance/evals.json` -- 42 core evaluation scenarios
+- `skill-provenance/evals-distribution.json` -- 21 supplemental distribution evals
 - `skill-provenance/validate.sh` -- local hash verification script
 - `skill-provenance/package.sh` -- derived copy generator (strict/ClawHub)
 - `skill-provenance/references/standalone-verification.md` -- no-plugin verify/bootstrap path
@@ -72,15 +72,14 @@ Test locally: `claude --plugin-dir .`
 
 `.github/workflows/validate.yml` runs on push/PR to `main`: verifies bundle hashes via the repo's own `action.yml`, test-builds the strict and ClawHub packages, and runs `release-surface-check.sh`, `action-security-check.sh`, `test-validate.sh`, and `test-standalone-verify.sh`. All are bash scripts under `.github/scripts/` and `skill-provenance/`.
 
-## Current state (as of 2026-08-28 release)
+## Current state (as of 2026-09-05 release)
 
-- Stable public bundle release is `6.2.0`, with standalone verification,
-  portable bootstrap guidance, refreshed evidence, and explicit tag-family
-  separation.
+- Stable public bundle release is `6.3.0`, with citation metadata, adoption
+  evidence classification, release-artifact boundaries, and expanded evals.
 - Validation fails closed on unsafe or ambiguous paths, duplicates, missing
   inventories, and symlink components. Packaging revalidates through the
   same policy at each derived-package boundary.
-- GitHub Marketplace lists the validation action at `v6.2.0`. GitHub Agent
+- GitHub Marketplace lists the validation action at `v6.3.0`. GitHub Agent
   Skill validation, exact-tag preview, and discovery search all pass.
 - Roadmap priorities are portfolio dogfooding, Agent Skill publication,
   evidence-led interop, and later optional signatures.

@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 6.2.0
-bundle_date: 2026-08-28
+bundle_version: 6.3.0
+bundle_date: 2026-09-05
 description: >
   Metaskill for portable provenance, integrity, and drift control across
   Agent Skills local folders, registries, platform uploads, and multi-agent
@@ -116,6 +116,17 @@ validated_against:
       tamper rejection, exit-code preservation, temporary cleanup, derived
       strict and ClawHub packages, repository search contract, archive
       agreement, and release surfaces passed. Attestation remains informational.
+  - bundle_version: 6.3.0
+    harness: OpenAI Codex desktop
+    model: GPT-5
+    date: 2026-09-05
+    result: pass
+    method: validate.sh verify + regression suite + skill validation + CFF schema validation + search contract + release-surface-check.sh
+    notes: >
+      Canonical hashes, verified-adoption classification, release-artifact
+      subjects, citation truthfulness, Scorecard evidence discipline, exact
+      archive contents, standalone verification, search, and release surfaces
+      passed. Attestation remains informational.
 
 files:
   - path: SKILL.md
@@ -156,20 +167,20 @@ files:
 
   - path: evals.json
     role: evals
-    version: 16
-    hash: sha256:18f64e10b8785ae59b775b2bedc100518396bc28d7567d6116ba2e3dd9626b9e
-    note: 41 core evals including standalone verifier pinning and bootstrap decision gates, files-section scope, malformed attestation, exact package inventory, unsafe paths, duplicates, symlinks, fail-closed hashes, and prior provenance, portability, deployment, validation, and trust workflows
+    version: 17
+    hash: sha256:67fb6ab87028f968403a8200d22d3bb03807cacbbb0ea7de3ccfabc2300c23a2
+    note: 42 core evals including verified-adoption evidence classification, standalone verifier pinning and bootstrap decision gates, files-section scope, malformed attestation, exact package inventory, unsafe paths, duplicates, symlinks, fail-closed hashes, and prior provenance, portability, deployment, validation, and trust workflows
 
   - path: evals-distribution.json
     role: evals
-    version: 10
-    hash: sha256:901e8a4a1d52a50c9aaf757ce248935b4e2788366fcfd9ac2fdb92c00754cdf0
-    note: 18 supplemental evals covering release tag-family separation, package-boundary safety, GitHub Action shell safety, derived packaging, origin metadata, release integrity, surface disclosure, and source-backed ecosystem workflows
+    version: 11
+    hash: sha256:0988a855783a1e621259c285552abb170e8b5151dbffc3bbbe396ccaaa1ea478
+    note: 21 supplemental evals covering release-artifact subjects, citation truthfulness, Scorecard evidence discipline, release tag-family separation, package-boundary safety, GitHub Action shell safety, derived packaging, origin metadata, release integrity, surface disclosure, and source-backed ecosystem workflows
 
   - path: CHANGELOG.md
     role: reference
-    version: 31
-    hash: sha256:cd07271b14cc63d654b88dc1d9083065adfee7f246ce13b9f82543e14d9c5d12
+    version: 32
+    hash: sha256:fb5822abd1802bc6b33c61d2d039b4df7e22f69d7e8cd9abb2b8b92b3d6210f0
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh

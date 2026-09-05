@@ -794,6 +794,26 @@
         "Runs standalone verification and shows the complete proposed diff",
         "Does not commit, push, install, publish, deploy, or replace source material without separate authorization"
       ]
+    },
+    {
+      "id": 42,
+      "name": "verified_adoption_evidence_classification",
+      "description": "Tests that adoption reporting distinguishes reproducible use from distribution, interest, owner confirmation, and unknown evidence.",
+      "prompt": "Classify these Skill Provenance signals: 800 registry downloads with no user identities, an attributed catalog listing, a public repository workflow pinned to v6.2.0 with successful runs, and a private team owner who confirms use but cannot publish repository details. How many verified adopters can we report?",
+      "files": [
+        "../docs/adoption-evidence.md",
+        "../README.md",
+        "MANIFEST.yaml"
+      ],
+      "expectations": [
+        "Classifies downloads as interest rather than verified adoption",
+        "Classifies the catalog listing as distribution rather than verified adoption",
+        "Counts the identified public repository only after confirming its Skill Provenance version, execution surface, use case, and reproducible successful evidence",
+        "Allows the private team to be recorded as owner-confirmed adoption only with identity, version, surface, use case, confirmation date, and an explicit private-evidence boundary",
+        "Keeps missing or incomplete facts unknown rather than converting them to zero or inferred use",
+        "Reports a count derived only from qualifying ledger entries and explains its evidence boundary",
+        "Does not publish adopter identity, private details, outreach, or repository changes without authorization"
+      ]
     }
   ]
 }

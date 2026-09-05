@@ -1,12 +1,18 @@
 [![Validate bundle](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml/badge.svg)](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE)
-[![Stable bundle](https://img.shields.io/github/v/tag/snapsynapse/skill-provenance?filter=v%2A&label=bundle)](https://github.com/snapsynapse/skill-provenance/releases/tag/v6.2.0)
+[![Stable bundle](https://img.shields.io/github/v/tag/snapsynapse/skill-provenance?filter=v%2A&label=bundle)](https://github.com/snapsynapse/skill-provenance/releases/tag/v6.3.0)
 [![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Skill%20Provenance%20Validate-blue)](https://github.com/marketplace/actions/skill-provenance-validate)
 
 # Skill Provenance
 
 Portable provenance, integrity, and drift control for Agent Skills across
 local folders, registries, platform uploads, and multi-agent sessions.
+
+Use Skill Provenance in a project? Submit a
+[compatibility or adoption report](https://github.com/snapsynapse/skill-provenance/issues/new?template=compatibility-report.yml).
+Reports are classified under the repository's
+[adoption evidence contract](docs/adoption-evidence.md), so public listings
+and download counts are not overstated as verified use.
 
 ## Who this is for
 
@@ -25,6 +31,10 @@ release label. See the [evidence note](docs/state-of-skill-versioning-2026.md).
 ## Canonical URL
 
 https://skillprovenance.dev/
+
+Citation metadata is available in [CITATION.cff](CITATION.cff). Release
+artifact classes and their verification boundaries are documented in
+[release provenance](docs/release-provenance.md).
 
 ```
 Before                              After
@@ -82,12 +92,12 @@ the bundle before install, but does not install anything for you.
 
 **GitHub CLI (Codex and other supported agents):**
 
-Preview the current stable v6.2.0 release before installing it.
+Preview the current stable v6.3.0 release before installing it.
 
 Literal
 ```shell
-gh skill preview snapsynapse/skill-provenance skill-provenance@v6.2.0
-gh skill install snapsynapse/skill-provenance skill-provenance@v6.2.0 --agent codex --scope user
+gh skill preview snapsynapse/skill-provenance skill-provenance@v6.3.0
+gh skill install snapsynapse/skill-provenance skill-provenance@v6.3.0 --agent codex --scope user
 ```
 
 This repository publishes two release tag families. Bundle releases use
@@ -134,7 +144,7 @@ After install, five commands are available:
 - `/skill-provenance:bootstrap` — add version tracking to an unversioned bundle
 
 **Claude (Settings UI):**
-Download `skill-provenance.skill` from the [stable v6.2.0 bundle release](https://github.com/snapsynapse/skill-provenance/releases/tag/v6.2.0) and install:
+Download `skill-provenance.skill` from the [stable v6.3.0 bundle release](https://github.com/snapsynapse/skill-provenance/releases/tag/v6.3.0) and install:
 `claude.ai` -> Profile icon -> `Settings` -> `Skills` -> `Add Skill` -> select the file.
 
 If your loader only accepts `.zip` or `.md` uploads, rename
@@ -159,7 +169,7 @@ directory bundle can be placed there when you want a neutral install path.
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: snapsynapse/skill-provenance@v6.2.0
+  - uses: snapsynapse/skill-provenance@v6.3.0
     with:
       bundle-path: skill-provenance
 ```
@@ -333,8 +343,8 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 41 core evaluation scenarios
-  evals-distribution.json        <- 18 supplemental packaging/deployment/integrity evals
+  evals.json                     <- 42 core evaluation scenarios
+  evals-distribution.json        <- 21 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
 CHANGELOG.md                     <- Full append-only repo history
@@ -347,8 +357,8 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-59 evaluation scenarios across two files: 41 core workflow evals in
-[evals.json](skill-provenance/evals.json) and 18 supplemental
+63 evaluation scenarios across two files: 42 core workflow evals in
+[evals.json](skill-provenance/evals.json) and 21 supplemental
 distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).
 

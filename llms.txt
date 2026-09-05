@@ -31,7 +31,7 @@ Most ecosystem tools track source, registry, install, or deployment state. Skill
 
 - Canonical site: https://skillprovenance.dev/
 - GitHub: https://github.com/snapsynapse/skill-provenance
-- Stable bundle release: https://github.com/snapsynapse/skill-provenance/releases/tag/v6.2.0
+- Stable bundle release: https://github.com/snapsynapse/skill-provenance/releases/tag/v6.3.0
 - ClawHub: https://clawhub.ai/snapsynapse/skills/skill-provenance
 - Standalone verifier: https://skillprovenance.dev/verify.sh
 - 2026 evidence note: https://github.com/snapsynapse/skill-provenance/blob/main/docs/state-of-skill-versioning-2026.md

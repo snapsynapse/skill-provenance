@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/snapsynapse/skill-provenance",
+  "observed_at": "2026-09-05",
+  "scope": "Read-only control baseline; not an official OpenSSF Scorecard result",
+  "aggregate_score": null,
+  "badge_publishable": false,
+  "checks": [
+    {
+      "control": "CI tests",
+      "status": "pass",
+      "evidence": "Validate bundle run 33228524321 passed at exact main commit feb818a4e0a4acd6e1aab04ccede823ded815262."
+    },
+    {
+      "control": "SAST",
+      "status": "pass",
+      "evidence": "CodeQL scheduled run 33887712784 passed at exact main commit feb818a4e0a4acd6e1aab04ccede823ded815262."
+    },
+    {
+      "control": "Workflow token permissions",
+      "status": "pass",
+      "evidence": "Repository-owned validation and production-search workflows declare contents: read."
+    },
+    {
+      "control": "Pinned dependencies",
+      "status": "gap",
+      "priority": "high",
+      "evidence": "Both repository-owned workflows use actions/checkout@v4 rather than an immutable commit SHA."
+    },
+    {
+      "control": "Dangerous workflow triggers",
+      "status": "pass",
+      "evidence": "Repository-owned workflows do not use pull_request_target or workflow_run."
+    },
+    {
+      "control": "Dependency security updates",
+      "status": "pass",
+      "evidence": "GitHub reports Dependabot security updates enabled."
+    },
+    {
+      "control": "Secret scanning",
+      "status": "pass",
+      "evidence": "GitHub reports secret scanning and push protection enabled."
+    },
+    {
+      "control": "Default-branch governance",
+      "status": "gap",
+      "priority": "high",
+      "evidence": "GitHub branch-protection API reports main is not protected; no active branch ruleset was returned."
+    },
+    {
+      "control": "Release-tag governance",
+      "status": "pass",
+      "evidence": "Active repository ruleset 21097876 protects release tags."
+    },
+    {
+      "control": "Signed releases",
+      "status": "gap",
+      "priority": "medium",
+      "evidence": "Baseline commit feb818a and annotated tag v6.2.0 do not have verifiable signatures. Existing immutable release is not to be replaced solely for signing."
+    },
+    {
+      "control": "Security policy",
+      "status": "pass",
+      "evidence": "SECURITY.md defines private reporting, supported trust boundaries, and in-scope validator defects."
+    },
+    {
+      "control": "Release provenance",
+      "status": "partial",
+      "priority": "medium",
+      "evidence": "GitHub reports a SHA-256 digest for the sole v6.2.0 asset, and release-surface checks reproduce archive agreement. No publisher identity attestation is present."
+    }
+  ],
+  "next_actions": [
+    "Pin third-party GitHub Actions by immutable commit SHA in a separately reviewed change.",
+    "Design and authorize proportional main-branch rules before changing repository settings.",
+    "Complete account-level signing setup before the next commit or release tag that is intended to carry a signature.",
+    "Re-run an official OpenSSF Scorecard only after material gaps are addressed; do not publish a badge from this baseline."
+  ]
+}

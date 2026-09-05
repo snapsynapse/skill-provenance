@@ -1,8 +1,17 @@
-name: Compatibility Report
-description: Report test results from a platform other than Claude
-title: "[Compat] "
+name: Compatibility or Adoption Report
+description: Report a platform test or evidence-backed use of Skill Provenance
+title: "[Evidence] "
 labels: ["compatibility"]
 body:
+  - type: dropdown
+    id: report-type
+    attributes:
+      label: Report type
+      options:
+        - Compatibility test
+        - Adoption report
+    validations:
+      required: true
   - type: dropdown
     id: platform
     attributes:
@@ -67,3 +76,24 @@ body:
       placeholder: "e.g., 4.3.0"
     validations:
       required: true
+  - type: input
+    id: adopter
+    attributes:
+      label: Adopter or project identity
+      description: Required for an adoption report. Name the repository, project, team, or organization.
+    validations:
+      required: false
+  - type: input
+    id: evidence
+    attributes:
+      label: Public evidence URL
+      description: Link to a repository, workflow, report, or other reproducible evidence. Leave blank if requesting owner-confirmed private classification.
+    validations:
+      required: false
+  - type: checkboxes
+    id: evidence-boundary
+    attributes:
+      label: Evidence boundary
+      options:
+        - label: I understand that a download, listing, fork, or redistribution alone is not verified adoption.
+          required: true
