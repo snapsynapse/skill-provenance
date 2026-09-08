@@ -99,6 +99,11 @@ check_assistant_guide_manifest() {
   [ "$guide_hash" = "$manifest_hash" ] || fail "assistant guide hash drift: manifest $manifest_hash, actual $guide_hash"
   [ "$guide_bytes" = "$manifest_bytes" ] || fail "assistant guide byte drift: manifest $manifest_bytes, actual $guide_bytes"
 
+  cmp -s .well-known/assistant-guide.txt assistant-guide.txt ||
+    fail "root assistant guide mirror differs from served guide"
+  cmp -s .well-known/assistant-guide-manifest.txt assistant-guide-manifest.txt ||
+    fail "root assistant guide manifest mirror differs from served manifest"
+
   for key in guide-version immutable-release-url profile profile-version canonical-url repository-url; do
     [ -n "$(manifest_value "$key")" ] || fail "assistant guide manifest missing $key"
   done

@@ -1,0 +1,11 @@
+guide-path: /.well-known/assistant-guide.txt
+guide-version: 1.2.0
+guide-sha256: 590138a4aebc64a9e14a64ab7d01a8eafe167bda0bdf8fb14742de5e45b227e1
+guide-bytes: 6924
+immutable-release-url: https://github.com/snapsynapse/skill-provenance/releases/tag/guidecheck-1.2.0
+profile: human-verifiable-assistant-guide
+profile-version: 0.3.0
+canonical-url: https://skillprovenance.dev/.well-known/assistant-guide.txt
+repository-url: https://github.com/snapsynapse/skill-provenance
+released-at: 2026-08-20T00:00:00Z
+changelog-url: https://github.com/snapsynapse/skill-provenance/blob/main/CHANGELOG.md

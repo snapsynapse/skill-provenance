@@ -671,3 +671,9 @@ to limit package weight. Older history remains here in the repo root.
 
 ## 1.0.0 — 2026-02-09
 - Initial public release of the skill-versioning metaskill.
+
+## Unreleased - 2026-09-08
+- assistant-guide.txt, assistant-guide-manifest.txt, and
+  .github/scripts/release-surface-check.sh: Added root trust mirrors for the
+  served GuideCheck files and enforce byte parity at the release surface.
+  The canonical skill bundle and `.skill` archive remain unchanged.
