@@ -677,3 +677,11 @@ to limit package weight. Older history remains here in the repo root.
   .github/scripts/release-surface-check.sh: Added root trust mirrors for the
   served GuideCheck files and enforce byte parity at the release surface.
   The canonical skill bundle and `.skill` archive remain unchanged.
+
+## Unreleased - 2026-09-12
+- docs/state-of-skill-versioning-2026.md: Added the observer's dated signed
+  manifests, signing key, and full history endpoint as sources, recorded that
+  the manifests cannot retroactively freeze the 2026-08-27 figure, and
+  recorded a 2026-09-12 recompute of 66 of 1,203 unchanged labels that does
+  not reproduce the reported 14.2 percent. The canonical skill bundle and
+  `.skill` archive remain unchanged.
