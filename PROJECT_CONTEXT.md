@@ -45,17 +45,20 @@ description (see the `SKILL_v4.md` → `SKILL.md`/`MANIFEST.yaml` snippet in
 - Assistant guide (pre-install verification): https://skillprovenance.dev/.well-known/assistant-guide.txt
 - Releases: https://github.com/snapsynapse/skill-provenance/releases
 
-## Current status (as of 2026-09-05 release)
+## Current status (as of 2026-09-23 release)
 
-- Stable public bundle release is 6.3.0. It adds citation metadata, verified
-  adoption classification, release-artifact boundaries, and expanded evals.
-- The validator now fails closed on unsafe or ambiguous paths, duplicate
-  entries, manifest-listed symlinks, and unsupported inventory syntax.
+- Stable public bundle release is 7.0.0. It makes the manifest inventory
+  complete: unlisted files beneath the bundle root fail verification unless
+  `--allow-unlisted` is given. This is a breaking change for bundles that
+  previously passed with extra files.
+- The validator fails closed on unsafe or ambiguous paths, duplicate
+  entries, manifest-listed symlinks, unsupported inventory syntax, and
+  unlisted entries.
   Packaging reuses that validator policy at each derived-package boundary.
 - Coverage is 43 core and 21 supplemental evals, 64 total, plus executable
   validator, action-input, packaging, and release-surface regression checks.
 - The GitHub Marketplace validation action is publicly listed and the stable
-  action reference is `snapsynapse/skill-provenance@v6.3.0`.
+  action reference is `snapsynapse/skill-provenance@v7.0.0`.
 - GitHub Agent Skill validation and exact-tag preview pass, and `gh skill
   search skill-provenance` returns this repository. The GitHub release carries
   the validated `.skill` archive.

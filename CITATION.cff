@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use Skill Provenance, please cite the software using this metadata."
 title: "Skill Provenance"
 type: software
-version: 6.3.0
-date-released: 2026-08-28
+version: 7.0.0
+date-released: 2026-09-23
 authors:
   - family-names: Rogers
     given-names: Sam

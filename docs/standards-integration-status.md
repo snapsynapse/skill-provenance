@@ -76,8 +76,8 @@ The smallest contract that survives the boundary crossings above:
 - One entry per bundle file: relative path and SHA-256 of its bytes. A
   listed file that is missing is a failure, and so is an unlisted file:
   the inventory is complete, with only the manifest itself exempt. The
-  reference validator enforces this from bundle 7.0.0 (merged, not yet
-  tagged); 6.3.0 and earlier verify only what they list, a gap observed
+  reference validator enforces this from bundle 7.0.0 (released
+  2026-09-23); 6.3.0 and earlier verify only what they list, a gap observed
   2026-09-24.
 - A verifier that fails closed on mismatch, missing inventory, unlisted
   entries, unsafe or ambiguous paths, and symlinks, with distinct outcomes

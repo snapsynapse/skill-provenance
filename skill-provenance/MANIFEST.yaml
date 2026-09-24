@@ -127,6 +127,18 @@ validated_against:
       subjects, citation truthfulness, Scorecard evidence discipline, exact
       archive contents, standalone verification, search, and release surfaces
       passed. Attestation remains informational.
+  - bundle_version: 7.0.0
+    harness: Anthropic Claude Code
+    model: claude-opus-5-5
+    date: 2026-09-23
+    result: pass
+    method: validate.sh verify + regression suite under Bash 5.3 and 3.2 + standalone pin test + action input test + derived package validation + search contract + release-surface-check.sh
+    notes: >
+      Canonical hashes, complete-inventory enforcement for unlisted files,
+      symlinks, special files, forged names, and unreadable directories,
+      update-mode refusal, derived strict and ClawHub packages, standalone
+      verifier pinning, search contract, and archive agreement passed.
+      Attestation remains informational.
 
 files:
   - path: SKILL.md
