@@ -7,6 +7,14 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## Unreleased - 2026-09-23
+- search-audit.config.json: Repinned the verify.sh search contract to the
+  7.0.0 validator SHA-256. The stale pin failed the repository search check,
+  the first CI step, after the 7.0.0 merge.
+- .github/scripts/release-surface-check.sh: Required the search contract's
+  verify.sh pin to match the current validator hash so the two pins cannot
+  drift apart again.
+
 ## 7.0.0 - 2026-09-23
 - skill-provenance/validate.sh: Closed the unlisted-file gap observed
   2026-09-24, where a bundle containing a file absent from MANIFEST.yaml still
