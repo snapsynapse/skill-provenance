@@ -18,7 +18,7 @@
 
 ## Adoption evidence gate
 
-After the 6.3.0 release is public, measure verified adopters, GitHub Agent
+After the 7.0.0 release is public, measure verified adopters, GitHub Agent
 Skill discovery, registry interest, and interop responses before adding a new
 service surface. Lack of evidence should defer expansion rather than create a
 parallel monitoring or packaging system.

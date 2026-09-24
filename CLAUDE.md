@@ -72,14 +72,15 @@ Test locally: `claude --plugin-dir .`
 
 `.github/workflows/validate.yml` runs on push/PR to `main`: verifies bundle hashes via the repo's own `action.yml`, test-builds the strict and ClawHub packages, and runs `release-surface-check.sh`, `action-security-check.sh`, `test-validate.sh`, and `test-standalone-verify.sh`. All are bash scripts under `.github/scripts/` and `skill-provenance/`.
 
-## Current state (as of 2026-09-05 release)
+## Current state (as of 2026-09-23 release)
 
-- Stable public bundle release is `6.3.0`, with citation metadata, adoption
-  evidence classification, release-artifact boundaries, and expanded evals.
+- Stable public bundle release is `7.0.0`. The manifest inventory is now
+  complete: files beneath the bundle root that MANIFEST.yaml does not list
+  fail verification unless `--allow-unlisted` is given (breaking change).
 - Validation fails closed on unsafe or ambiguous paths, duplicates, missing
-  inventories, and symlink components. Packaging revalidates through the
+  inventories, symlink components, and unlisted entries. Packaging revalidates through the
   same policy at each derived-package boundary.
-- GitHub Marketplace lists the validation action at `v6.3.0`. GitHub Agent
+- The stable action reference is `snapsynapse/skill-provenance@v7.0.0`. GitHub Agent
   Skill validation, exact-tag preview, and discovery search all pass.
 - Roadmap priorities are portfolio dogfooding, Agent Skill publication,
   evidence-led interop, and later optional signatures.

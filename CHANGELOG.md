@@ -7,6 +7,20 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 2026-09-23 - 7.0.0 release surfaces
+- skill-provenance/MANIFEST.yaml: Recorded the 7.0.0 validated_against
+  entry for Anthropic Claude Code with claude-opus-5-5.
+- README.md, index.html, llms.txt, and search-audit.config.json: Moved the
+  stable install, preview, action, and release links from v6.3.0 to v7.0.0.
+- CITATION.cff and .codex-plugin/plugin.json: Set version 7.0.0 and the
+  2026-09-23 release date.
+- CLAUDE.md, PROJECT_CONTEXT.md, and ROADMAP.md: Recorded 7.0.0 as the
+  stable release and its breaking complete-inventory change.
+- docs/release-provenance.md: Recorded the v7.0.0 release asset size and
+  digest.
+- docs/standards-integration-status.md: Marked 7.0.0 as released.
+- skill-provenance.skill: Rebuilt from the canonical bundle.
+
 ## 2026-09-23 - Status note inventory correction (repo only)
 - docs/standards-integration-status.md: Updated the minimal provenance
   contract. Unlisted files now fail verification as of bundle 7.0.0, so the
