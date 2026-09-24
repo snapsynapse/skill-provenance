@@ -699,3 +699,13 @@ to limit package weight. Older history remains here in the repo root.
   and below so the page no longer scrolls horizontally on phones (observed
   595px document width at a 375px viewport before the fix, none after).
   The canonical skill bundle and `.skill` archive remain unchanged.
+- index.html: Updated the ClawHub download signal to 1,700+ (1.7k all-time
+  observed 2026-09-24) and removed the ProSkills 8.41/10 score, which dates
+  from 2026-04-08 and has no current listing to verify against.
+- README.md: Stated the governability rationale in "What problem it solves"
+  without claiming safety.
+- docs/standards-integration-status.md and ROADMAP.md: Added a dated
+  standards integration status note covering agentskills#46, #254, #380, and
+  AI Catalog, the smallest unresolved gap, and the minimal provenance
+  contract, including the observed limit that unlisted extra files are not
+  detected by the current validator.

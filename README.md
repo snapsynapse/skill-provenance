@@ -22,6 +22,10 @@ Teams that build, distribute, or run Agent Skills across multiple surfaces and n
 
 Agent Skills move across local folders, registries, and platform uploads with no portable way to verify version, integrity, or drift. Skill Provenance makes a bundle's identity and integrity travel with it.
 
+Governing skill-driven work starts with knowing what ran. Skill Provenance
+shows which version of a skill was reviewed, which is deployed, and whether
+they still match, without claiming the skill is safe.
+
 In a public registry-diff history recomputed here and confirmed by its
 observer on 2026-09-13, 66 of 1,210 Agent Skill instruction-text changes, or
 5.5 percent, had no version movement. This is a dated observation, not a live

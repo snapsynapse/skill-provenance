@@ -11,6 +11,8 @@
   use the repository issue form.
 - Use the dated skill-version drift evidence for targeted registry and
   toolmaker interop, keeping reported observations distinct from live metrics.
+  Current thread state, the smallest unresolved gap, and the minimal
+  provenance contract are in `docs/standards-integration-status.md`.
 - Pin third-party GitHub Actions to immutable commits and design proportional
   `main` branch governance in separately reviewed changes.
 
