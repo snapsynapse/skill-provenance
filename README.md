@@ -22,11 +22,13 @@ Teams that build, distribute, or run Agent Skills across multiple surfaces and n
 
 Agent Skills move across local folders, registries, and platform uploads with no portable way to verify version, integrity, or drift. Skill Provenance makes a bundle's identity and integrity travel with it.
 
-A public registry-diff observation dated 2026-08-27 reported that 169 of
-1,193 Agent Skill instruction-text changes, or 14.2 percent, had no version
-movement. This is a dated third-party observation, not a live metric. It is
-evidence for making the digest load-bearing while keeping semver as a useful
-release label. See the [evidence note](docs/state-of-skill-versioning-2026.md).
+In a public registry-diff history recomputed here and confirmed by its
+observer on 2026-09-13, 66 of 1,210 Agent Skill instruction-text changes, or
+5.5 percent, had no version movement. This is a dated observation, not a live
+metric. An earlier reported 14.2 percent could not be reproduced and should not
+be cited. A version label alone does not show whether the bytes changed, which
+is why the digest is load-bearing while semver remains a useful release label.
+See the [evidence note](docs/state-of-skill-versioning-2026.md).
 
 ## Canonical URL
 

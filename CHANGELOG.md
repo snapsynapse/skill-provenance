@@ -685,3 +685,17 @@ to limit package weight. Older history remains here in the repo root.
   recorded a 2026-09-12 recompute of 66 of 1,203 unchanged labels that does
   not reproduce the reported 14.2 percent. The canonical skill bundle and
   `.skill` archive remain unchanged.
+
+## Unreleased - 2026-09-23
+- index.html, README.md, and docs/state-of-skill-versioning-2026.md: Replaced
+  the unreproduced 14.2 percent drift figure with the observer-confirmed 66 of
+  1,210 (5.5 percent) to 2026-09-13, recorded the observer's recipe, the 839
+  retracted events, a 2026-09-24 recompute on the mutable history, and
+  verification that the per-file `url` and `eventId` gaps are closed. Refs #4.
+- index.html and sitemap.xml: Corrected the platform stat to 4 tested of 8
+  supported, matching the README platform table, and aligned the visible
+  update date, JSON-LD dateModified, article modified time, and sitemap lastmod.
+- index.html: Contained the comparison table and before/after panels at 768px
+  and below so the page no longer scrolls horizontally on phones (observed
+  595px document width at a 375px viewport before the fix, none after).
+  The canonical skill bundle and `.skill` archive remain unchanged.
