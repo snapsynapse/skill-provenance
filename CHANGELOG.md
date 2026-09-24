@@ -7,6 +7,45 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 7.0.0 - 2026-09-23
+- skill-provenance/validate.sh: Closed the unlisted-file gap observed
+  2026-09-24, where a bundle containing a file absent from MANIFEST.yaml still
+  verified with exit 0. The validator now walks the bundle root in pure Bash
+  and reports every unlisted file, symlink, or special file as `UNLISTED`.
+  Unlisted entries fail verification (exit 1) unless `--allow-unlisted` is
+  given, which reports them as warnings without verifying them. Only the root
+  MANIFEST.yaml is exempt. Unlisted symlinks are never followed, control
+  characters in reported names are escaped so filenames cannot forge report
+  lines, unreadable directories fail closed, and update mode never adds
+  unlisted files. Summaries now include an unlisted count. Breaking: bundles
+  that previously passed with extra files now fail.
+- .github/scripts/test-validate.sh: Added regression fixtures for root,
+  nested, dotfile, nested-manifest, symlinked-directory, dangling-symlink,
+  FIFO, forged-newline, and unreadable-directory entries, empty directories,
+  `--allow-unlisted` in either argument position, and update mode refusing to
+  rewrite or extend the manifest. Cleaned up earlier fixtures that now count
+  as unlisted. Passes under Bash 5.3 and macOS system Bash 3.2.
+- skill-provenance/SKILL.md, skill-provenance/README.md, and
+  skill-provenance/references/platforms-and-trust.md: Corrected the
+  completeness claim, stated the complete-inventory rule and its only
+  exemption, and documented `--allow-unlisted`, new-file workflow, and exit
+  semantics.
+- skill-provenance/evals.json: Added a core scenario for unlisted-file
+  inventory failure. Coverage is now 43 core, 21 supplemental, and 64 total.
+- skill-provenance/MANIFEST.yaml and skill-provenance/CHANGELOG.md: Prepared
+  bundle 7.0.0, advanced per-file versions, refreshed hashes and notes, and
+  rolled the in-bundle history to the newest 5 entries.
+- verify.sh: Repinned the standalone wrapper to the new validator SHA-256.
+- skills/validate/SKILL.md, skills/open/SKILL.md, and skills/close/SKILL.md:
+  Added unlisted-entry reporting and the list-before-update rule.
+- README.md, AGENTS.md, SECURITY.md, and AGENTIC_SURFACES.md: Updated
+  verification comments, exit semantics, in-scope threats, and surface trust
+  boundaries for unlisted files.
+- README.md, AGENTS.md, CLAUDE.md, PROJECT_CONTEXT.md, and index.html:
+  Synchronized eval counts to 43 core and 64 total. Public install and
+  release links remain on the published v6.3.0 release until 7.0.0 is tagged.
+- skill-provenance.skill: Rebuilt from the canonical bundle.
+
 ## Unreleased - 2026-09-05
 - README.md, index.html, llms.txt, search-audit.config.json, PROJECT_CONTEXT.md,
   CLAUDE.md, and ROADMAP.md: Synchronized stable install links, release state,

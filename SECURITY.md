@@ -58,6 +58,7 @@ permission prompts.
 In scope:
 - Accidental drift between files and MANIFEST.yaml
 - Missing files listed in the manifest
+- Unlisted files, symlinks, or special files added beneath the bundle root
 - SHA-256 hash mismatches
 - Unsafe, ambiguous, absolute, or duplicate manifest paths
 - Symlinks in manifest path components that could resolve outside the bundle
@@ -80,7 +81,10 @@ inventory grammar is deliberately smaller than general YAML: normalized,
 unique, unquoted relative paths and explicitly indented hash fields.
 Absolute paths, parent traversal, dot or empty components, backslashes,
 YAML path syntax, and symlinks in any path component fail closed before
-hashing. `package.sh`
+hashing. Every other entry beneath the bundle root must be listed:
+unlisted files fail verification unless `--allow-unlisted` is given,
+unlisted symlinks are never followed, and a directory that cannot be
+enumerated fails closed. `package.sh`
 delegates this decision to `validate.sh` at each package boundary rather
 than maintaining a second parser policy.
 

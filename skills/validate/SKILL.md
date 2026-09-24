@@ -33,6 +33,7 @@ whether a copy appears to be canonical or derived.
 3. **Report validation results only.** Include:
    - File count checked
    - Missing files
+   - Unlisted files, symlinks, or special files (`UNLISTED` lines)
    - Hash mismatches
    - Explicit `hash: null` opt-outs
    - Structural, unsafe-path, duplicate-path, and symlink errors
@@ -58,7 +59,7 @@ Keep the response concise:
 ```text
 Bundle: my-skill 1.2.0
 Copy type: canonical source bundle
-Files: 7 checked, 0 missing, 0 mismatched, 0 explicit opt-outs
+Files: 7 checked, 0 missing, 0 unlisted, 0 mismatched, 0 explicit opt-outs
 Result: pass
 ```
 If validation fails, name the specific files and explain that a mismatch

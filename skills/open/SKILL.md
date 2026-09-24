@@ -27,8 +27,9 @@ on a skill bundle — a directory containing `SKILL.md` and optionally
    the bundle contains. If no manifest exists, tell the user and suggest
    running `/skill-provenance:bootstrap` instead.
 
-2. **Verify all listed files are present.** Report any files listed in the
-   manifest but missing from disk.
+2. **Verify the inventory is complete.** Report any files listed in the
+   manifest but missing from disk, and any files on disk the manifest does
+   not list. Unlisted files fail verification.
 
 3. **Verify structure and hashes.** Prefer the bundle's `validate.sh` when
    available so constrained path grammar, duplicate inventory entries,

@@ -7,6 +7,29 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 7.0.0 - 2026-09-23
+- validate.sh: The files inventory is now complete. After checking listed
+  files, the validator walks the bundle root in pure Bash and reports every
+  unlisted file, symlink, or special file as `UNLISTED`. Unlisted entries fail
+  verification (exit 1) unless `--allow-unlisted` is given, which reports them
+  as warnings without verifying them. Only the root MANIFEST.yaml is exempt.
+  Unlisted symlinks are never followed, control characters in reported names
+  are escaped, unreadable directories fail closed, and update mode never adds
+  unlisted files. Summaries now include an unlisted count. This is a breaking
+  change: bundles that previously passed with extra files now fail.
+- SKILL.md: Stated the complete-inventory rule, corrected the completeness
+  claim, and added unlisted-entry checks to the validate, open, package, and
+  close protocols.
+- README.md: Documented unlisted-entry reporting, `--allow-unlisted`, update
+  behavior for new files, revised exit semantics, and sample output.
+- references/platforms-and-trust.md: Stated what a verified manifest shows
+  about added files.
+- evals.json: Added a core scenario for unlisted-file inventory failure.
+  Coverage is now 43 core, 21 supplemental, and 64 total.
+- MANIFEST.yaml: Bumped the bundle to 7.0.0, advanced changed file revisions,
+  refreshed notes, and refreshed hashes.
+- CHANGELOG.md: Added this entry and retained the newest 5 releases.
+
 ## 6.3.0 - 2026-09-05
 - evals.json: Added a core scenario that separates verified adoption from
   distribution, interest, owner confirmation, and unknown evidence.
@@ -86,26 +109,6 @@ Full release history lives in the source repository's top-level
   Supplemental eval count is now 17; total eval count is now 56.
 - MANIFEST.yaml: Bumped the bundle to 6.0.0, advanced changed file versions,
   refreshed hashes and inventory notes, and recorded release validation.
-- CHANGELOG.md: Added this entry and retained the newest 5 releases.
-
-## 5.1.0 - 2026-07-16
-- MANIFEST.yaml: Added optional `validated_against` attestation block.
-  Entries bind a validation event (harness, model, date, result, method)
-  to the exact bundle_version they validated — distinct from
-  `compatibility.tested_on` design-time claims and from integrity hashes.
-  Recorded the first entry for this release.
-- validate.sh: Added informational attestation reporting after hash
-  results: ATTEST lines for entries matching the current bundle_version,
-  and a stale flag when none match. Exit codes are unchanged by
-  attestation state — integrity gates, attestation informs.
-- SKILL.md: Added `validated_against` to the manifest schema example and
-  a rules paragraph on the attestation/integrity boundary.
-- README.md: Added the "Attestation: validated_against" section covering
-  the two-guarantee distinction and stale semantics.
-- evals.json: Added 2 core scenarios covering attestation reporting and
-  stale-attestation semantics. Core eval count is now 35; total is 52.
-- MANIFEST.yaml: Bumped bundle to 5.1.0, advanced changed file versions,
-  refreshed hashes and inventory notes.
 - CHANGELOG.md: Added this entry and retained the newest 5 releases.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.

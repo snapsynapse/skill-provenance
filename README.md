@@ -256,14 +256,16 @@ tool, authentication, sandbox, or approval policy.
 ```bash
 # Clone or download the bundle, then:
 cd skill-name/
-./validate.sh          # checks every file hash against MANIFEST.yaml
+./validate.sh          # checks every file hash and flags unlisted files
 
-# Exit code 0 = all hashes match
-# Exit code 1 = mismatches found (file modified or corrupted)
+# Exit code 0 = all hashes match and nothing unlisted is present
+# Exit code 1 = mismatches, missing files, or unlisted files found
 # Exit code 2 = no MANIFEST.yaml (unversioned bundle)
 ```
 
-If a hash fails, the file has changed since the author published it.
+If a hash fails, the file has changed since the author published it. If a
+file is reported as `UNLISTED`, something was added that the author never
+recorded; treat it as untrusted until you know where it came from.
 That might be intentional (a fork with local edits) or a problem
 (corruption, tampering, incomplete download). Either way, you know
 before you install.
@@ -345,7 +347,7 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 42 core evaluation scenarios
+  evals.json                     <- 43 core evaluation scenarios
   evals-distribution.json        <- 21 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
@@ -359,7 +361,7 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-63 evaluation scenarios across two files: 42 core workflow evals in
+64 evaluation scenarios across two files: 43 core workflow evals in
 [evals.json](skill-provenance/evals.json) and 21 supplemental
 distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).
