@@ -74,12 +74,14 @@ The smallest contract that survives the boundary crossings above:
 - A companion manifest beside `SKILL.md`, never inside it, so it costs no
   prompt tokens and is ignored by loaders that do not know it.
 - One entry per bundle file: relative path and SHA-256 of its bytes. A
-  listed file that is missing is a failure. The current validator does not
-  detect unlisted extra files (observed 2026-09-24), so the inventory
-  proves completeness of what it lists, not absence of additions.
-- A verifier that fails closed on mismatch, missing inventory, unsafe or
-  ambiguous paths, and symlinks, with distinct outcomes for match, drift,
-  and no manifest.
+  listed file that is missing is a failure, and so is an unlisted file:
+  the inventory is complete, with only the manifest itself exempt. The
+  reference validator enforces this from bundle 7.0.0 (merged, not yet
+  tagged); 6.3.0 and earlier verify only what they list, a gap observed
+  2026-09-24.
+- A verifier that fails closed on mismatch, missing inventory, unlisted
+  entries, unsafe or ambiguous paths, and symlinks, with distinct outcomes
+  for match, drift, and no manifest.
 - Optional, never gating: a release label (`bundle_version`) and
   environment attestations (`validated_against`) bound to one release.
 
