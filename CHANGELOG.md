@@ -7,6 +7,12 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 2026-09-23 - Status note inventory correction (repo only)
+- docs/standards-integration-status.md: Updated the minimal provenance
+  contract. Unlisted files now fail verification as of bundle 7.0.0, so the
+  note no longer records the validator as unable to detect additions; the
+  2026-09-24 observation is kept as the history of the gap.
+
 ## Unreleased - 2026-09-23
 - search-audit.config.json: Repinned the verify.sh search contract to the
   7.0.0 validator SHA-256. The stale pin failed the repository search check,
