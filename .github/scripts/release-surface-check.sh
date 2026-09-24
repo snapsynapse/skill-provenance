@@ -128,6 +128,9 @@ check_standalone_verifier() {
   [ "$actual_validator_hash" = "$pinned_validator_hash" ] ||
     fail "standalone verifier pin drift: wrapper $pinned_validator_hash, validator $actual_validator_hash"
 
+  grep -Fq "VALIDATOR_SHA256=\\\"${actual_validator_hash}\\\"" search-audit.config.json ||
+    fail "search-audit.config.json verify.sh contract does not pin validator $actual_validator_hash"
+
   grep -q '^VALIDATOR_SOURCE_URL="https://raw.githubusercontent.com/snapsynapse/skill-provenance/main/skill-provenance/validate.sh"$' verify.sh ||
     fail "verify.sh canonical validator URL drift"
 
