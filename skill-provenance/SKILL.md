@@ -12,12 +12,13 @@ license: MIT
 metadata:
   skill_bundle: skill-provenance
   file_role: skill
-  version: 25
-  version_date: 2026-08-28
-  previous_version: 24
+  version: 26
+  version_date: 2026-09-23
+  previous_version: 25
   change_summary: >
-    Added standalone verification and bootstrap routing for users who have
-    not installed the plugin while keeping validate.sh as the sole parser.
+    Made the files inventory complete: unlisted bundle entries fail
+    verification unless explicitly allowed, and new files must be listed
+    before hashes are updated.
   author: PAICE.work PBC (paice.work)
   source: https://github.com/snapsynapse/skill-provenance
 ---
@@ -38,7 +39,8 @@ This skill establishes three conventions that prevent that:
    always in the manifest.
 2. A recent changelog travels with the skill bundle, while longer history
    can live in the source repo.
-3. A manifest lists all files in the bundle so any session can verify completeness.
+3. A manifest lists every file in the bundle, and verification fails on
+   unlisted files, so any session can verify completeness.
 
 ## What Gets Versioned
 
@@ -313,6 +315,15 @@ disagree with a general YAML implementation.
 the manifest as the bundle's control file and verify it via git, transport
 checksums, or the surrounding package when needed.
 
+**The inventory is complete.** Every file, symlink, or special file beneath
+the bundle root must be listed, except the root `MANIFEST.yaml`. Unlisted
+entries, including dotfiles such as `.DS_Store` and nested manifests, fail
+verification. Unlisted symlinks are reported but never followed, and a
+directory that cannot be enumerated fails closed. `--allow-unlisted`
+downgrades unlisted entries to warnings for bundles that intentionally share
+a directory with other files; it never verifies them. Update mode never adds
+unlisted files to the manifest.
+
 
 ## The .skill Package Format
 
@@ -339,14 +350,15 @@ for the format and trimming rules.
 When the user asks only to validate a bundle, run the hash and inventory
 check without doing the full open-session review or close-session update:
 
-1. Read `MANIFEST.yaml` and verify all listed files are present.
+1. Read `MANIFEST.yaml`, verify all listed files are present, and verify no
+   unlisted entries exist beneath the bundle root.
 2. Run `validate.sh` when available, or compute SHA-256 hashes for listed
    files and compare them against the manifest.
    When the plugin and local helper are both absent, read
    [references/standalone-verification.md](references/standalone-verification.md)
    and use its pinned standalone wrapper rather than recreating the parser.
-3. Report checked files, missing files, hash mismatches, skipped files,
-   and pass/fail status.
+3. Report checked files, missing files, unlisted entries, hash mismatches,
+   skipped files, and pass/fail status.
    Treat only `hash: null` as an intentional skip; missing, malformed, or
    duplicate hash fields are manifest errors.
 4. Identify whether the copy appears to be a canonical source bundle,
@@ -364,8 +376,8 @@ Before building a strict-platform install copy, registry package, or
 settings ZIP, verify the canonical source bundle first. The included
 `package.sh` helper runs `validate.sh` against the canonical bundle at each
 derived-package boundary and must stop if the manifest reports invalid
-structure, unsafe paths, symlinks, duplicate paths, missing files, or hash
-mismatches. `validate.sh` remains the single parser and policy authority so
+structure, unsafe paths, symlinks, duplicate paths, missing files, unlisted
+files, or hash mismatches. `validate.sh` remains the single parser and policy authority so
 validation and packaging cannot drift into separate grammars.
 
 Do not treat generated strict-loader, ClawHub, or `.skill` outputs as the
@@ -384,7 +396,8 @@ to the package manager.
 When a skill bundle is loaded into a new session:
 
 1. Read `MANIFEST.yaml` first.
-2. Verify all listed files are present. Report any missing files.
+2. Verify all listed files are present and no unlisted entries exist.
+   Report any missing or unlisted files.
 3. Reject invalid inventory structure, unsafe or duplicate paths, and
    symlinks in any path component before reading or hashing a listed file.
 4. For files with hashes, verify hashes match. Flag mismatches. In
@@ -405,9 +418,10 @@ When work is complete and files are being delivered:
 
 1. Update internal version headers for changed files that use them.
 2. Update `MANIFEST.yaml` with new versions and hashes for every changed
-   versioned file, including manifest-only files. If the user deployed or
-   reinstalled the skill this session, update any relevant `deployments`
-   metadata too.
+   versioned file, including manifest-only files. Add a manifest entry for
+   every new file before updating hashes; `validate.sh --update` never adds
+   unlisted files. If the user deployed or reinstalled the skill this
+   session, update any relevant `deployments` metadata too.
 3. Add a new top entry to `CHANGELOG.md`.
 4. If any versioned file was changed but another dependent file was not
    updated (e.g., SKILL.md changed but evals.json was not updated), note

@@ -8,7 +8,7 @@ set -euo pipefail
 export LC_ALL=C
 export LANG=C
 
-VALIDATOR_SHA256="cac9624665345d317fd37edf183defd5553f8a2afaed736c07f58f597ae55c05"
+VALIDATOR_SHA256="aaeac06ba392fd9d2283ec24a8e490d924df3f5f2cd9cd2f85604ff9a5063497"
 VALIDATOR_SOURCE_URL="https://raw.githubusercontent.com/snapsynapse/skill-provenance/main/skill-provenance/validate.sh"
 TARGET_DIR="."
 DOWNLOADED_VALIDATOR=""

@@ -8,7 +8,7 @@ VALIDATOR="$ROOT_DIR/skill-provenance/validate.sh"
 TEST_DIR="$(mktemp -d "${TMPDIR:-/tmp}/skill-provenance-validate-test.XXXXXX")"
 OUTSIDE_FILE="${TEST_DIR}.outside.txt"
 PACKAGE_TEST_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/skill-provenance-package-test.XXXXXX")"
-trap 'rm -rf "$TEST_DIR" "$PACKAGE_TEST_ROOT"; rm -f "$OUTSIDE_FILE"' EXIT
+trap 'chmod -R u+rwx "$TEST_DIR" 2>/dev/null || true; rm -rf "$TEST_DIR" "${TEST_DIR}.outside-dir" "$PACKAGE_TEST_ROOT"; rm -f "$OUTSIDE_FILE"' EXIT
 
 if command -v shasum >/dev/null 2>&1; then
   hash_file() { shasum -a 256 "$1" | awk '{print $1}'; }
@@ -159,12 +159,18 @@ write_path_manifest "link-dir/payload.txt" "$outside_component_hash"
 expect_fail "$VALIDATOR" "$TEST_DIR"
 expect_fail "$VALIDATOR" --update "$TEST_DIR"
 expect_output "manifest paths may not contain symlink components" "$VALIDATOR" "$TEST_DIR"
+rm -rf "$TEST_DIR/link.txt" "$TEST_DIR/link-dir" "$TEST_DIR/outside-dir"
 
 mkdir -p "$TEST_DIR/references"
 printf 'legitimate\n' > "$TEST_DIR/references/file with spaces:v1.md"
 legitimate_hash="$(hash_file "$TEST_DIR/references/file with spaces:v1.md")"
 write_path_manifest "references/file with spaces:v1.md" "$legitimate_hash"
+printf 'payload\n' > "$TEST_DIR/references/payload.txt"
+expect_fail "$VALIDATOR" "$TEST_DIR"
+rm "$TEST_DIR/payload.txt" "$TEST_DIR/references/payload.txt"
 expect_pass "$VALIDATOR" "$TEST_DIR"
+rm -rf "$TEST_DIR/references"
+printf 'payload\n' > "$TEST_DIR/payload.txt"
 
 # Path-shaped metadata outside the top-level files inventory is data, not file
 # authority. Verify and update must ignore it rather than hash or rewrite it.
@@ -178,6 +184,118 @@ decoy_count="$(grep -c "$decoy_hash" "$TEST_DIR/MANIFEST.yaml")"
   echo "FAIL: update mode rewrote path-shaped metadata outside files" >&2
   exit 1
 }
+
+# The files inventory must be complete. Any entry beneath the bundle root that
+# the manifest does not list fails verification unless --allow-unlisted is
+# given. Only the root MANIFEST.yaml is exempt; empty directories carry no
+# bytes and are ignored. Update mode never adds unlisted entries.
+write_manifest "    hash: sha256:$valid_hash"
+expect_pass "$VALIDATOR" "$TEST_DIR"
+expect_output "unlisted 0, errors 0" "$VALIDATOR" "$TEST_DIR"
+
+mkdir -p "$TEST_DIR/empty/nested"
+expect_pass "$VALIDATOR" "$TEST_DIR"
+rm -rf "$TEST_DIR/empty"
+
+printf 'extra\n' > "$TEST_DIR/extra.md"
+expect_fail "$VALIDATOR" "$TEST_DIR"
+expect_output "^UNLISTED extra.md$" "$VALIDATOR" "$TEST_DIR"
+expect_output "Unlisted entries fail verification" "$VALIDATOR" "$TEST_DIR"
+expect_pass "$VALIDATOR" --allow-unlisted "$TEST_DIR"
+expect_pass "$VALIDATOR" "$TEST_DIR" --allow-unlisted
+expect_output "WARNING: 1 unlisted entr(ies) allowed by --allow-unlisted were not verified." \
+  "$VALIDATOR" --allow-unlisted "$TEST_DIR"
+rm "$TEST_DIR/extra.md"
+
+mkdir -p "$TEST_DIR/scripts/deep"
+printf '#!/bin/sh\n' > "$TEST_DIR/scripts/deep/run.sh"
+expect_fail "$VALIDATOR" "$TEST_DIR"
+expect_output "^UNLISTED scripts/deep/run.sh$" "$VALIDATOR" "$TEST_DIR"
+rm -rf "$TEST_DIR/scripts"
+
+printf 'hidden\n' > "$TEST_DIR/.DS_Store"
+expect_fail "$VALIDATOR" "$TEST_DIR"
+expect_output "^UNLISTED .DS_Store$" "$VALIDATOR" "$TEST_DIR"
+rm "$TEST_DIR/.DS_Store"
+
+mkdir -p "$TEST_DIR/sub"
+printf 'bundle: nested\nfiles:\n' > "$TEST_DIR/sub/MANIFEST.yaml"
+expect_fail "$VALIDATOR" "$TEST_DIR"
+expect_output "^UNLISTED sub/MANIFEST.yaml$" "$VALIDATOR" "$TEST_DIR"
+rm -rf "$TEST_DIR/sub"
+
+# Unlisted symlinks are reported, never followed, so an outside directory's
+# contents are not enumerated through the link.
+mkdir -p "${TEST_DIR}.outside-dir"
+printf 'outside\n' > "${TEST_DIR}.outside-dir/secret.txt"
+ln -s "${TEST_DIR}.outside-dir" "$TEST_DIR/linked"
+expect_fail "$VALIDATOR" "$TEST_DIR"
+expect_output "^UNLISTED linked (symlink, not followed)$" "$VALIDATOR" "$TEST_DIR"
+output="$("$VALIDATOR" "$TEST_DIR" 2>&1)" || true
+if printf '%s\n' "$output" | grep -q "secret.txt"; then
+  echo "FAIL: unlisted symlinked directory was traversed" >&2
+  exit 1
+fi
+rm "$TEST_DIR/linked"
+rm -rf "${TEST_DIR}.outside-dir"
+
+ln -s missing-target "$TEST_DIR/dangling"
+expect_fail "$VALIDATOR" "$TEST_DIR"
+expect_output "^UNLISTED dangling (symlink, not followed)$" "$VALIDATOR" "$TEST_DIR"
+rm "$TEST_DIR/dangling"
+
+if command -v mkfifo >/dev/null 2>&1; then
+  mkfifo "$TEST_DIR/pipe"
+  expect_fail "$VALIDATOR" "$TEST_DIR"
+  expect_output "^UNLISTED pipe (not a regular file, not read)$" "$VALIDATOR" "$TEST_DIR"
+  rm "$TEST_DIR/pipe"
+fi
+
+# Control characters in unlisted names are escaped so a crafted filename
+# cannot forge an OK line in the report.
+forged_name="$TEST_DIR/evil"$'\n'"OK       forged.md"
+printf 'x\n' > "$forged_name"
+expect_fail "$VALIDATOR" "$TEST_DIR"
+expect_output "^UNLISTED \$'evil\\\\nOK       forged.md'$" "$VALIDATOR" "$TEST_DIR"
+output="$("$VALIDATOR" "$TEST_DIR" 2>&1)" || true
+if printf '%s\n' "$output" | grep -q "^OK       forged.md"; then
+  echo "FAIL: unlisted filename forged a report line" >&2
+  exit 1
+fi
+rm "$forged_name"
+
+# A directory that cannot be enumerated fails closed instead of hiding files.
+# Root ignores permission bits, so this check only runs unprivileged.
+if [ "$(id -u)" -ne 0 ]; then
+  mkdir -p "$TEST_DIR/locked"
+  printf 'hidden\n' > "$TEST_DIR/locked/hidden.sh"
+  chmod 000 "$TEST_DIR/locked"
+  expect_fail "$VALIDATOR" "$TEST_DIR"
+  expect_fail "$VALIDATOR" --allow-unlisted "$TEST_DIR"
+  expect_output "^INVALID  locked (directory cannot be enumerated for unlisted files)$" \
+    "$VALIDATOR" "$TEST_DIR"
+  chmod 755 "$TEST_DIR/locked"
+  rm -rf "$TEST_DIR/locked"
+fi
+
+# Update mode refuses to rewrite the manifest while unlisted entries remain,
+# and never adds them to the inventory, even under --allow-unlisted.
+write_manifest ""
+printf 'extra\n' > "$TEST_DIR/extra.md"
+manifest_before="$(hash_file "$TEST_DIR/MANIFEST.yaml")"
+expect_fail "$VALIDATOR" --update "$TEST_DIR"
+[ "$(hash_file "$TEST_DIR/MANIFEST.yaml")" = "$manifest_before" ] || {
+  echo "FAIL: update mode rewrote the manifest despite unlisted entries" >&2
+  exit 1
+}
+expect_pass "$VALIDATOR" --update --allow-unlisted "$TEST_DIR"
+if grep -q "extra.md" "$TEST_DIR/MANIFEST.yaml"; then
+  echo "FAIL: update mode added an unlisted entry to the manifest" >&2
+  exit 1
+fi
+expect_pass "$VALIDATOR" --allow-unlisted "$TEST_DIR"
+rm "$TEST_DIR/extra.md"
+expect_pass "$VALIDATOR" "$TEST_DIR"
 
 # package.sh delegates manifest policy to validate.sh at each build boundary.
 # Exercise the real package entrypoint from disposable copies so unsafe source

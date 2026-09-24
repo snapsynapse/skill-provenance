@@ -5,6 +5,7 @@
 # Usage:
 #   ./validate.sh [path/to/bundle]          Verify hashes (default)
 #   ./validate.sh --update [path/to/bundle] Recompute and write hashes
+#   ./validate.sh --allow-unlisted [...]    Report unlisted files without failing
 #   ./validate.sh --help                    Show usage
 #
 #   If no path given, uses the directory containing this script.
@@ -14,13 +15,19 @@
 #   General YAML path syntax, absolute or non-normalized paths, duplicate paths,
 #   and manifest-listed symlinks fail closed.
 #
+#   Every other entry beneath the bundle root must be listed. Unlisted files,
+#   symlinks, and special files are reported as UNLISTED and fail the run
+#   unless --allow-unlisted is given. Only the root MANIFEST.yaml is exempt.
+#   Unlisted symlinks are reported but never followed. Update mode never adds
+#   unlisted files to the manifest.
+#
 #   If the manifest carries an optional validated_against block, a summary
 #   is reported after the hash results. Attestation is informational only:
 #   it never changes the exit code. Integrity gates, attestation informs.
 #
 # Exit codes:
 #   0 = all files present and hashes match (verify) or updated (update)
-#   1 = mismatches or missing files found
+#   1 = mismatches, missing files, or unlisted files found
 #   2 = MANIFEST.yaml not found
 
 export LC_ALL=C
@@ -29,15 +36,19 @@ export LANG=C
 set -euo pipefail
 
 MODE="verify"
+ALLOW_UNLISTED=0
 BUNDLE_DIR=""
 UPDATES_FILE=""
 TEMP_MANIFEST=""
+LISTED_FILE=""
+WALKED_FILE=""
 
 usage() {
   cat <<'EOF'
 Usage:
   ./validate.sh [path/to/bundle]          Verify hashes (default)
   ./validate.sh --update [path/to/bundle] Recompute and write hashes
+  ./validate.sh --allow-unlisted [...]    Report unlisted files without failing
   ./validate.sh --help                    Show usage
 EOF
 }
@@ -49,6 +60,12 @@ cleanup() {
   if [ -n "$TEMP_MANIFEST" ] && [ -f "$TEMP_MANIFEST" ]; then
     rm -f "$TEMP_MANIFEST"
   fi
+  if [ -n "$LISTED_FILE" ] && [ -f "$LISTED_FILE" ]; then
+    rm -f "$LISTED_FILE"
+  fi
+  if [ -n "$WALKED_FILE" ] && [ -f "$WALKED_FILE" ]; then
+    rm -f "$WALKED_FILE"
+  fi
 }
 
 trap cleanup EXIT
@@ -58,6 +75,9 @@ for arg in "$@"; do
   case "$arg" in
     --update)
       MODE="update"
+      ;;
+    --allow-unlisted)
+      ALLOW_UNLISTED=1
       ;;
     --help|-h)
       usage
@@ -97,6 +117,7 @@ errors=0
 checked=0
 skipped=0
 updated=0
+unlisted=0
 manifest_errors=0
 
 if [ "$MODE" = "update" ]; then
@@ -328,6 +349,119 @@ for ((i = 0; i < ${#paths[@]}; i++)); do
   checked=$((checked + 1))
 done
 
+# Every entry beneath the bundle root must be listed in the files inventory,
+# so the manifest proves what is absent as well as what is present. The walk
+# uses bash globbing only, stays Bash 3.2 compatible, records symlinks without
+# following them, and fails closed on a directory it cannot enumerate rather
+# than silently skipping its contents.
+declare -a walked_kinds=()
+declare -a walked_paths=()
+walk_errors=0
+
+walk_bundle_dir() {
+  local rel="$1"
+  local dir="$BUNDLE_DIR"
+  local entry=""
+  local name=""
+  local child=""
+  local -a entries=()
+
+  if [ -n "$rel" ]; then
+    dir="$BUNDLE_DIR/$rel"
+  fi
+  if [ ! -r "$dir" ] || [ ! -x "$dir" ]; then
+    echo "INVALID  ${rel:-bundle root} (directory cannot be enumerated for unlisted files)"
+    walk_errors=$((walk_errors + 1))
+    return
+  fi
+
+  entries=("$dir"/*)
+  for entry in ${entries[@]+"${entries[@]}"}; do
+    name="${entry##*/}"
+    child="${rel:+$rel/}$name"
+    if [ -z "$rel" ] && [ "$name" = "MANIFEST.yaml" ]; then
+      continue
+    fi
+    if [ -L "$entry" ]; then
+      walked_kinds+=("symlink")
+      walked_paths+=("$child")
+    elif [ -d "$entry" ]; then
+      walk_bundle_dir "$child"
+    elif [ -f "$entry" ]; then
+      walked_kinds+=("file")
+      walked_paths+=("$child")
+    else
+      walked_kinds+=("special")
+      walked_paths+=("$child")
+    fi
+  done
+}
+
+report_unlisted() {
+  local kind="$1"
+  local path="$2"
+  local shown="$path"
+
+  # Escape control characters so a crafted filename cannot forge report lines.
+  if [[ "$path" == *[[:cntrl:]]* ]]; then
+    shown="$(printf '%q' "$path")"
+  fi
+  case "$kind" in
+    symlink)
+      echo "UNLISTED $shown (symlink, not followed)"
+      ;;
+    special)
+      echo "UNLISTED $shown (not a regular file, not read)"
+      ;;
+    *)
+      echo "UNLISTED $shown"
+      ;;
+  esac
+  unlisted=$((unlisted + 1))
+}
+
+shopt_state="$(shopt -p dotglob nullglob || true)"
+shopt -s dotglob nullglob
+walk_bundle_dir ""
+eval "$shopt_state"
+
+LISTED_FILE=$(mktemp "${TMPDIR:-/tmp}/skill-provenance-listed.XXXXXX")
+WALKED_FILE=$(mktemp "${TMPDIR:-/tmp}/skill-provenance-walked.XXXXXX")
+for ((i = 0; i < ${#paths[@]}; i++)); do
+  printf '%s\n' "${paths[$i]}" >> "$LISTED_FILE"
+done
+for ((i = 0; i < ${#walked_paths[@]}; i++)); do
+  # Manifest paths are read line by line, so a name containing a newline can
+  # never be listed. Report it directly instead of passing it to awk.
+  if [[ "${walked_paths[$i]}" == *$'\n'* ]]; then
+    report_unlisted "${walked_kinds[$i]}" "${walked_paths[$i]}"
+  else
+    printf '%s\t%s\n' "${walked_kinds[$i]}" "${walked_paths[$i]}" >> "$WALKED_FILE"
+  fi
+done
+
+if ! unlisted_entries="$(awk '
+    FILENAME == ARGV[1] { listed[$0] = 1; next }
+    {
+      split_at = index($0, "\t")
+      if (!(substr($0, split_at + 1) in listed)) print
+    }
+  ' "$LISTED_FILE" "$WALKED_FILE")"; then
+  echo "INVALID  bundle root (unlisted-file comparison failed)"
+  walk_errors=$((walk_errors + 1))
+  unlisted_entries=""
+fi
+
+while IFS= read -r entry_line; do
+  [ -n "$entry_line" ] || continue
+  report_unlisted "${entry_line%%$'\t'*}" "${entry_line#*$'\t'}"
+done <<< "$unlisted_entries"
+
+errors=$((errors + walk_errors))
+if [ "$ALLOW_UNLISTED" -eq 0 ]; then
+  errors=$((errors + unlisted))
+fi
+
 errors=$((errors + manifest_errors))
 
 if [ "$MODE" = "update" ] && [ "$updated" -gt 0 ] && [ "$errors" -eq 0 ]; then
@@ -460,7 +594,7 @@ report_attestation
 
 echo ""
 if [ "$MODE" = "update" ]; then
-  echo "Checked $checked files, skipped $skipped, updated $updated"
+  echo "Checked $checked files, skipped $skipped, unlisted $unlisted, updated $updated"
   if [ "$errors" -gt 0 ]; then
     echo "Errors: $errors"
     exit 1
@@ -471,13 +605,19 @@ if [ "$MODE" = "update" ]; then
     echo "All hashes already current."
   fi
 else
-  echo "Checked $checked files, skipped $skipped, errors $errors"
+  echo "Checked $checked files, skipped $skipped, unlisted $unlisted, errors $errors"
   if [ "$errors" -gt 0 ]; then
+    if [ "$unlisted" -gt 0 ] && [ "$ALLOW_UNLISTED" -eq 0 ]; then
+      echo "Unlisted entries fail verification; list them in MANIFEST.yaml or remove them."
+    fi
     exit 1
   fi
   if [ "$skipped" -gt 0 ]; then
     echo "All pinned hashes verified; $skipped explicit hash opt-out(s) were not hashed."
   else
     echo "All hashes verified."
+  fi
+  if [ "$unlisted" -gt 0 ]; then
+    echo "WARNING: $unlisted unlisted entr(ies) allowed by --allow-unlisted were not verified."
   fi
 fi

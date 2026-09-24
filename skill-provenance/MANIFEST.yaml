@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 6.3.0
-bundle_date: 2026-09-05
+bundle_version: 7.0.0
+bundle_date: 2026-09-23
 description: >
   Metaskill for portable provenance, integrity, and drift control across
   Agent Skills local folders, registries, platform uploads, and multi-agent
@@ -131,15 +131,15 @@ validated_against:
 files:
   - path: SKILL.md
     role: skill
-    version: 25
-    hash: sha256:75cf176b93f3bc3fbb3f7b7e8d440bd2f2f604fdd6874a1c3a39ef8de7970eee
-    note: Canonical skill definition with action-led triggers, concise progressive disclosure, constrained manifest grammar, standalone verification and bootstrap routing, exact package inventory, evidence-based staleness, package validation gates, origin metadata, and provenance metadata in frontmatter
+    version: 26
+    hash: sha256:d83d2ad7a30659078782a0a13936a3fe57bb052b7610b507f6f1f25ec7693c05
+    note: Canonical skill definition with action-led triggers, concise progressive disclosure, constrained manifest grammar, complete-inventory verification that fails on unlisted files, standalone verification and bootstrap routing, exact package inventory, evidence-based staleness, package validation gates, origin metadata, and provenance metadata in frontmatter
 
   - path: README.md
     role: reference
-    version: 28
-    hash: sha256:322865d66ff4f137939c42bf0cbdb44519ae4756ecf960cc27ec4a895b3b35b0
-    note: Human-facing instructions for GitHub CLI installation, exact bundle-versus-GuideCheck release tags, no-plugin verification and bootstrap, dated adoption evidence, OpenAI discovery metadata, constrained manifest paths, exact package inventory, fail-closed validation, packaging, trust, and troubleshooting
+    version: 29
+    hash: sha256:5269abb61df6934dbe73c49b931f465181b2917335b0b65999a2504135eb95dd
+    note: Human-facing instructions for GitHub CLI installation, exact bundle-versus-GuideCheck release tags, no-plugin verification and bootstrap, dated adoption evidence, OpenAI discovery metadata, constrained manifest paths, complete-inventory verification with unlisted-file reporting, exact package inventory, fail-closed validation, packaging, trust, and troubleshooting
 
   - path: agents/openai.yaml
     role: agents
@@ -155,8 +155,8 @@ files:
 
   - path: references/platforms-and-trust.md
     role: reference
-    version: 1
-    hash: sha256:dbd6a0e4b7035d0c9deb37e0a76b3385347b82a6d6b4d9bd4c2bee03956eac51
+    version: 2
+    hash: sha256:8bd9fc1bad8f9b1c30fc14e7cb16d99ddcfc77ef58b5324a17d2bbc4d7d4baa7
     note: Load-on-demand canonical and derived states, platform notes, ecosystem boundaries, and trust guidance
 
   - path: references/standalone-verification.md
@@ -167,9 +167,9 @@ files:
 
   - path: evals.json
     role: evals
-    version: 17
-    hash: sha256:67fb6ab87028f968403a8200d22d3bb03807cacbbb0ea7de3ccfabc2300c23a2
-    note: 42 core evals including verified-adoption evidence classification, standalone verifier pinning and bootstrap decision gates, files-section scope, malformed attestation, exact package inventory, unsafe paths, duplicates, symlinks, fail-closed hashes, and prior provenance, portability, deployment, validation, and trust workflows
+    version: 18
+    hash: sha256:56fe59d0738c3ef9bf52940a19f12f6077b63f46cf75f5165a6c05e774533b6c
+    note: 43 core evals including unlisted-file inventory failure, verified-adoption evidence classification, standalone verifier pinning and bootstrap decision gates, files-section scope, malformed attestation, exact package inventory, unsafe paths, duplicates, symlinks, fail-closed hashes, and prior provenance, portability, deployment, validation, and trust workflows
 
   - path: evals-distribution.json
     role: evals
@@ -179,15 +179,15 @@ files:
 
   - path: CHANGELOG.md
     role: reference
-    version: 32
-    hash: sha256:fb5822abd1802bc6b33c61d2d039b4df7e22f69d7e8cd9abb2b8b92b3d6210f0
+    version: 33
+    hash: sha256:ea5883739cfb1db30639cc62a81a07c4a426c2fa8fe4142d23173fb06f6a9fb6
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh
     role: script
-    version: 9
-    hash: sha256:cac9624665345d317fd37edf183defd5553f8a2afaed736c07f58f597ae55c05
-    note: Zero-dependency constrained manifest parsing, path and symlink enforcement, fail-closed hash verification and repair, explicit null opt-outs, and non-gating malformed, stale, or matching validated_against reporting
+    version: 10
+    hash: sha256:aaeac06ba392fd9d2283ec24a8e490d924df3f5f2cd9cd2f85604ff9a5063497
+    note: Zero-dependency constrained manifest parsing, path and symlink enforcement, complete-inventory walk that fails on unlisted files, symlinks, and special files unless --allow-unlisted is given, fail-closed hash verification and repair, explicit null opt-outs, and non-gating malformed, stale, or matching validated_against reporting
 
   - path: package.sh
     role: script

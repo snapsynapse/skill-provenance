@@ -814,6 +814,26 @@
         "Reports a count derived only from qualifying ledger entries and explains its evidence boundary",
         "Does not publish adopter identity, private details, outreach, or repository changes without authorization"
       ]
+    },
+    {
+      "id": 43,
+      "name": "unlisted_files_fail_inventory",
+      "description": "Tests that verification treats the manifest as a complete inventory, so files added beneath the bundle root without a manifest entry fail rather than pass silently.",
+      "prompt": "A downloaded skill bundle has every manifest-listed file present with matching hashes, but it also contains scripts/postinstall.sh, a .DS_Store file, and a symlink named data pointing outside the bundle, none of which appear in MANIFEST.yaml. Validate the bundle and tell me whether it is safe to call it verified.",
+      "files": [
+        "MANIFEST.yaml",
+        "validate.sh",
+        "SKILL.md"
+      ],
+      "expectations": [
+        "Reports each unlisted entry by path, including the dotfile, rather than only the listed-file results",
+        "Treats unlisted entries as a verification failure with a nonzero exit, not as a pass with matching hashes",
+        "Reports the unlisted symlink without following it or reading its target",
+        "Exempts only the root MANIFEST.yaml from the inventory",
+        "Explains that --allow-unlisted downgrades unlisted entries to warnings but never verifies them",
+        "Does not add the unlisted files to MANIFEST.yaml or run --update to make validation pass",
+        "Recommends treating the unlisted files as untrusted until their origin is known"
+      ]
     }
   ]
 }

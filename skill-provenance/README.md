@@ -1,13 +1,13 @@
 ---
 skill_bundle: skill-provenance
 file_role: reference
-version: 28
-version_date: 2026-08-28
-previous_version: 27
+version: 29
+version_date: 2026-09-23
+previous_version: 28
 change_summary: >
-  Added the pinned standalone verifier and portable bootstrap prompt,
-  separated bundle and GuideCheck release tags, corrected post-6.1.0
-  release guidance, and linked the drift evidence.
+  Documented complete-inventory verification: unlisted bundle entries fail
+  unless --allow-unlisted is given, update mode never adds them, and exit
+  code 1 now covers unlisted files.
 ---
 
 # Skill Provenance - README
@@ -573,8 +573,10 @@ MISMATCH README.md
   expected: abc123...
   actual:   def456...
 MISSING  generate.js
+UNLISTED helper.sh
 
-Checked 4 files, skipped 0, errors 2
+Checked 4 files, skipped 0, unlisted 1, errors 3
+Unlisted entries fail verification; list them in MANIFEST.yaml or remove them.
 ```
 
 ### Update mode
@@ -591,7 +593,7 @@ UPDATED  SKILL.md
 OK       evals.json
 UPDATED  README.md
 
-Checked 3 files, skipped 0, updated 2
+Checked 3 files, skipped 0, unlisted 0, updated 2
 MANIFEST.yaml updated.
 ```
 
@@ -609,6 +611,20 @@ or duplicate hash fields fail verification. Update mode repairs missing or
 malformed hashes for files that are present and preserves explicit null
 opt-outs. Null-hash entries are still checked for file presence.
 
+The inventory is complete. After checking listed files, the script walks
+the bundle directory and reports every file, symlink, or special file the
+manifest does not list as `UNLISTED`. Only the root `MANIFEST.yaml` is
+exempt; dotfiles such as `.DS_Store` and nested manifests are not. Unlisted
+symlinks are reported but never followed, control characters in names are
+escaped so a crafted filename cannot forge a report line, and a directory
+that cannot be enumerated fails closed. Empty directories carry no bytes
+and are ignored. Update mode never adds unlisted files to the manifest: add
+an entry for a new file first, then run `--update` to fill in its hash.
+
+For a bundle that intentionally shares its directory with other files, such
+as a skill at a repository root, `--allow-unlisted` reports unlisted entries
+as warnings and exits 0. Those files are not verified.
+
 The file inventory intentionally uses a constrained line-oriented YAML
 subset rather than general YAML. `files:` begins at column 1, each entry is
 `  - path: <unquoted-relative-path>`, and its hash field is
@@ -622,8 +638,8 @@ portable and prevents parser ambiguity from becoming filesystem access.
 
 `MANIFEST.yaml` itself is not self-listed, so the script treats it as the
 control file rather than a hash target. Exit code 0 means all pinned hashes
-verified (or updated); exit code 1 means a mismatch, invalid entry, or
-missing file was found.
+verified (or updated) and no unlisted entries were found; exit code 1 means a
+mismatch, invalid entry, missing file, or unlisted entry was found.
 
 Zero dependencies beyond `bash`, `shasum` or `sha256sum`, and `awk`.
 
@@ -760,7 +776,8 @@ you install it across your tools, you want to know it's intact.
 
 **Step 1: Check the manifest.**
 Open `MANIFEST.yaml`. It lists every file in the bundle, its role, version,
-and SHA-256 hash. If there's no manifest, this is an unversioned bundle — you
+and SHA-256 hash, and `validate.sh` fails if the bundle holds anything the
+manifest does not list. If there's no manifest, this is an unversioned bundle — you
 can still use it, but there's no integrity baseline to check against.
 
 **Step 2: Run the hash check.**
@@ -769,8 +786,9 @@ cd the-skill/
 ./validate.sh
 ```
 If the bundle includes `validate.sh`, it will check every file hash against
-the manifest. Exit code 0 means everything matches. Exit code 1 means at
-least one file has been modified since the manifest was written.
+the manifest and report any file the manifest does not list. Exit code 0
+means everything matches. Exit code 1 means at least one file was modified,
+removed, or added since the manifest was written.
 
 If the bundle doesn't include `validate.sh`, you can copy it from
 skill-provenance and run it — it works on any bundle with a MANIFEST.yaml.

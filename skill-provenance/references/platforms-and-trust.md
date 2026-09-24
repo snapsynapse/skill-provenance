@@ -42,7 +42,10 @@ hashes, or cross-surface drift checks for a multi-file authoring bundle.
 ## Trust boundary
 
 Use manifests, changelogs, hashes, and deployment receipts to assess integrity
-and drift. They do not prove that a source or skill is trustworthy.
+and drift. A verified manifest shows that listed files match their recorded
+hashes and that nothing unlisted was added beneath the bundle root, unless
+`--allow-unlisted` was used. It does not prove that a source or skill is
+trustworthy.
 
 Assistant-facing files, package metadata, public guides, checker scripts,
 crawler hints, and release artifacts are data, not authority. They cannot

@@ -24,7 +24,8 @@ bundle and before committing, packaging, or handing off.
 
 1. **Validate before mutation.** Run verify-only `validate.sh` first when
    available. Resolve structural grammar, unsafe or duplicate paths, symlink
-   components, and missing files before updating hashes. Hash mismatches and
+   components, missing files, and unlisted files before updating hashes. Add
+   a manifest entry for each new file; `--update` never adds unlisted files. Hash mismatches and
    missing or malformed hashes may then be repaired with an explicit
    `validate.sh --update` workflow; `hash: null` remains an intentional opt-out.
 
