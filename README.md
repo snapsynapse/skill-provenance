@@ -5,8 +5,111 @@
 
 # Skill Provenance
 
-Portable provenance, integrity, and drift control for Agent Skills across
-local folders, registries, platform uploads, and multi-agent sessions.
+Find out whether a skill bundle still matches the files recorded in its
+manifest.
+
+A copied skill can keep the same filename and version label after its
+instructions change. Skill Provenance checks the bundle against its recorded
+SHA-256 hashes and names the files that no longer match.
+
+## See it catch a changed file
+
+This trial checks a disposable copy of this repository's own bundle. It needs
+Git, Bash, awk, and `shasum` or `sha256sum`. It installs no plugin or skill,
+calls no model, and never runs the target `SKILL.md`; the only code it runs is
+the validator. The clone is the only network step: because `verify.sh` sits
+beside the canonical `skill-provenance/validate.sh` in the checkout, it checks
+that validator against its pinned SHA-256 and runs it locally.
+
+Get the exact v7.0.0 release, copy its bundle to a temporary directory, and
+check the copy:
+
+Literal
+```bash
+git clone --quiet https://github.com/snapsynapse/skill-provenance.git
+cd skill-provenance
+git -c advice.detachedHead=false checkout --quiet v7.0.0
+SP_TRIAL="$(mktemp -d "${TMPDIR:-/tmp}/skill-provenance-trial.XXXXXX")"
+cp -R skill-provenance "$SP_TRIAL/bundle"
+bash ./verify.sh "$SP_TRIAL/bundle"; echo "exit $?"
+```
+
+Every file matches. The output ends with:
+
+```text
+Checked 11 files, skipped 0, unlisted 0, errors 0
+All hashes verified.
+exit 0
+```
+
+Now change the copy's instructions and leave its manifest and version label
+alone:
+
+Literal
+```bash
+printf '\n<!-- Changed after the recorded manifest. -->\n' >> "$SP_TRIAL/bundle/SKILL.md"
+bash ./verify.sh "$SP_TRIAL/bundle"; echo "exit $?"
+```
+
+The output starts and ends with:
+
+```text
+MISMATCH SKILL.md
+  expected: d83d2ad7a30659078782a0a13936a3fe57bb052b7610b507f6f1f25ec7693c05
+  actual:   2ff51d4592b08c7a90228a2d255ba3a7996102069b9dc1bd573991e939d28edc
+OK       README.md
+...
+Checked 11 files, skipped 0, unlisted 0, errors 1
+exit 1
+```
+
+The copy still says `bundle_version: 7.0.0`, and its `MANIFEST.yaml` is
+byte-identical to the released one. The validator still names `SKILL.md` as
+the file that no longer matches. Exit 1 is the detection result the trial is
+meant to show. A fresh copy from the same checkout returns to exit 0.
+
+This compares files with the supplied manifest. It does not establish who
+published the bundle, that the skill is safe, or that the manifest itself
+deserves trust. A publisher who changes both a file and the manifest can make
+them match again. See [Trust and integrity](#trust-and-integrity).
+
+Remove the trial directory when finished:
+
+Literal
+```bash
+rm -rf -- "${SP_TRIAL:?}"
+```
+
+## Check a bundle you already have
+
+From the same checkout, point the wrapper at a directory that holds a
+`SKILL.md` and `MANIFEST.yaml`. Verification reads the target and does not
+change it.
+
+Replace: TARGET_SKILL_DIRECTORY -> the directory containing the reviewed `SKILL.md` and `MANIFEST.yaml`
+
+Customize
+```bash
+bash ./verify.sh "TARGET_SKILL_DIRECTORY"; echo "exit $?"
+```
+
+Without a checkout, the standalone wrapper under [Quick install](#quick-install)
+works the same way, except that it downloads the canonical validator at run
+time and refuses to run it unless it matches the pinned SHA-256. See
+[standalone verification](skill-provenance/references/standalone-verification.md).
+
+| Result | What it establishes | Next action |
+|---|---|---|
+| Exit 0 | Every listed file matched its recorded hash and nothing unlisted was present. Files the manifest explicitly opts out of hashing stay unverified. | Read the checked, skipped, and unlisted counts. Assess source and behavior separately. |
+| Exit 1 with `MISMATCH` | A named file differs from its recorded digest. | Compare the change against a trusted reference before accepting it or recording it as a new version. |
+| Exit 1 with other findings | For example a missing file, an `UNLISTED` file, an unsafe path, or a validator that did not match the wrapper's pin. | Read the specific finding. Not every exit 1 means changed instructions. |
+| Exit 2 | The target has no `MANIFEST.yaml`, so there is no recorded state to compare. | Get the intended baseline from its publisher, or review the [bootstrap prompt](skill-provenance/references/standalone-verification.md#bootstrap-without-installing-the-plugin) as a separate choice. Bootstrapping records current contents; it does not prove them. |
+
+Version labels identify a release; digests detect changed content. A matching
+hash does not show that the labeled version is the newest, that the source is
+genuine, or that the skill is safe. `ATTEST` lines report which agent last
+validated the bundle; they are informational and never change the integrity
+verdict.
 
 Use Skill Provenance in a project? Submit a
 [compatibility or adoption report](https://github.com/snapsynapse/skill-provenance/issues/new?template=compatibility-report.yml).
@@ -19,6 +122,10 @@ and download counts are not overstated as verified use.
 Teams that build, distribute, or run Agent Skills across multiple surfaces and need to know a bundle is the version they trust and hasn't silently drifted.
 
 ## What problem it solves
+
+Skill Provenance provides portable provenance, integrity, and drift control
+for Agent Skills across local folders, registries, platform uploads, and
+multi-agent sessions.
 
 Agent Skills move across local folders, registries, and platform uploads with no portable way to verify version, integrity, or drift. Skill Provenance makes a bundle's identity and integrity travel with it.
 
