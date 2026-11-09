@@ -35,9 +35,9 @@ parallel monitoring or packaging system.
   verify from a clean download.
 - **Registry and package-manager interop**: Preserve portable bundle identity
   while leaving install resolution and consumer lockfiles to their owners.
-- **Signing and citation publication**: Sign future commits and release tags
-  after account-level setup. Consider one Zenodo record only after choosing
-  the archival subject; add a DOI to `CITATION.cff` only after it resolves.
+- **Citation publication**: Commits and bundle release tags are SSH-signed
+  as of v7.0.0. Consider one Zenodo record only after choosing the archival
+  subject; add a DOI to `CITATION.cff` only after it resolves.
 - **OpenSSF programs**: Re-run Scorecard after material gaps are addressed and
   begin Best Practices review only after the release-provenance story is
   coherent. Do not publish a badge from the 2026-09-05 local baseline.

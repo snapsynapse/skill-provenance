@@ -7,6 +7,47 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 7.0.1 - 2026-11-08
+- skill-provenance/references/platforms-and-trust.md: Stated that a
+  matching `bundle_version` does not show that two copies have the same
+  contents, and that `validate.sh --update` is an author tool for recording a
+  reviewed edit, not a way to make someone else's mismatched bundle pass.
+- skill-provenance/evals.json: Added core scenarios 44
+  (`same_version_label_changed_content`) and 45
+  (`refuse_update_to_clear_mismatch`). Coverage is now 45 core, 21
+  supplemental, and 66 total.
+- skill-provenance/MANIFEST.yaml: Bumped the bundle to 7.0.1, advanced
+  evals.json, platforms-and-trust.md, and CHANGELOG.md revisions, refreshed
+  notes and hashes, and recorded the 7.0.1 validated_against entry for
+  Anthropic Claude Code with claude-opus-5-5.
+- skill-provenance/CHANGELOG.md: Added the 7.0.1 entry and retained the
+  newest 5 releases, moving 6.0.0 to this file only.
+- README.md, index.html, llms.txt, and search-audit.config.json: Moved the
+  stable install, preview, action, trial, and release links from v7.0.0 to
+  v7.0.1, and updated eval counts.
+- CITATION.cff and .codex-plugin/plugin.json: Set version 7.0.1 and the
+  2026-11-08 release date.
+- AGENTS.md, CLAUDE.md, and PROJECT_CONTEXT.md: Recorded 7.0.1 as the stable
+  release and the new eval counts.
+- skill-provenance.skill: Rebuilt from the canonical bundle.
+- .well-known/assistant-guide.txt and its root mirror: Released GuideCheck
+  guide 1.3.0. It now applies to `skill-provenance >=7.0.0, <8.0.0` (1.2.0
+  still declared `<7.0.0`) and treats unlisted entries as an incomplete
+  check, matching 7.x validation. The sidecar manifest and its mirror carry
+  the new version, digest, size, release URL, and release date.
+- docs/release-provenance.md: Recorded the v7.0.1 asset size and digest and
+  the guidecheck-1.3.0 assets.
+
+## 2026-11-08 - Actions pinning and roadmap sync (repo only)
+- .github/workflows/validate.yml and .github/workflows/production-search.yml:
+  Pinned `actions/checkout` to commit
+  11d5960a326750d5838078e36cf38b85af677262 (v4.4.0) instead of the mutable
+  `v4` tag.
+- ROADMAP.md: Marked Actions pinning done, leaving `main` branch governance
+  as the open item. Reworded the signing entry to record that commits and
+  bundle release tags are already SSH-signed; Zenodo and DOI remain open.
+- The hashed bundle is unchanged; no version bump.
+
 ## 2026-11-08 - README changed-bundle trial and drift check (repo only)
 - README.md: Opened with a runnable changed-bundle trial against v7.0.0
   (clean exit 0, changed `SKILL.md` with unchanged manifest exits 1 with
