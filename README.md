@@ -1,6 +1,6 @@
 [![Validate bundle](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml/badge.svg)](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE)
-[![Stable bundle](https://img.shields.io/github/v/tag/snapsynapse/skill-provenance?filter=v%2A&label=bundle)](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.0)
+[![Stable bundle](https://img.shields.io/github/v/tag/snapsynapse/skill-provenance?filter=v%2A&label=bundle)](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.1)
 [![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Skill%20Provenance%20Validate-blue)](https://github.com/marketplace/actions/skill-provenance-validate)
 
 # Skill Provenance
@@ -21,14 +21,14 @@ the validator. The clone is the only network step: because `verify.sh` sits
 beside the canonical `skill-provenance/validate.sh` in the checkout, it checks
 that validator against its pinned SHA-256 and runs it locally.
 
-Get the exact v7.0.0 release, copy its bundle to a temporary directory, and
+Get the exact v7.0.1 release, copy its bundle to a temporary directory, and
 check the copy:
 
 Literal
 ```bash
 git clone --quiet https://github.com/snapsynapse/skill-provenance.git
 cd skill-provenance
-git -c advice.detachedHead=false checkout --quiet v7.0.0
+git -c advice.detachedHead=false checkout --quiet v7.0.1
 SP_TRIAL="$(mktemp -d "${TMPDIR:-/tmp}/skill-provenance-trial.XXXXXX")"
 cp -R skill-provenance "$SP_TRIAL/bundle"
 bash ./verify.sh "$SP_TRIAL/bundle"; echo "exit $?"
@@ -63,7 +63,7 @@ Checked 11 files, skipped 0, unlisted 0, errors 1
 exit 1
 ```
 
-The copy still says `bundle_version: 7.0.0`, and its `MANIFEST.yaml` is
+The copy still says `bundle_version: 7.0.1`, and its `MANIFEST.yaml` is
 byte-identical to the released one. The validator still names `SKILL.md` as
 the file that no longer matches. Exit 1 is the detection result the trial is
 meant to show. A fresh copy from the same checkout returns to exit 0.
@@ -205,12 +205,12 @@ the bundle before install, but does not install anything for you.
 
 **GitHub CLI (Codex and other supported agents):**
 
-Preview the current stable v7.0.0 release before installing it.
+Preview the current stable v7.0.1 release before installing it.
 
 Literal
 ```shell
-gh skill preview snapsynapse/skill-provenance skill-provenance@v7.0.0
-gh skill install snapsynapse/skill-provenance skill-provenance@v7.0.0 --agent codex --scope user
+gh skill preview snapsynapse/skill-provenance skill-provenance@v7.0.1
+gh skill install snapsynapse/skill-provenance skill-provenance@v7.0.1 --agent codex --scope user
 ```
 
 This repository publishes two release tag families. Bundle releases use
@@ -257,7 +257,7 @@ After install, five commands are available:
 - `/skill-provenance:bootstrap` — add version tracking to an unversioned bundle
 
 **Claude (Settings UI):**
-Download `skill-provenance.skill` from the [stable v7.0.0 bundle release](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.0) and install:
+Download `skill-provenance.skill` from the [stable v7.0.1 bundle release](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.1) and install:
 `claude.ai` -> Profile icon -> `Settings` -> `Skills` -> `Add Skill` -> select the file.
 
 If your loader only accepts `.zip` or `.md` uploads, rename
@@ -282,7 +282,7 @@ directory bundle can be placed there when you want a neutral install path.
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: snapsynapse/skill-provenance@v7.0.0
+  - uses: snapsynapse/skill-provenance@v7.0.1
     with:
       bundle-path: skill-provenance
 ```
@@ -458,7 +458,7 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 43 core evaluation scenarios
+  evals.json                     <- 45 core evaluation scenarios
   evals-distribution.json        <- 21 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
@@ -472,7 +472,7 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-64 evaluation scenarios across two files: 43 core workflow evals in
+66 evaluation scenarios across two files: 45 core workflow evals in
 [evals.json](skill-provenance/evals.json) and 21 supplemental
 distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).

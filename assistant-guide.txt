@@ -4,12 +4,12 @@ Assistant Guide: Skill Provenance bundle fetch and integrity check
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
 profile-version: 0.3.0
-guide-version: 1.2.0
-applies-to: skill-provenance >=6.1.0, <7.0.0
+guide-version: 1.3.0
+applies-to: skill-provenance >=7.0.0, <8.0.0
 canonical-url: https://skillprovenance.dev/.well-known/assistant-guide.txt
 repository-url: https://github.com/snapsynapse/skill-provenance
 source-path: /.well-known/assistant-guide.txt
-last-reviewed: 2026-08-20
+last-reviewed: 2026-11-08
 status: active
 recommended-verifier: https://guidecheck.org/verify
 verifier-conformance: human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0
@@ -116,12 +116,12 @@ Approve, modify, or cancel?
 Acceptance checklist
 The task is complete when:
 - git clone created a skill-provenance directory
-- validate.sh exits zero and reports every file hash matching
-  MANIFEST.yaml
+- validate.sh exits zero, reports every file hash matching
+  MANIFEST.yaml, and reports no unlisted entries
 The task is incomplete, and the assistant must stop, if:
 - any action errors
-- validate.sh reports a hash mismatch, a missing file, or a stale
-  file
+- validate.sh reports a hash mismatch, a missing file, an unlisted
+  entry, or a stale file
 After a clean check, tell the user the bundle is integrity-verified,
 then let the user install it themselves using a pinned GitHub CLI command,
 the documented Claude Code plugin commands, or the skill-provenance.skill

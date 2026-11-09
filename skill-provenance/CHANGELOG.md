@@ -7,6 +7,18 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 7.0.1 - 2026-11-08
+- references/platforms-and-trust.md: Stated that a matching
+  `bundle_version` does not show that two copies have the same contents, and
+  that `validate.sh --update` is an author tool for recording a reviewed edit,
+  not a way to make someone else's mismatched bundle pass.
+- evals.json: Added core scenarios for comparing copies that share a version
+  label and for refusing to refresh hashes to clear a downloaded bundle's
+  mismatch. Coverage is now 45 core, 21 supplemental, and 66 total.
+- MANIFEST.yaml: Bumped the bundle to 7.0.1, advanced changed file revisions,
+  refreshed notes, and refreshed hashes.
+- CHANGELOG.md: Added this entry and retained the newest 5 releases.
+
 ## 7.0.0 - 2026-09-23
 - validate.sh: The files inventory is now complete. After checking listed
   files, the validator walks the bundle root in pure Bash and reports every
@@ -79,36 +91,6 @@ Full release history lives in the source repository's top-level
   validation, packaging, and trust contracts remain semantically unchanged.
 - MANIFEST.yaml: Bumped the bundle to 6.1.0, advanced changed file versions,
   added new files to inventory, and refreshed hashes.
-- CHANGELOG.md: Added this entry and retained the newest 5 releases.
-
-## 6.0.0 - 2026-07-21
-- validate.sh: Added a constrained file-inventory grammar and fail-closed
-  rejection for absolute or non-normalized paths, parent traversal,
-  ambiguous YAML path syntax, duplicate paths, malformed inventory
-  indentation, missing inventories, and symlinks in any path component. Update
-  mode no longer partially rewrites structurally invalid manifests. Verify
-  summaries no longer call explicitly opted-out files hash-verified. Array
-  iteration remains compatible with macOS system Bash 3.2 under nounset.
-  Malformed attestation records are now reported without counting as current
-  evidence or changing integrity exit codes.
-- package.sh: Revalidates the canonical source at each derived-package
-  boundary and delegates derived hash updates back to validate.sh, removing
-  its duplicate hash-rewrite implementation.
-- SKILL.md: Defined the normative inventory grammar, filesystem boundary,
-  symlink policy, exact package inventory, evidence-based staleness rule,
-  attestation record contract, package delegation, and internal version header.
-- README.md: Documented accepted path syntax, rejected path states, update
-  behavior, exact archive-to-manifest agreement, malformed attestation
-  warnings, package-boundary validation, and internal version header.
-- evals.json: Added 4 core scenarios covering unsafe or ambiguous paths,
-  duplicates, symlinks, files-section scoping, and malformed attestations;
-  corrected stale version-domain and partial-package assumptions; refreshed
-  Gemini and Copilot compatibility guidance. Core eval count is now 39.
-- evals-distribution.json: Added package-boundary coverage and merged the
-  redundant dirty-source package eval into its canonical-source gate.
-  Supplemental eval count is now 17; total eval count is now 56.
-- MANIFEST.yaml: Bumped the bundle to 6.0.0, advanced changed file versions,
-  refreshed hashes and inventory notes, and recorded release validation.
 - CHANGELOG.md: Added this entry and retained the newest 5 releases.
 
 Older entries archived in the source repository's top-level CHANGELOG.md.
