@@ -53,7 +53,10 @@ The `skill-provenance/` directory is the single source of truth. The `.skill` fi
    ```
 7. Run `./.github/scripts/release-surface-check.sh` to confirm eval-count
    declarations, the standalone validator pin, GuideCheck sidecar metadata,
-   and the `.skill` ZIP all match the current source.
+   the README changed-bundle trial output, and the `.skill` ZIP all match the
+   current source. A bundle release that changes `SKILL.md`, the file count,
+   or `bundle_version` must refresh the README trial's tag, digests, and
+   summary lines from a real run in the same change.
 
 
 ## Key rules

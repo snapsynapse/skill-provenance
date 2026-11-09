@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Verify release-facing surfaces that are easy to let drift.
 # Dependencies: bash, awk, shasum or sha256sum, wc, unzip, sort, dirname,
-# mktemp, cmp, and diff.
+# mktemp, cmp, cp, grep, and diff.
 
 set -euo pipefail
 
@@ -138,6 +138,106 @@ check_standalone_verifier() {
   echo "Standalone verifier pin OK: $actual_validator_hash"
 }
 
+# The README opens with a changed-bundle trial whose displayed output is
+# pinned to the current release. Re-run that trial against a temporary copy
+# of the canonical bundle and require every displayed output line, exit code,
+# release tag, and version label to match what the validator produces now.
+readme_trial_section() {
+  awk '
+    /^## See it catch a changed file$/ { in_section = 1; next }
+    in_section && /^## / { exit }
+    in_section { print }
+  ' README.md
+}
+
+# Print the Nth ```text block (1-based) from the README trial section.
+readme_trial_output_block() {
+  readme_trial_section | awk -v want="$1" '
+    /^```text$/ { block++; if (block == want) { inside = 1 }; next }
+    inside && /^```$/ { exit }
+    inside { print }
+  '
+}
+
+compare_trial_output() {
+  local label="$1"
+  local block="$2"
+  local output="$3"
+  local status="$4"
+  local line
+  local shown_status=""
+
+  [ -n "$block" ] || fail "README trial has no displayed output for the $label run"
+
+  while IFS= read -r line; do
+    case "$line" in
+      ""|"...")
+        ;;
+      "exit "*)
+        shown_status="${line#exit }"
+        ;;
+      *)
+        printf '%s\n' "$output" | grep -Fx -- "$line" >/dev/null ||
+          fail "README trial $label output drift: '$line' is not produced by the validator"
+        ;;
+    esac
+  done <<< "$block"
+
+  [ -n "$shown_status" ] || fail "README trial $label output shows no exit code"
+  [ "$shown_status" = "$status" ] ||
+    fail "README trial $label exit drift: README shows $shown_status, validator returned $status"
+}
+
+check_readme_trial() {
+  local section
+  local bundle_version
+  local change_command="printf '\\n<!-- Changed after the recorded manifest. -->\\n' >> \"\$SP_TRIAL/bundle/SKILL.md\""
+  local trial_dir
+  local clean_output
+  local clean_status
+  local changed_output
+  local changed_status
+
+  section="$(readme_trial_section)"
+  [ -n "$section" ] || fail "README.md has no 'See it catch a changed file' trial section"
+
+  bundle_version="$(awk '/^bundle_version:/ { print $2; exit }' skill-provenance/MANIFEST.yaml)"
+  [ -n "$bundle_version" ] || fail "MANIFEST.yaml has no bundle_version"
+
+  printf '%s\n' "$section" |
+    grep -Fx "git -c advice.detachedHead=false checkout --quiet v${bundle_version}" >/dev/null ||
+    fail "README trial does not check out the current bundle tag v${bundle_version}"
+  printf '%s\n' "$section" | grep -Fq "\`bundle_version: ${bundle_version}\`" ||
+    fail "README trial prose does not name bundle_version: ${bundle_version}"
+  printf '%s\n' "$section" | grep -Fx -- "$change_command" >/dev/null ||
+    fail "README trial change command differs from the one this check reproduces"
+
+  trial_dir="$(mktemp -d "${TMPDIR:-/tmp}/skill-provenance-readme-trial.XXXXXX")"
+  trap 'rm -rf -- "${trial_dir:?}"' EXIT
+  cp -R skill-provenance "$trial_dir/bundle"
+
+  set +e
+  clean_output="$(./verify.sh "$trial_dir/bundle" 2>&1)"
+  clean_status=$?
+  set -e
+  compare_trial_output "clean" "$(readme_trial_output_block 1)" "$clean_output" "$clean_status"
+
+  printf '\n<!-- Changed after the recorded manifest. -->\n' >> "$trial_dir/bundle/SKILL.md"
+  cmp -s skill-provenance/MANIFEST.yaml "$trial_dir/bundle/MANIFEST.yaml" ||
+    fail "README trial copy manifest changed during the trial"
+
+  set +e
+  changed_output="$(./verify.sh "$trial_dir/bundle" 2>&1)"
+  changed_status=$?
+  set -e
+  compare_trial_output "changed" "$(readme_trial_output_block 2)" "$changed_output" "$changed_status"
+
+  rm -rf -- "${trial_dir:?}"
+  trap - EXIT
+
+  echo "README trial output matches bundle ${bundle_version}"
+}
+
 check_skill_zip() {
   local archive="skill-provenance.skill"
   local archive_listing
@@ -217,4 +317,5 @@ check_eval_counts
 check_release_tag_families
 check_assistant_guide_manifest
 check_standalone_verifier
+check_readme_trial
 check_skill_zip

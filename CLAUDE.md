@@ -66,7 +66,7 @@ Test locally: `claude --plugin-dir .`
    rm -f skill-provenance.skill
    zip -r skill-provenance.skill skill-provenance/
    ```
-6. Run `./.github/scripts/release-surface-check.sh` to confirm eval-count declarations, the standalone validator pin, GuideCheck sidecar metadata, and the `.skill` ZIP all match the current source.
+6. Run `./.github/scripts/release-surface-check.sh` to confirm eval-count declarations, the standalone validator pin, GuideCheck sidecar metadata, the README changed-bundle trial output (tag, digests, counts, exit codes), and the `.skill` ZIP all match the current source. A release that changes `SKILL.md`, the file count, or `bundle_version` must refresh the README trial block from a real run.
 
 ## CI
 

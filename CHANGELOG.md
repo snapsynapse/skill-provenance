@@ -7,6 +7,20 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 2026-11-08 - README changed-bundle trial and drift check (repo only)
+- README.md: Opened with a runnable changed-bundle trial against v7.0.0
+  (clean exit 0, changed `SKILL.md` with unchanged manifest exits 1 with
+  `MISMATCH`), a guide to checking an existing bundle, and an exit-code
+  table. Moved the tagline, adoption-report route, and dated 5.5 percent
+  observation below it.
+- .github/scripts/release-surface-check.sh: Added `check_readme_trial`,
+  which re-runs the README trial against a temporary copy of the canonical
+  bundle and fails when the displayed tag, version label, change command,
+  output lines, digests, counts, or exit codes drift from the validator.
+- AGENTS.md and CLAUDE.md: Recorded that bundle releases must refresh the
+  README trial block from a real run.
+- The hashed bundle is unchanged; no version bump.
+
 ## 2026-09-23 - 7.0.0 release surfaces
 - skill-provenance/MANIFEST.yaml: Recorded the 7.0.0 validated_against
   entry for Anthropic Claude Code with claude-opus-5-5.
