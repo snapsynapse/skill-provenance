@@ -390,8 +390,8 @@ Literal
 
 This repo-level check confirms declared eval counts, the standalone validator
 pin, release tag-family separation, the GuideCheck sidecar hash and byte
-metadata, and `skill-provenance.skill` contents all match the current source
-tree. It is a release-confidence check, not a trust anchor.
+metadata, the output shown in the changed-bundle trial above, and
+`skill-provenance.skill` contents all match the current source tree. It is a release-confidence check, not a trust anchor.
 
 **What the manifest tells you:**
 - Which files belong to the bundle (and which are missing)
