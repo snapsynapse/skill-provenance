@@ -7,6 +7,16 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 2026-11-08 - Actions pinning and roadmap sync (repo only)
+- .github/workflows/validate.yml and .github/workflows/production-search.yml:
+  Pinned `actions/checkout` to commit
+  11d5960a326750d5838078e36cf38b85af677262 (v4.4.0) instead of the mutable
+  `v4` tag.
+- ROADMAP.md: Marked Actions pinning done, leaving `main` branch governance
+  as the open item. Reworded the signing entry to record that commits and
+  bundle release tags are already SSH-signed; Zenodo and DOI remain open.
+- The hashed bundle is unchanged; no version bump.
+
 ## 2026-11-08 - README changed-bundle trial and drift check (repo only)
 - README.md: Opened with a runnable changed-bundle trial against v7.0.0
   (clean exit 0, changed `SKILL.md` with unchanged manifest exits 1 with
