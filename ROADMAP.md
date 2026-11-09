@@ -13,8 +13,9 @@
   toolmaker interop, keeping reported observations distinct from live metrics.
   Current thread state, the smallest unresolved gap, and the minimal
   provenance contract are in `docs/standards-integration-status.md`.
-- Pin third-party GitHub Actions to immutable commits and design proportional
-  `main` branch governance in separately reviewed changes.
+- Design proportional `main` branch governance in a separately reviewed
+  change. Third-party GitHub Actions are pinned to immutable commits as of
+  2026-11-08.
 
 ## Adoption evidence gate
 
