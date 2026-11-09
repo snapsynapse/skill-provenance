@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // skill_bundle: portfolio-search-indexing-audit
 // file_role: asset
-// version: 5
-// version_date: 2026-08-18
-// previous_version: 4
-// change_summary: Revalidated unchanged for the v5 bundle; the portable repository contract remains v4.
+// version: 6
+// version_date: 2026-11-08
+// previous_version: 5
+// change_summary: Single-pass XML entity decode() fixes CodeQL js/double-escaping (&amp;lt; no longer becomes <); repository contract remains v4.
 // Upstream: portfolio-search-indexing-audit contract v4.
 // Release-triggered HTTP validation. Exit 2 means infrastructure is unavailable.
 'use strict';
@@ -23,6 +23,11 @@ function report(kind, message) {
     if (kind === 'defect') defects++;
     else infrastructure++;
     console.error(`${kind === 'defect' ? 'LIVE' : 'NETWORK'}  ${message}`);
+}
+
+const XML_ENTITIES = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" };
+function decode(value) {
+    return String(value || '').replace(/&(?:amp|lt|gt|quot|#39);/g, (entity) => XML_ENTITIES[entity]);
 }
 
 function loadConfig() {
@@ -108,7 +113,7 @@ async function fetchSitemap(canonical, seen = new Set()) {
     if (/<sitemapindex\b/i.test(result.body)) {
         for (const match of result.body.matchAll(/<sitemap>[\s\S]*?<loc>([^<]+)<\/loc>[\s\S]*?<\/sitemap>/gi)) {
             let child;
-            try { child = new URL(match[1].replace(/&amp;/g, '&')); }
+            try { child = new URL(decode(match[1])); }
             catch { report('defect', `${canonical}: invalid child sitemap URL ${match[1]}`); continue; }
             if (child.origin !== canonicalOrigin.origin) {
                 report('defect', `${canonical}: child sitemap uses noncanonical origin ${child.href}`);
@@ -143,7 +148,7 @@ const canonicals = [];
 const sitemapLastmods = new Map();
 for (const [sitemap, body] of sitemapBodies) {
     for (const match of body.matchAll(/<url>([\s\S]*?)<\/url>/gi)) {
-        const canonical = match[1].match(/<loc>([^<]+)<\/loc>/i)?.[1]?.replace(/&amp;/g, '&');
+        const canonical = decode(match[1].match(/<loc>([^<]+)<\/loc>/i)?.[1]);
         const lastmod = match[1].match(/<lastmod>([^<]+)<\/lastmod>/i)?.[1]?.trim();
         if (!canonical) {
             report('defect', `${sitemap}: URL entry is missing loc`);
@@ -160,11 +165,6 @@ for (const [sitemap, body] of sitemapBodies) {
     }
 }
 if (!canonicals.length) report('infrastructure', 'live sitemaps contain no page locations');
-
-function decode(value) {
-    return String(value || '').replace(/&amp;/g, '&').replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
-}
 
 function repositoryCanonicals() {
     const output = path.resolve(ROOT, config.outputDir || '');

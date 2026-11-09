@@ -7,6 +7,15 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 2026-11-08 - Search-audit decoder fix (repo only)
+- scripts/check-search.mjs and scripts/check-production-search.mjs:
+  Re-vendored asset version 6 from the portfolio-search-indexing-audit skill
+  (bundle 8, upstream commit f76bdef). `decode()` now decodes XML entities in
+  a single pass, so `&amp;lt;` stays `&lt;` instead of becoming `<`. This
+  resolves CodeQL `js/double-escaping` alerts 1 and 2. The repository search
+  contract remains version 4.
+- The hashed bundle is unchanged; no version bump.
+
 ## 7.0.1 - 2026-11-08
 - skill-provenance/references/platforms-and-trust.md: Stated that a
   matching `bundle_version` does not show that two copies have the same
