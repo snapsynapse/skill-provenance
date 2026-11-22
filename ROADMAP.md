@@ -13,9 +13,13 @@
   toolmaker interop, keeping reported observations distinct from live metrics.
   Current thread state, the smallest unresolved gap, and the minimal
   provenance contract are in `docs/standards-integration-status.md`.
-- Design proportional `main` branch governance in a separately reviewed
-  change. Third-party GitHub Actions are pinned to immutable commits as of
-  2026-11-08.
+- `main` branch governance is in place as of 2026-11-22: a ruleset requires
+  a pull request, the `validate` check, and signed commits, and blocks force
+  pushes and deletion, with no bypass actors. Third-party GitHub Actions are
+  pinned to immutable commits as of 2026-11-08. Still open from the
+  2026-11-22 audit: pin the GuideCheck guide's clone and validator, add a
+  strict mode that forbids `hash: null`, reject empty or flag-shaped path
+  arguments, and escape manifest text in validator output.
 
 ## Adoption evidence gate
 

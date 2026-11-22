@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Verify release-facing surfaces that are easy to let drift.
 # Dependencies: bash, awk, shasum or sha256sum, wc, unzip, sort, dirname,
-# mktemp, cmp, cp, grep, and diff.
+# mktemp, cmp, cp, grep, diff, and git. curl is used only to read a release
+# tag that is not present in the local checkout.
 
 set -euo pipefail
 
@@ -37,6 +38,55 @@ manifest_value() {
       exit
     }
   ' .well-known/assistant-guide-manifest.txt
+}
+
+# Print the SHA-256 of a repository file as it exists at an exact release
+# tag. Reads the local tag when the checkout has it; otherwise downloads the
+# tagged file. Prints nothing when the tag cannot be read either way.
+tagged_file_hash() {
+  local tag="$1"
+  local path="$2"
+  local tmp
+
+  if git rev-parse -q --verify "refs/tags/${tag}^{commit}" >/dev/null 2>&1; then
+    git show "refs/tags/${tag}:${path}" | sha256_hash -
+    return 0
+  fi
+
+  command -v curl >/dev/null 2>&1 || return 0
+  tmp="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-tagged.XXXXXX")"
+  if curl -fsSL --proto '=https' --max-time 30 \
+    "https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/${tag}/${path}" \
+    -o "$tmp" 2>/dev/null; then
+    sha256_hash "$tmp"
+  fi
+  rm -f "$tmp"
+}
+
+# Require that an exact release tag carries a file with the expected SHA-256.
+# The tag for the release being prepared may not exist yet; that one case is
+# accepted unread, because the local file is what the tag will carry and the
+# caller has already checked its hash. Every other tag must be readable.
+require_tagged_hash() {
+  local label="$1"
+  local tag="$2"
+  local path="$3"
+  local expected="$4"
+  local actual
+  local bundle_version
+
+  bundle_version="$(awk '/^bundle_version:/ { print $2; exit }' skill-provenance/MANIFEST.yaml)"
+  actual="$(tagged_file_hash "$tag" "$path")"
+
+  if [ -z "$actual" ]; then
+    [ "$tag" = "v${bundle_version}" ] ||
+      fail "$label names tag $tag, which could not be read locally or downloaded"
+    echo "NOTE: $label names $tag, which is not published yet; accepted as the release being prepared"
+    return 0
+  fi
+
+  [ "$actual" = "$expected" ] ||
+    fail "$label names tag $tag, whose $path hashes to $actual, not $expected"
 }
 
 check_eval_counts() {
@@ -114,6 +164,9 @@ check_assistant_guide_manifest() {
 check_standalone_verifier() {
   local actual_validator_hash
   local pinned_validator_hash
+  local validator_url
+  local validator_tag
+  local validator_url_re='^https://raw\.githubusercontent\.com/snapsynapse/skill-provenance/refs/tags/(v[0-9]+\.[0-9]+\.[0-9]+)/skill-provenance/validate\.sh$'
 
   [ -x verify.sh ] || fail "verify.sh missing or not executable"
   [ -x .github/scripts/test-standalone-verify.sh ] ||
@@ -131,11 +184,54 @@ check_standalone_verifier() {
   grep -Fq "VALIDATOR_SHA256=\\\"${actual_validator_hash}\\\"" search-audit.config.json ||
     fail "search-audit.config.json verify.sh contract does not pin validator $actual_validator_hash"
 
-  grep -q '^VALIDATOR_SOURCE_URL="https://raw.githubusercontent.com/snapsynapse/skill-provenance/main/skill-provenance/validate.sh"$' verify.sh ||
-    fail "verify.sh canonical validator URL drift"
+  # The wrapper must fetch the validator from an immutable release tag that
+  # carries the pinned bytes, never from a branch.
+  validator_url="$(awk -F'"' '/^VALIDATOR_SOURCE_URL=/ { print $2; exit }' verify.sh)"
+  [[ "$validator_url" =~ $validator_url_re ]] ||
+    fail "verify.sh validator URL must name an exact release tag under refs/tags/, not a branch: $validator_url"
+  validator_tag="${BASH_REMATCH[1]}"
+  require_tagged_hash "verify.sh validator URL" "$validator_tag" \
+    skill-provenance/validate.sh "$actual_validator_hash"
+
+  grep -Fq "$validator_url" search-audit.config.json ||
+    fail "search-audit.config.json verify.sh contract does not name $validator_url"
 
   ./verify.sh skill-provenance >/dev/null
-  echo "Standalone verifier pin OK: $actual_validator_hash"
+  echo "Standalone verifier pin OK: $actual_validator_hash from $validator_tag"
+}
+
+# Every surface that tells a reader to download the wrapper must name one
+# exact release tag and show the SHA-256 of the wrapper that tag carries.
+check_wrapper_download_surfaces() {
+  local wrapper_hash
+  local surface
+  local tags
+  local wrapper_tag=""
+  local surface_tag
+
+  wrapper_hash="$(sha256_hash verify.sh)"
+
+  for surface in README.md index.html llms.txt skill-provenance/README.md \
+    skill-provenance/references/standalone-verification.md; do
+    if grep -Fq "skillprovenance.dev/verify.sh" "$surface"; then
+      fail "$surface points at the branch-served wrapper instead of an exact release tag"
+    fi
+    grep -Fq "$wrapper_hash" "$surface" ||
+      fail "$surface does not show the current verify.sh SHA-256 $wrapper_hash"
+
+    tags="$(grep -Eo 'refs/tags/v[0-9]+\.[0-9]+\.[0-9]+/verify\.sh' "$surface" | sort -u)"
+    [ -n "$tags" ] || fail "$surface has no exact-tag wrapper download URL"
+    [ "$(printf '%s\n' "$tags" | wc -l | awk '{print $1}')" = "1" ] ||
+      fail "$surface names more than one wrapper release tag"
+    surface_tag="${tags#refs/tags/}"
+    surface_tag="${surface_tag%/verify.sh}"
+    [ -z "$wrapper_tag" ] || [ "$surface_tag" = "$wrapper_tag" ] ||
+      fail "$surface names wrapper tag $surface_tag; other surfaces name $wrapper_tag"
+    wrapper_tag="$surface_tag"
+  done
+
+  require_tagged_hash "wrapper download URL" "$wrapper_tag" verify.sh "$wrapper_hash"
+  echo "Wrapper download surfaces OK: $wrapper_hash from $wrapper_tag"
 }
 
 # The README opens with a changed-bundle trial whose displayed output is
@@ -317,5 +413,6 @@ check_eval_counts
 check_release_tag_families
 check_assistant_guide_manifest
 check_standalone_verifier
+check_wrapper_download_surfaces
 check_readme_trial
 check_skill_zip

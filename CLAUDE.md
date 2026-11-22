@@ -9,7 +9,7 @@ Canonical site: https://skillprovenance.dev/ | Repo: snapsynapse/skill-provenanc
 - `skill-provenance/SKILL.md` -- the skill definition (what agents read)
 - `skill-provenance/MANIFEST.yaml` -- file inventory with roles, versions, SHA-256 hashes
 - `skill-provenance/CHANGELOG.md` -- rolling recent history (last 5 entries)
-- `skill-provenance/evals.json` -- 45 core evaluation scenarios
+- `skill-provenance/evals.json` -- 46 core evaluation scenarios
 - `skill-provenance/evals-distribution.json` -- 21 supplemental distribution evals
 - `skill-provenance/validate.sh` -- local hash verification script
 - `skill-provenance/package.sh` -- derived copy generator (strict/ClawHub)
@@ -72,17 +72,19 @@ Test locally: `claude --plugin-dir .`
 
 `.github/workflows/validate.yml` runs on push/PR to `main`: verifies bundle hashes via the repo's own `action.yml`, test-builds the strict and ClawHub packages, and runs `release-surface-check.sh`, `action-security-check.sh`, `test-validate.sh`, and `test-standalone-verify.sh`. All are bash scripts under `.github/scripts/` and `skill-provenance/`.
 
-## Current state (as of 2026-11-08 release)
+## Current state (as of 2026-11-22 release)
 
-- Stable public bundle release is `7.0.1`, a patch on 7.0.0 that adds two
-  core evals and version-label versus digest guidance in the trust reference.
+- Stable public bundle release is `7.0.2`, a security patch: agents verify a
+  bundle with a trusted validator and never run a script the bundle supplies,
+  and `verify.sh` plus its download docs bind to exact release tags instead
+  of `main`. `validate.sh` is unchanged from 7.0.1.
   Since 7.0.0 the manifest inventory is complete: files beneath the bundle
   root that MANIFEST.yaml does not list fail verification unless
   `--allow-unlisted` is given.
 - Validation fails closed on unsafe or ambiguous paths, duplicates, missing
   inventories, symlink components, and unlisted entries. Packaging revalidates through the
   same policy at each derived-package boundary.
-- The stable action reference is `snapsynapse/skill-provenance@v7.0.1`. GitHub Agent
+- The stable action reference is `snapsynapse/skill-provenance@v7.0.2`. GitHub Agent
   Skill validation, exact-tag preview, and discovery search all pass.
 - Roadmap priorities are portfolio dogfooding, Agent Skill publication,
   evidence-led interop, and later optional signatures.

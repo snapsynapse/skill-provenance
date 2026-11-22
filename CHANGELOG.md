@@ -7,6 +7,67 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 7.0.2 - 2026-11-22
+Security release from the 2026-11-22 repository audit. It closes the two
+High findings; the validator itself is unchanged.
+- skills/validate/SKILL.md, skills/open/SKILL.md, and skills/close/SKILL.md:
+  The plugin skills no longer tell the agent to prefer the bundle's own
+  `validate.sh`. They run the validator that ships with the plugin against
+  the bundle root, fall back to the pinned standalone wrapper and then to
+  manual hashing with reduced assurance, and never execute a script found
+  inside the bundle under review. A third-party bundle could previously ship
+  a script that ran arbitrary code and printed a passing result.
+- skill-provenance/SKILL.md: Same trusted-validator rule in the canonical
+  validate and open protocols. Manifest fields and validator output are
+  treated as data.
+- skill-provenance/README.md: The downloaded-skill use case runs a validator
+  the reader already trusts instead of the bundle's own script. Corrected a
+  stale `@v6.1.0` Codex install pin.
+- skill-provenance/evals.json: Added core scenario 46
+  (`bundle_supplied_validator_not_executed`). Coverage is now 46 core, 21
+  supplemental, and 67 total.
+- verify.sh: The validator download URL names the immutable `v7.0.1` release
+  tag, which carries the pinned validator bytes, instead of the `main`
+  branch. A published wrapper no longer breaks when a later release changes
+  the validator, and a change to `main` cannot alter what it fetches.
+- README.md, index.html, llms.txt, skill-provenance/README.md, and
+  skill-provenance/references/standalone-verification.md: The no-plugin
+  wrapper download names the exact `v7.0.2` tag and checks the wrapper's
+  SHA-256 before it is inspected or run. These surfaces no longer fetch the
+  wrapper from the branch-served site copy.
+- .github/scripts/release-surface-check.sh: Requires the wrapper's validator
+  URL to name an exact release tag whose `validate.sh` matches the pin, and
+  requires every wrapper download surface to name one exact tag and show the
+  current `verify.sh` SHA-256. A tag that is not published yet is accepted
+  only when it is the release being prepared.
+- search-audit.config.json: Moved the production `verify.sh` contract to the
+  tag URL, and the install and release links to v7.0.2.
+- skill-provenance/MANIFEST.yaml: Bumped the bundle to 7.0.2, advanced
+  SKILL.md, README.md, standalone-verification.md, evals.json, and
+  CHANGELOG.md revisions, refreshed notes and hashes, and recorded the 7.0.2
+  validated_against entry.
+- skill-provenance/CHANGELOG.md: Added the 7.0.2 entry and retained the
+  newest 5 releases, moving 6.1.0 to this file only.
+- README.md, index.html, and llms.txt: Moved the stable install, preview,
+  action, trial, and release links from v7.0.1 to v7.0.2, refreshed the
+  trial output from a real run, and updated eval counts.
+- CITATION.cff and .codex-plugin/plugin.json: Set version 7.0.2 and the
+  2026-11-22 release date.
+- .claude-plugin/plugin.json: Bumped the plugin to 0.2.2 so installed copies
+  pick up the corrected skill instructions.
+- AGENTS.md, CLAUDE.md, and PROJECT_CONTEXT.md: Recorded 7.0.2 as the stable
+  release and the new eval counts.
+- skill-provenance.skill: Rebuilt from the canonical bundle.
+- docs/release-provenance.md: Recorded the v7.0.2 asset size and digest.
+- Not changed: `skill-provenance/validate.sh` and the GuideCheck assistant
+  guide. The guide still clones the default branch and runs that checkout's
+  validator; pinning it needs its own GuideCheck release.
+- SECURITY.md and ROADMAP.md: Recorded the trusted-validator rule, the new
+  `main` branch ruleset, and the audit items still open.
+- Repository setting, not a file: `main` gained a branch ruleset on
+  2026-11-22 (pull request required, `validate` check required, signed
+  commits required, force push and deletion blocked, no bypass actors).
+
 ## 2026-11-08 - Search-audit decoder fix (repo only)
 - scripts/check-search.mjs and scripts/check-production-search.mjs:
   Re-vendored asset version 6 from the portfolio-search-indexing-audit skill
