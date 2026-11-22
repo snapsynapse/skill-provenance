@@ -16,10 +16,11 @@
 - `main` branch governance is in place as of 2026-11-22: a ruleset requires
   a pull request, the `validate` check, and signed commits, and blocks force
   pushes and deletion, with no bypass actors. Third-party GitHub Actions are
-  pinned to immutable commits as of 2026-11-08. Still open from the
-  2026-11-22 audit: pin the GuideCheck guide's clone and validator, add a
-  strict mode that forbids `hash: null`, reject empty or flag-shaped path
-  arguments, and escape manifest text in validator output.
+  pinned to immutable commits as of 2026-11-08. The 7.1.0
+  release closed the validator items from the 2026-11-22 audit. Still open:
+  pin the GuideCheck guide's clone and validator in its own `guidecheck-*`
+  release, build release assets in CI with provenance, and run the
+  adversarial agent evals against a model and record the result.
 
 ## Adoption evidence gate
 

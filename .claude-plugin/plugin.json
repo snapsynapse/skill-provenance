@@ -1,7 +1,7 @@
 {
   "name": "skill-provenance",
   "description": "Portable provenance, integrity, and drift control for agent skills across sessions, surfaces, and platforms",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "author": {
     "name": "PAICE.work PBC",
     "url": "https://paice.work"

@@ -74,7 +74,7 @@ validate_source_bundle() {
   fi
 
   echo "Verifying canonical bundle before packaging..."
-  "$BUNDLE_DIR/validate.sh" "$BUNDLE_DIR"
+  "$BUNDLE_DIR/validate.sh" -- "$BUNDLE_DIR"
 }
 
 manifest_paths() {
@@ -135,6 +135,9 @@ strip_skill_metadata() {
   local temp_file
 
   temp_file="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-skill.XXXXXX")"
+  # mktemp creates 0600 files. Copy the original first so the replacement
+  # keeps its mode; the redirect below truncates it in place.
+  cp -p "$skill_file" "$temp_file"
 
   awk '
     BEGIN {
@@ -180,6 +183,8 @@ rewrite_manifest() {
   local temp_file
 
   temp_file="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-manifest.XXXXXX")"
+  # Keep the manifest's mode across the rewrite, as above.
+  cp -p "$manifest_file" "$temp_file"
 
   awk -v target_mode="$target_mode" -v include_mode="$include_mode" '
     function include_path(path) {
@@ -290,8 +295,8 @@ build_variant() {
       ;;
   esac
 
-  "$BUNDLE_DIR/validate.sh" --update "$dest_dir"
-  "$BUNDLE_DIR/validate.sh" "$dest_dir"
+  "$BUNDLE_DIR/validate.sh" --update -- "$dest_dir"
+  "$BUNDLE_DIR/validate.sh" -- "$dest_dir"
   echo "Built $mode package at $dest_dir"
 }
 

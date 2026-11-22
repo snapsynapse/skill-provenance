@@ -11,12 +11,14 @@ skill-provenance/                ← Canonical source bundle (DO NOT rename)
 ├── README.md                    ← Human-facing user guide (has internal version header)
 ├── MANIFEST.yaml                ← File inventory: roles, versions, SHA-256 hashes
 ├── CHANGELOG.md                 ← Recent in-bundle change history (last 5 entries)
-├── evals.json                   ← 46 core evaluation scenarios
+├── evals.json                   ← 50 core evaluation scenarios
 ├── evals-distribution.json      ← 21 supplemental distribution evals
 ├── validate.sh                  ← Bash script for local hash verification
 ├── package.sh                   ← Bash script for derived strict/ClawHub outputs
 └── references/standalone-verification.md ← No-plugin verify/bootstrap path
 action.yml                       ← GitHub Actions Marketplace wrapper for validate.sh
+action-validate.sh               ← Action entry point; inputs arrive by environment, path passed after --
+scripts/adversarial-agent-evals.sh ← Model-run adversarial evals graded by canary files (manual, not CI)
 verify.sh                        ← Standalone wrapper pinned to canonical validate.sh
 CHANGELOG.md                     ← Full append-only repo history
 skill-provenance.skill           ← Claude Settings ZIP (rebuilt from the directory)

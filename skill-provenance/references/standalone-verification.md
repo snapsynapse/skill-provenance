@@ -13,21 +13,40 @@ inspect it before running it. Stop if the second command does not print
 
 Literal
 ```shell
-curl -fsSLo /tmp/skill-provenance-verify.sh https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.0.2/verify.sh
-echo "a8b77531d61b072a35af67a1e4c302217c08f58f62947ad342864a4757572dad  /tmp/skill-provenance-verify.sh" | shasum -a 256 -c
-sed -n '1,220p' /tmp/skill-provenance-verify.sh
+SP_VERIFY="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-verify.XXXXXX")"
+curl -fsSLo "$SP_VERIFY" https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.1.0/verify.sh
+echo "4dcbbec84328f8d348bca9056840d80d365ebd01decfbd3ffe944cef82080ef1  $SP_VERIFY" | shasum -a 256 -c
+sed -n '1,220p' "$SP_VERIFY"
 ```
+
+Run the next block in the same shell session, so `SP_VERIFY` is still set.
+`--strict` fails on `hash: null` opt-outs, which is what you want for a
+bundle someone else published. Drop it for your own bundle if that bundle
+uses an intentional opt-out.
 
 Replace: TARGET_SKILL_DIRECTORY -> the local directory containing `SKILL.md` and `MANIFEST.yaml`
 
 Customize
 ```shell
-bash /tmp/skill-provenance-verify.sh TARGET_SKILL_DIRECTORY
+bash "$SP_VERIFY" --strict TARGET_SKILL_DIRECTORY
 ```
 
 Exit code `0` means every pinned file is present and matches. Exit code `1`
-means the manifest is invalid, a file is missing, or a hash mismatches. Exit
-code `2` means the target has no `MANIFEST.yaml`.
+means the manifest is invalid, a file is missing, unlisted, or opted out
+under `--strict`, a hash mismatches, or an argument is invalid. Exit code `2`
+means the target has no `MANIFEST.yaml`.
+
+The summary names the directory that was checked and the SHA-256 of its
+`MANIFEST.yaml`. Confirm the directory is the one you meant. If the publisher
+states a manifest digest somewhere outside the bundle, such as a release
+note, pass it as `--expect-manifest-sha256=DIGEST` before the directory. The
+run then fails unless the manifest is that exact file. Without such a digest,
+a passing run shows only that the files agree with the manifest shipped
+beside them.
+
+The wrapper passes only `--strict` and `--expect-manifest-sha256` through. It
+never updates a manifest and never allows unlisted files. An empty path or an
+unknown option is an error, not a fallback to another directory.
 
 The wrapper uses a repository-local canonical validator when present and
 byte-identical to its pin. Otherwise it downloads the validator from the

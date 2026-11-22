@@ -9,9 +9,14 @@ on:
 permissions:
   contents: read
 
+# The job named `validate` is a required status check in the `main` branch
+# ruleset. Do not rename it or turn it into a matrix: either changes the
+# check name and blocks every pull request. Add further coverage as separate
+# jobs, as below.
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
@@ -45,3 +50,46 @@ jobs:
 
       - name: Test standalone verifier pinning
         run: ./.github/scripts/test-standalone-verify.sh
+
+  # macOS ships Bash 3.2 and BSD userland. Run the same regression suites
+  # there so the scripts stay portable to the shell most local users have.
+  validate-macos:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Show system Bash version
+        run: /bin/bash --version
+
+      - name: Verify bundle hashes
+        run: /bin/bash skill-provenance/validate.sh --strict -- skill-provenance
+
+      - name: Test validator hash states
+        run: /bin/bash .github/scripts/test-validate.sh
+
+      - name: Test standalone verifier pinning
+        run: /bin/bash .github/scripts/test-standalone-verify.sh
+
+      - name: Verify action input transport
+        run: /bin/bash .github/scripts/action-security-check.sh
+
+      - name: Verify release surfaces
+        run: /bin/bash .github/scripts/release-surface-check.sh
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Lint shell scripts
+        run: |
+          shellcheck --version
+          shellcheck --severity=warning \
+            verify.sh \
+            action-validate.sh \
+            skill-provenance/validate.sh \
+            skill-provenance/package.sh \
+            .github/scripts/*.sh \
+            scripts/adversarial-agent-evals.sh

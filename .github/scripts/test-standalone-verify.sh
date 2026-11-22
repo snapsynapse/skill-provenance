@@ -111,4 +111,24 @@ if find "$test_root/download-tmp" -type f -print -quit | grep -q .; then
   exit 1
 fi
 
+# The wrapper never treats an empty or option-shaped value as "use the
+# default directory", passes only verification options through, and applies
+# --strict to the target.
+expect_status 1 "$repo_root/verify.sh" ""
+expect_status 1 "$repo_root/verify.sh" --update "$repo_root/skill-provenance"
+expect_status 1 "$repo_root/verify.sh" --allow-unlisted "$repo_root/skill-provenance"
+expect_status 1 "$repo_root/verify.sh" "$repo_root/skill-provenance" "$repo_root/skill-provenance"
+expect_status 2 "$repo_root/verify.sh" -- --help
+expect_status 0 "$repo_root/verify.sh" -- "$repo_root/skill-provenance"
+expect_status 0 "$repo_root/verify.sh" --strict "$repo_root/skill-provenance"
+
+mkdir "$test_root/null bundle"
+printf 'payload\n' > "$test_root/null bundle/payload.txt"
+printf 'bundle: test\nfiles:\n  - path: payload.txt\n    hash: null\n' > "$test_root/null bundle/MANIFEST.yaml"
+expect_status 0 "$repo_root/verify.sh" "$test_root/null bundle"
+expect_status 1 "$repo_root/verify.sh" --strict "$test_root/null bundle"
+expect_status 1 "$repo_root/verify.sh" \
+  "--expect-manifest-sha256=0000000000000000000000000000000000000000000000000000000000000000" \
+  "$test_root/null bundle"
+
 echo "Standalone verifier enforces local and downloaded pins, preserves exit codes, and cleans temporary validators"

@@ -9,13 +9,15 @@ Canonical site: https://skillprovenance.dev/ | Repo: snapsynapse/skill-provenanc
 - `skill-provenance/SKILL.md` -- the skill definition (what agents read)
 - `skill-provenance/MANIFEST.yaml` -- file inventory with roles, versions, SHA-256 hashes
 - `skill-provenance/CHANGELOG.md` -- rolling recent history (last 5 entries)
-- `skill-provenance/evals.json` -- 46 core evaluation scenarios
+- `skill-provenance/evals.json` -- 50 core evaluation scenarios
 - `skill-provenance/evals-distribution.json` -- 21 supplemental distribution evals
 - `skill-provenance/validate.sh` -- local hash verification script
 - `skill-provenance/package.sh` -- derived copy generator (strict/ClawHub)
 - `skill-provenance/references/standalone-verification.md` -- no-plugin verify/bootstrap path
 - `verify.sh` -- standalone wrapper pinned to the canonical validator
 - `action.yml` -- GitHub Actions Marketplace wrapper for bundle validation
+- `action-validate.sh` -- the action's entry point (inputs by environment, path after `--`)
+- `scripts/adversarial-agent-evals.sh` -- manual model-run adversarial evals graded by canary files
 - `CHANGELOG.md` -- full append-only repo history
 - `AGENTS.md` -- detailed guide for agents working on this repo
 
@@ -70,21 +72,25 @@ Test locally: `claude --plugin-dir .`
 
 ## CI
 
-`.github/workflows/validate.yml` runs on push/PR to `main`: verifies bundle hashes via the repo's own `action.yml`, test-builds the strict and ClawHub packages, and runs `release-surface-check.sh`, `action-security-check.sh`, `test-validate.sh`, and `test-standalone-verify.sh`. All are bash scripts under `.github/scripts/` and `skill-provenance/`.
+`.github/workflows/validate.yml` runs on push/PR to `main`. The job named `validate` is a required check in the `main` ruleset, so never rename or matrix it; `validate-macos` (Bash 3.2) and `shellcheck` are separate jobs. The `validate` job verifies bundle hashes via the repo's own `action.yml`, test-builds the strict and ClawHub packages, and runs `release-surface-check.sh`, `action-security-check.sh`, `test-validate.sh`, and `test-standalone-verify.sh`. All are bash scripts under `.github/scripts/` and `skill-provenance/`.
 
 ## Current state (as of 2026-11-22 release)
 
-- Stable public bundle release is `7.0.2`, a security patch: agents verify a
-  bundle with a trusted validator and never run a script the bundle supplies,
-  and `verify.sh` plus its download docs bind to exact release tags instead
-  of `main`. `validate.sh` is unchanged from 7.0.1.
+- Stable public bundle release is `7.1.0`, the validator hardening release
+  from the 2026-11-22 audit: `--strict` fails on `hash: null`,
+  `--expect-manifest-sha256` binds a run to an out-of-band manifest digest,
+  empty or option-shaped paths and a symlinked manifest are errors, manifest
+  text is escaped in output, and the action gained `strict`,
+  `expected-manifest-sha256`, and a `manifest-sha256` output. 7.0.2 (tag only,
+  no GitHub release) made agents use a trusted validator and bound
+  `verify.sh` to release tags.
   Since 7.0.0 the manifest inventory is complete: files beneath the bundle
   root that MANIFEST.yaml does not list fail verification unless
   `--allow-unlisted` is given.
 - Validation fails closed on unsafe or ambiguous paths, duplicates, missing
   inventories, symlink components, and unlisted entries. Packaging revalidates through the
   same policy at each derived-package boundary.
-- The stable action reference is `snapsynapse/skill-provenance@v7.0.2`. GitHub Agent
+- The stable action reference is `snapsynapse/skill-provenance@v7.1.0`. GitHub Agent
   Skill validation, exact-tag preview, and discovery search all pass.
 - Roadmap priorities are portfolio dogfooding, Agent Skill publication,
   evidence-led interop, and later optional signatures.
