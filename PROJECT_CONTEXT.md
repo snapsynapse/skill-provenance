@@ -45,10 +45,12 @@ description (see the `SKILL_v4.md` → `SKILL.md`/`MANIFEST.yaml` snippet in
 - Assistant guide (pre-install verification): https://skillprovenance.dev/.well-known/assistant-guide.txt
 - Releases: https://github.com/snapsynapse/skill-provenance/releases
 
-## Current status (as of 2026-11-08 release)
+## Current status (as of 2026-11-22 release)
 
-- Stable public bundle release is 7.0.1, a patch on 7.0.0 that adds two
-  core evals and version-label versus digest guidance in the trust reference.
+- Stable public bundle release is 7.0.2, a security patch on 7.0.1: agents
+  verify a bundle with a trusted validator and never run a script the bundle
+  supplies, and `verify.sh` plus its download docs bind to exact release
+  tags instead of `main`. The validator is unchanged from 7.0.1.
   7.0.0 made the manifest inventory complete: unlisted files beneath the
   bundle root fail verification unless `--allow-unlisted` is given. That was
   a breaking change for bundles that previously passed with extra files.
@@ -56,10 +58,10 @@ description (see the `SKILL_v4.md` → `SKILL.md`/`MANIFEST.yaml` snippet in
   entries, manifest-listed symlinks, unsupported inventory syntax, and
   unlisted entries.
   Packaging reuses that validator policy at each derived-package boundary.
-- Coverage is 45 core and 21 supplemental evals, 66 total, plus executable
+- Coverage is 46 core and 21 supplemental evals, 67 total, plus executable
   validator, action-input, packaging, and release-surface regression checks.
 - The GitHub Marketplace validation action is publicly listed and the stable
-  action reference is `snapsynapse/skill-provenance@v7.0.1`.
+  action reference is `snapsynapse/skill-provenance@v7.0.2`.
 - GitHub Agent Skill validation and exact-tag preview pass, and `gh skill
   search skill-provenance` returns this repository. The GitHub release carries
   the validated `.skill` archive.

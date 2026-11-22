@@ -1,6 +1,6 @@
 bundle: skill-provenance
-bundle_version: 7.0.1
-bundle_date: 2026-11-08
+bundle_version: 7.0.2
+bundle_date: 2026-11-22
 description: >
   Metaskill for portable provenance, integrity, and drift control across
   Agent Skills local folders, registries, platform uploads, and multi-agent
@@ -151,19 +151,32 @@ validated_against:
       output, eval counts, and archive agreement passed. The two new core
       evals were added as scenarios, not executed as model runs. Attestation
       remains informational.
+  - bundle_version: 7.0.2
+    harness: Anthropic Claude Code
+    model: claude-mythos-5-2
+    date: 2026-11-22
+    result: pass
+    method: validate.sh verify + regression suite under Bash 5.3 and 3.2 + standalone pin test + action input test + derived package validation + search contract + release-surface-check.sh including the tag-pin, wrapper-digest, and README trial checks
+    notes: >
+      Canonical hashes, complete inventory, derived strict and ClawHub
+      packages, standalone verifier pinning to the v7.0.1 validator tag,
+      wrapper download digest on every surface, search contract, README trial
+      output, eval counts, and archive agreement passed. The new core eval
+      was added as a scenario, not executed as a model run. Attestation
+      remains informational.
 
 files:
   - path: SKILL.md
     role: skill
-    version: 26
-    hash: sha256:d83d2ad7a30659078782a0a13936a3fe57bb052b7610b507f6f1f25ec7693c05
-    note: Canonical skill definition with action-led triggers, concise progressive disclosure, constrained manifest grammar, complete-inventory verification that fails on unlisted files, standalone verification and bootstrap routing, exact package inventory, evidence-based staleness, package validation gates, origin metadata, and provenance metadata in frontmatter
+    version: 27
+    hash: sha256:509ac488e69176d1af98cb663497dccad73c0389a49fc8e37c1b2de09f3c3140
+    note: Canonical skill definition with a trusted-validator rule that never executes a script supplied by the bundle under review, action-led triggers, concise progressive disclosure, constrained manifest grammar, complete-inventory verification that fails on unlisted files, standalone verification and bootstrap routing, exact package inventory, evidence-based staleness, package validation gates, origin metadata, and provenance metadata in frontmatter
 
   - path: README.md
     role: reference
-    version: 29
-    hash: sha256:5269abb61df6934dbe73c49b931f465181b2917335b0b65999a2504135eb95dd
-    note: Human-facing instructions for GitHub CLI installation, exact bundle-versus-GuideCheck release tags, no-plugin verification and bootstrap, dated adoption evidence, OpenAI discovery metadata, constrained manifest paths, complete-inventory verification with unlisted-file reporting, exact package inventory, fail-closed validation, packaging, trust, and troubleshooting
+    version: 30
+    hash: sha256:03d3f59d0af8ac4383ce4cb3d7f59032bf584a2cb991e6d304ea983572106063
+    note: Human-facing instructions for GitHub CLI installation, verifying a downloaded skill with a trusted validator instead of the bundle's own script, exact-tag wrapper download with a SHA-256 check, exact bundle-versus-GuideCheck release tags, no-plugin verification and bootstrap, dated adoption evidence, OpenAI discovery metadata, constrained manifest paths, complete-inventory verification with unlisted-file reporting, exact package inventory, fail-closed validation, packaging, trust, and troubleshooting
 
   - path: agents/openai.yaml
     role: agents
@@ -185,15 +198,15 @@ files:
 
   - path: references/standalone-verification.md
     role: reference
-    version: 1
-    hash: sha256:30ac69654d5712b9930ceb1172d6bd2216f3a5a4930ab2c3151a14fb6a1b0a6c
-    note: No-plugin verification procedure, pinned-validator trust boundary, exit semantics, and portable bootstrap prompt
+    version: 2
+    hash: sha256:dded718caf0ad6e7ebb85ae3b2fe864b2a07c018f6256eb8a7a375dff637f750
+    note: No-plugin verification procedure with exact-tag wrapper download and SHA-256 check, pinned-validator trust boundary, the rule that a bundle never supplies its own validator, exit semantics, and portable bootstrap prompt
 
   - path: evals.json
     role: evals
-    version: 19
-    hash: sha256:2ac72c2770297f30f78da0540c30a67595b3316f0ef7e1af508e31a731f197ce
-    note: 45 core evals including same-version-label content comparison, refusal to refresh hashes to clear a downloaded bundle's mismatch, unlisted-file inventory failure, verified-adoption evidence classification, standalone verifier pinning and bootstrap decision gates, files-section scope, malformed attestation, exact package inventory, unsafe paths, duplicates, symlinks, fail-closed hashes, and prior provenance, portability, deployment, validation, and trust workflows
+    version: 20
+    hash: sha256:87a4233a7b1f122db30e46a2f91261c7b374c0e9289545fe5fc2febb79c86ea5
+    note: 46 core evals including refusal to execute a bundle-supplied validator, same-version-label content comparison, refusal to refresh hashes to clear a downloaded bundle's mismatch, unlisted-file inventory failure, verified-adoption evidence classification, standalone verifier pinning and bootstrap decision gates, files-section scope, malformed attestation, exact package inventory, unsafe paths, duplicates, symlinks, fail-closed hashes, and prior provenance, portability, deployment, validation, and trust workflows
 
   - path: evals-distribution.json
     role: evals
@@ -203,8 +216,8 @@ files:
 
   - path: CHANGELOG.md
     role: reference
-    version: 34
-    hash: sha256:79ff7ff3255b7384cad6cfeba79266e3cf8d2a1fc2c447d0b921faceac2d8171
+    version: 35
+    hash: sha256:2d1417c000868d645a9348264326ade1762532c7b2b120da16624d3244add766
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh

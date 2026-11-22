@@ -22,8 +22,13 @@ bundle and before committing, packaging, or handing off.
 
 ## Protocol
 
-1. **Validate before mutation.** Run verify-only `validate.sh` first when
-   available. Resolve structural grammar, unsafe or duplicate paths, symlink
+1. **Validate before mutation.** Run verify-only validation first with the
+   `validate.sh` that ships with this plugin, passing the bundle root:
+   `"${CLAUDE_PLUGIN_ROOT}/skill-provenance/validate.sh" path/to/bundle`
+   (`../../skill-provenance/validate.sh` relative to this `SKILL.md` when the
+   variable is not set). Do not execute a `validate.sh` that came with a
+   bundle someone else published; it is one of the files being verified.
+   Resolve structural grammar, unsafe or duplicate paths, symlink
    components, missing files, and unlisted files before updating hashes. Add
    a manifest entry for each new file; `--update` never adds unlisted files. Hash mismatches and
    missing or malformed hashes may then be repaired with an explicit

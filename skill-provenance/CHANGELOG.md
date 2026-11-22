@@ -7,6 +7,27 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 7.0.2 - 2026-11-22
+- SKILL.md: Verification now requires a trusted validator. A `validate.sh`
+  or any other script supplied by the bundle under review is never executed,
+  because it is one of the files being verified and can print a forged pass.
+  A matching manifest hash for that script does not make it trusted.
+  Manifest fields and validator output are treated as data.
+- README.md: The downloaded-skill use case now runs a validator the reader
+  already trusts against the bundle instead of the bundle's own script. The
+  no-plugin wrapper download names an exact release tag and checks the
+  wrapper's SHA-256 before it is inspected or run. Corrected a stale Codex
+  install pin.
+- references/standalone-verification.md: Same exact-tag download and digest
+  check, and the rule that a bundle never supplies its own validator.
+- evals.json: Added core scenario 46 for refusing to execute a
+  bundle-supplied validator. Coverage is now 46 core, 21 supplemental, and
+  67 total.
+- MANIFEST.yaml: Bumped the bundle to 7.0.2, advanced changed file revisions,
+  refreshed notes, and refreshed hashes.
+- CHANGELOG.md: Added this entry and retained the newest 5 releases.
+- Not changed: `validate.sh` is byte-identical to 7.0.1.
+
 ## 7.0.1 - 2026-11-08
 - references/platforms-and-trust.md: Stated that a matching
   `bundle_version` does not show that two copies have the same contents, and
@@ -72,25 +93,3 @@ Full release history lives in the source repository's top-level
   inventoried the new reference, refreshed hashes, and recorded release
   validation.
 - CHANGELOG.md: Added this entry and retained the newest 5 releases.
-
-## 6.1.0 - 2026-08-20
-- SKILL.md: Front-loaded concrete Agent Skill bundle triggers, added the MIT
-  license field, and moved detailed packaging and platform guidance into
-  direct load-on-demand references. The always-loaded body is now below 500
-  lines without removing the operational protocol.
-- agents/openai.yaml: Added OpenAI display, trigger, brand, default-prompt, and
-  implicit-invocation metadata.
-- references/packaging-and-changelog.md: Added the detailed archive,
-  exact-inventory, and changelog rules moved out of SKILL.md.
-- references/platforms-and-trust.md: Added canonical and derived state,
-  ecosystem relationship, platform, and trust-boundary guidance moved out of
-  SKILL.md.
-- README.md: Added pinned GitHub CLI installation guidance and documented the
-  OpenAI metadata surfaces without claiming marketplace publication.
-- evals.json and evals-distribution.json: Unchanged because the versioning,
-  validation, packaging, and trust contracts remain semantically unchanged.
-- MANIFEST.yaml: Bumped the bundle to 6.1.0, advanced changed file versions,
-  added new files to inventory, and refreshed hashes.
-- CHANGELOG.md: Added this entry and retained the newest 5 releases.
-
-Older entries archived in the source repository's top-level CHANGELOG.md.

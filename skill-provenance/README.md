@@ -103,7 +103,7 @@ install the skill and does not prove the bundle is safe to run.
 | **Claude Chat** (project) | Add `SKILL.md` to the project knowledge. It will be available in every conversation within that project. |
 | **Claude Cowork** | Place the `skill-provenance/` folder in your Cowork skill directory. Claude will discover it automatically. |
 | **Claude Code** | Place the `skill-provenance/` folder in your project's skill directory (typically alongside other skills). Reference it in your CLAUDE.md if needed. |
-| **Codex** | Preview the current stable release with `gh skill preview snapsynapse/skill-provenance skill-provenance@v6.1.0`, then install with `gh skill install snapsynapse/skill-provenance skill-provenance@v6.1.0 --agent codex --scope user`. For a local derived copy, use `./package.sh strict`. |
+| **Codex** | Preview the current stable release with `gh skill preview snapsynapse/skill-provenance skill-provenance@v7.0.2`, then install with `gh skill install snapsynapse/skill-provenance skill-provenance@v7.0.2 --agent codex --scope user`. For a local derived copy, use `./package.sh strict`. |
 | **Gemini CLI** | Copy or symlink a strict-platform copy to `~/.gemini/skills/skill-provenance/` for user-wide availability, or `.gemini/skills/skill-provenance/` for a single project. `./package.sh strict` prepares the minimal-frontmatter variant. |
 | **Perplexity Computer** | Upload a `.zip` or folder copy when supported. For strict loaders, start from `./package.sh strict`, then rename `.skill` to `.zip` if needed and keep the trigger-rich description. |
 | **Generic agentskills clients** | Use the directory bundle directly. Some cross-client tooling also recognizes `.agents/skills/skill-provenance/` as a neutral install location. |
@@ -122,11 +122,15 @@ family.
 
 If the plugin is not installed, use the repository's standalone wrapper. It
 checks the canonical validator against a pinned SHA-256 before running it, so
-the digest rather than a mutable version label controls execution.
+the digest rather than a mutable version label controls execution. Download
+the wrapper from its immutable release tag and check its own SHA-256 first.
+Stop if the second command does not print `OK`. Use `sha256sum -c` where
+`shasum` is absent.
 
 Literal
 ```shell
-curl -fsSLo /tmp/skill-provenance-verify.sh https://skillprovenance.dev/verify.sh
+curl -fsSLo /tmp/skill-provenance-verify.sh https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.0.2/verify.sh
+echo "a8b77531d61b072a35af67a1e4c302217c08f58f62947ad342864a4757572dad  /tmp/skill-provenance-verify.sh" | shasum -a 256 -c
 sed -n '1,220p' /tmp/skill-provenance-verify.sh
 ```
 
@@ -780,18 +784,26 @@ and SHA-256 hash, and `validate.sh` fails if the bundle holds anything the
 manifest does not list. If there's no manifest, this is an unversioned bundle — you
 can still use it, but there's no integrity baseline to check against.
 
-**Step 2: Run the hash check.**
-```bash
-cd the-skill/
-./validate.sh
-```
-If the bundle includes `validate.sh`, it will check every file hash against
-the manifest and report any file the manifest does not list. Exit code 0
-means everything matches. Exit code 1 means at least one file was modified,
-removed, or added since the manifest was written.
+**Step 2: Run the hash check with your own validator.**
 
-If the bundle doesn't include `validate.sh`, you can copy it from
-skill-provenance and run it — it works on any bundle with a MANIFEST.yaml.
+Replace: TRUSTED_VALIDATE_SH -> the path to a `validate.sh` you already trust, such as the copy in your installed skill-provenance
+Replace: DOWNLOADED_SKILL_DIRECTORY -> the directory of the skill you downloaded
+
+Customize
+```bash
+bash TRUSTED_VALIDATE_SH DOWNLOADED_SKILL_DIRECTORY
+```
+The validator checks every file hash against the manifest and reports any
+file the manifest does not list. Exit code 0 means everything matches. Exit
+code 1 means at least one file was modified, removed, or added since the
+manifest was written.
+
+Do not run a `validate.sh` that came inside the downloaded bundle, and do
+not let an agent run it. That script is one of the files under review. It
+can do anything a script can do and then print a passing result, and a
+matching manifest hash for it proves nothing because the same publisher
+wrote both. If you have no trusted copy, use the pinned standalone wrapper
+in [references/standalone-verification.md](references/standalone-verification.md).
 
 **Step 3: Read the changelog.**
 `CHANGELOG.md` tells you what changed recently and whether any files are

@@ -1,6 +1,6 @@
 [![Validate bundle](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml/badge.svg)](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE)
-[![Stable bundle](https://img.shields.io/github/v/tag/snapsynapse/skill-provenance?filter=v%2A&label=bundle)](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.1)
+[![Stable bundle](https://img.shields.io/github/v/tag/snapsynapse/skill-provenance?filter=v%2A&label=bundle)](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.2)
 [![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Skill%20Provenance%20Validate-blue)](https://github.com/marketplace/actions/skill-provenance-validate)
 
 # Skill Provenance
@@ -21,14 +21,14 @@ the validator. The clone is the only network step: because `verify.sh` sits
 beside the canonical `skill-provenance/validate.sh` in the checkout, it checks
 that validator against its pinned SHA-256 and runs it locally.
 
-Get the exact v7.0.1 release, copy its bundle to a temporary directory, and
+Get the exact v7.0.2 release, copy its bundle to a temporary directory, and
 check the copy:
 
 Literal
 ```bash
 git clone --quiet https://github.com/snapsynapse/skill-provenance.git
 cd skill-provenance
-git -c advice.detachedHead=false checkout --quiet v7.0.1
+git -c advice.detachedHead=false checkout --quiet v7.0.2
 SP_TRIAL="$(mktemp -d "${TMPDIR:-/tmp}/skill-provenance-trial.XXXXXX")"
 cp -R skill-provenance "$SP_TRIAL/bundle"
 bash ./verify.sh "$SP_TRIAL/bundle"; echo "exit $?"
@@ -55,15 +55,15 @@ The output starts and ends with:
 
 ```text
 MISMATCH SKILL.md
-  expected: d83d2ad7a30659078782a0a13936a3fe57bb052b7610b507f6f1f25ec7693c05
-  actual:   2ff51d4592b08c7a90228a2d255ba3a7996102069b9dc1bd573991e939d28edc
+  expected: 509ac488e69176d1af98cb663497dccad73c0389a49fc8e37c1b2de09f3c3140
+  actual:   f8d86ed7c5ff23294c0b051491f824111bdecee88b568eda89386641a1d970e6
 OK       README.md
 ...
 Checked 11 files, skipped 0, unlisted 0, errors 1
 exit 1
 ```
 
-The copy still says `bundle_version: 7.0.1`, and its `MANIFEST.yaml` is
+The copy still says `bundle_version: 7.0.2`, and its `MANIFEST.yaml` is
 byte-identical to the released one. The validator still names `SKILL.md` as
 the file that no longer matches. Exit 1 is the detection result the trial is
 meant to show. A fresh copy from the same checkout returns to exit 0.
@@ -205,12 +205,12 @@ the bundle before install, but does not install anything for you.
 
 **GitHub CLI (Codex and other supported agents):**
 
-Preview the current stable v7.0.1 release before installing it.
+Preview the current stable v7.0.2 release before installing it.
 
 Literal
 ```shell
-gh skill preview snapsynapse/skill-provenance skill-provenance@v7.0.1
-gh skill install snapsynapse/skill-provenance skill-provenance@v7.0.1 --agent codex --scope user
+gh skill preview snapsynapse/skill-provenance skill-provenance@v7.0.2
+gh skill install snapsynapse/skill-provenance skill-provenance@v7.0.2 --agent codex --scope user
 ```
 
 This repository publishes two release tag families. Bundle releases use
@@ -224,12 +224,15 @@ packaging. Its presence does not imply that a public plugin listing exists.
 
 **No plugin required:**
 
-Download and inspect the standalone wrapper. It verifies the canonical
-validator against a pinned SHA-256 before running it.
+Download the standalone wrapper from its immutable release tag, check its
+SHA-256, and inspect it. Stop if the second command does not print `OK`. Use
+`sha256sum -c` where `shasum` is absent. The wrapper then verifies the
+canonical validator against a pinned SHA-256 before running it.
 
 Literal
 ```shell
-curl -fsSLo /tmp/skill-provenance-verify.sh https://skillprovenance.dev/verify.sh
+curl -fsSLo /tmp/skill-provenance-verify.sh https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.0.2/verify.sh
+echo "a8b77531d61b072a35af67a1e4c302217c08f58f62947ad342864a4757572dad  /tmp/skill-provenance-verify.sh" | shasum -a 256 -c
 sed -n '1,220p' /tmp/skill-provenance-verify.sh
 ```
 
@@ -257,7 +260,7 @@ After install, five commands are available:
 - `/skill-provenance:bootstrap` — add version tracking to an unversioned bundle
 
 **Claude (Settings UI):**
-Download `skill-provenance.skill` from the [stable v7.0.1 bundle release](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.1) and install:
+Download `skill-provenance.skill` from the [stable v7.0.2 bundle release](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.2) and install:
 `claude.ai` -> Profile icon -> `Settings` -> `Skills` -> `Add Skill` -> select the file.
 
 If your loader only accepts `.zip` or `.md` uploads, rename
@@ -282,7 +285,7 @@ directory bundle can be placed there when you want a neutral install path.
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: snapsynapse/skill-provenance@v7.0.1
+  - uses: snapsynapse/skill-provenance@v7.0.2
     with:
       bundle-path: skill-provenance
 ```
@@ -458,7 +461,7 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 45 core evaluation scenarios
+  evals.json                     <- 46 core evaluation scenarios
   evals-distribution.json        <- 21 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
@@ -472,7 +475,7 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-66 evaluation scenarios across two files: 45 core workflow evals in
+67 evaluation scenarios across two files: 46 core workflow evals in
 [evals.json](skill-provenance/evals.json) and 21 supplemental
 distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).

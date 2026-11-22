@@ -2,6 +2,9 @@
 # Standalone entrypoint for Skill Provenance verification.
 # It delegates all manifest parsing to the canonical validate.sh after
 # verifying that validator against the pinned SHA-256 below.
+# The download URL names the immutable release tag that carries those exact
+# validator bytes, never a branch, so a published wrapper keeps working after
+# later releases change the validator.
 
 set -euo pipefail
 
@@ -9,7 +12,7 @@ export LC_ALL=C
 export LANG=C
 
 VALIDATOR_SHA256="aaeac06ba392fd9d2283ec24a8e490d924df3f5f2cd9cd2f85604ff9a5063497"
-VALIDATOR_SOURCE_URL="https://raw.githubusercontent.com/snapsynapse/skill-provenance/main/skill-provenance/validate.sh"
+VALIDATOR_SOURCE_URL="https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.0.1/skill-provenance/validate.sh"
 TARGET_DIR="."
 DOWNLOADED_VALIDATOR=""
 

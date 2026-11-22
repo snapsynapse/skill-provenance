@@ -7,11 +7,14 @@ running it. The digest, not a mutable version label, is the execution gate.
 
 ## Verify without installing the plugin
 
-Download and inspect the wrapper before running it.
+Download the wrapper from its immutable release tag, check its SHA-256, and
+inspect it before running it. Stop if the second command does not print
+`OK`. Use `sha256sum -c` where `shasum` is absent.
 
 Literal
 ```shell
-curl -fsSLo /tmp/skill-provenance-verify.sh https://skillprovenance.dev/verify.sh
+curl -fsSLo /tmp/skill-provenance-verify.sh https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.0.2/verify.sh
+echo "a8b77531d61b072a35af67a1e4c302217c08f58f62947ad342864a4757572dad  /tmp/skill-provenance-verify.sh" | shasum -a 256 -c
 sed -n '1,220p' /tmp/skill-provenance-verify.sh
 ```
 
@@ -28,9 +31,15 @@ code `2` means the target has no `MANIFEST.yaml`.
 
 The wrapper uses a repository-local canonical validator when present and
 byte-identical to its pin. Otherwise it downloads the validator from the
-canonical repository and refuses to execute it unless the pinned digest
-matches. This verifies the validator bytes, not publisher identity or runtime
-safety.
+immutable release tag named in the wrapper and refuses to execute it unless
+the pinned digest matches. This verifies the validator bytes, not publisher
+identity or runtime safety.
+
+The validator that judges a bundle must never come from that bundle. Do not
+run a `validate.sh` found inside a bundle someone else published, even when
+its manifest lists the script with a matching hash: it is one of the files
+under review and can print any result. Point the wrapper, or another trusted
+copy of the validator, at the bundle instead.
 
 ## Bootstrap without installing the plugin
 
