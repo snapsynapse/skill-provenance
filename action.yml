@@ -9,11 +9,26 @@ inputs:
     description: Path to the skill bundle directory containing MANIFEST.yaml.
     required: false
     default: skill-provenance
+  strict:
+    description: Set to true to fail on hash null opt-outs, so every file beneath the bundle root must be hashed and match. Use it for bundles you did not author.
+    required: false
+    default: "false"
+  expected-manifest-sha256:
+    description: Optional SHA-256 of MANIFEST.yaml obtained outside the bundle, such as a release note or a reviewed base branch. The run fails when the manifest differs.
+    required: false
+    default: ""
+outputs:
+  manifest-sha256:
+    description: SHA-256 of the MANIFEST.yaml that was checked.
+    value: ${{ steps.validate.outputs.manifest-sha256 }}
 runs:
   using: composite
   steps:
     - name: Validate Skill Provenance manifest
+      id: validate
       shell: bash
       env:
         BUNDLE_PATH: ${{ inputs.bundle-path }}
-      run: '"$GITHUB_ACTION_PATH/skill-provenance/validate.sh" "$BUNDLE_PATH"'
+        STRICT: ${{ inputs.strict }}
+        EXPECTED_MANIFEST_SHA256: ${{ inputs.expected-manifest-sha256 }}
+      run: '"$GITHUB_ACTION_PATH/action-validate.sh"'

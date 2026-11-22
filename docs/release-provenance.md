@@ -27,21 +27,27 @@ canonical authored bundle.
 
 ## Current release inventory
 
-Release `v7.0.2` has one uploaded asset:
+Release `v7.1.0` has one uploaded asset:
 
 | Asset | Size | Local build digest |
 |---|---:|---|
-| `skill-provenance.skill` | 66,490 bytes | `sha256:bf1eed581bcb2f21751b88fa12bc279da4abf60f73ed78f1ccb04930fedef68b` |
+| `skill-provenance.skill` | 71,940 bytes | `sha256:4b98f1aad3fc3fedc07af55b80094a7c12582fa4a5a6399b4acb351598c28999` |
 
-The previous bundle release, `v7.0.1`, carried a 65,027-byte
-`skill-provenance.skill` with digest
+Tag `v7.0.2` was pushed without a GitHub release, so it has no uploaded
+asset. The `skill-provenance.skill` committed at that tag is 66,490 bytes
+with digest
+`sha256:bf1eed581bcb2f21751b88fa12bc279da4abf60f73ed78f1ccb04930fedef68b`.
+The previous published release, `v7.0.1`, carried a 65,027-byte archive with
+digest
 `sha256:be313c0cb41a8ddf3ae5eac535238a68a2ca019e6a6e44ac3124b9a525fc82fb`.
 
-The `v7.0.2` tag also carries the standalone wrapper `verify.sh` with digest
-`sha256:a8b77531d61b072a35af67a1e4c302217c08f58f62947ad342864a4757572dad`.
+The `v7.1.0` tag also carries the standalone wrapper `verify.sh` with digest
+`sha256:4dcbbec84328f8d348bca9056840d80d365ebd01decfbd3ffe944cef82080ef1`.
 Download surfaces name that exact tag and show that digest. The wrapper
-fetches the validator from the `v7.0.1` tag, the release whose
-`validate.sh` matches its pin.
+fetches the validator from the `v7.1.0` tag, the release whose
+`validate.sh` matches its pin. The `v7.0.2` wrapper
+(`sha256:a8b77531d61b072a35af67a1e4c302217c08f58f62947ad342864a4757572dad`)
+keeps working: it fetches the `v7.0.1` validator.
 
 Release `guidecheck-1.3.0` carries `assistant-guide.txt` (6,973 bytes,
 `sha256:0a8d445b0e3ca350ec8d130adabca4f275634a9ac40b32e77200aef22657c362`)

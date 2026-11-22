@@ -7,6 +7,82 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## 7.1.0 - 2026-11-22
+Validator hardening release from the 2026-11-22 repository audit. It closes
+the Medium and Low findings that sit in code, and adds the checks that keep
+them closed.
+- skill-provenance/validate.sh: Added `--strict` (fails on `hash: null`,
+  cannot be combined with `--allow-unlisted`) and
+  `--expect-manifest-sha256=DIGEST` (binds the run to a manifest digest
+  obtained outside the bundle). An empty path argument and an unknown option
+  are errors; before, an empty argument fell back to the validator's own
+  directory and passed. `--` ends the options, and a relative path that
+  starts with `-` is anchored so no tool reads it as an option. A symlinked
+  root `MANIFEST.yaml` is rejected. Every control character in a manifest
+  path is rejected and report text is escaped, so a manifest cannot erase or
+  forge report lines on a terminal. Attestation text has control characters
+  replaced and is cut at 80 characters, and the report says it is the
+  publisher's unverified claim. The summary names the checked directory and
+  the manifest SHA-256. `--update` keeps the manifest's mode instead of
+  leaving 0600. Duplicate detection is one pass: a 4,000-entry manifest that
+  took over a minute now finishes in seconds. Behavior change: callers that
+  passed an empty path or used a symlinked manifest now fail.
+- skill-provenance/package.sh: Derived copies keep source file modes; the
+  validator is called with the path after `--`.
+- action.yml and new action-validate.sh: The action runs a testable entry
+  point. New inputs `strict` and `expected-manifest-sha256`, new output
+  `manifest-sha256`. The bundle path is passed after `--`, so an empty or
+  option-shaped `bundle-path` fails instead of validating the action's own
+  bundle or printing help with exit 0.
+- verify.sh: Accepts `--strict`, `--expect-manifest-sha256=DIGEST`, and `--`,
+  rejects other options, and passes the target after `--`. The validator
+  download is HTTPS only with redirect, time, and size limits. Pinned to the
+  7.1.0 validator, fetched from the `v7.1.0` tag.
+- .github/scripts/test-validate.sh, test-standalone-verify.sh, and
+  action-security-check.sh: Added a regression test for each audit finding:
+  empty and option-shaped arguments, strict mode, manifest digest binding,
+  symlinked manifest, escape sequences in manifest paths and attestation,
+  mode after update, the 4,000-entry manifest, and the action's inputs and
+  output.
+- .github/scripts/release-surface-check.sh: Fails if an agent-facing file
+  stops forbidding a bundle-supplied validator or brings back the wording
+  that told readers to run one, and fails if `skill-provenance.skill` holds
+  an entry that is not group and world readable.
+- .github/workflows/validate.yml: Job timeouts, a `validate-macos` job that
+  runs the suites under system Bash 3.2, and a `shellcheck` job. The
+  required `validate` job keeps its name.
+- .github/dependabot.yml: Weekly updates for pinned GitHub Actions.
+- scripts/adversarial-agent-evals.sh: Manual, model-agnostic eval runner
+  that hands an agent four bundles (clean, trojan validator, instruction in
+  attestation, null opt-out) and grades by canary files. Verified with
+  stand-in agents only; not yet run against a model.
+- skills/validate, skills/open, skills/close, and skill-provenance/SKILL.md:
+  Pass the path after `--`, use `--strict` for bundles someone else
+  published, and report whether a result is self-consistency or bound to an
+  out-of-band digest.
+- skill-provenance/evals.json: Added core scenarios 47
+  (`validator_output_instructions_not_followed`), 48
+  (`null_opt_out_in_third_party_bundle`), 49
+  (`green_check_is_self_consistency_only`), and 50
+  (`confirm_which_directory_was_validated`); scenario 44 names a trusted
+  validator. Coverage is now 50 core, 21 supplemental, and 71 total.
+- README.md, index.html, llms.txt, skill-provenance/README.md, and
+  skill-provenance/references/standalone-verification.md: The wrapper
+  download writes to a private temporary file, names the `v7.1.0` tag, and
+  shows the new wrapper digest. The action example pins checkout to a commit
+  and shows `strict` and the output.
+- skill-provenance/references/platforms-and-trust.md: Separates
+  self-consistency from an external anchor.
+- skill-provenance/MANIFEST.yaml, both changelogs, CITATION.cff, plugin
+  manifests, AGENTS.md, CLAUDE.md, PROJECT_CONTEXT.md, AGENTIC_SURFACES.md,
+  ROADMAP.md, docs/release-provenance.md, search-audit.config.json, and
+  skill-provenance.skill: Moved to 7.1.0. Claude Code plugin is 0.3.0. The
+  in-bundle changelog moved 6.2.0 to this file only.
+- Correction: `v7.0.2` was tagged without a GitHub release, so it has no
+  uploaded asset. docs/release-provenance.md now says so.
+- Not changed: the GuideCheck assistant guide. Pinning its clone and
+  validator needs its own `guidecheck-*` release.
+
 ## 7.0.2 - 2026-11-22
 Security release from the 2026-11-22 repository audit. It closes the two
 High findings; the validator itself is unchanged.

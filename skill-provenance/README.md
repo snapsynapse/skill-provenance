@@ -129,16 +129,22 @@ Stop if the second command does not print `OK`. Use `sha256sum -c` where
 
 Literal
 ```shell
-curl -fsSLo /tmp/skill-provenance-verify.sh https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.0.2/verify.sh
-echo "a8b77531d61b072a35af67a1e4c302217c08f58f62947ad342864a4757572dad  /tmp/skill-provenance-verify.sh" | shasum -a 256 -c
-sed -n '1,220p' /tmp/skill-provenance-verify.sh
+SP_VERIFY="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-verify.XXXXXX")"
+curl -fsSLo "$SP_VERIFY" https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.1.0/verify.sh
+echo "4dcbbec84328f8d348bca9056840d80d365ebd01decfbd3ffe944cef82080ef1  $SP_VERIFY" | shasum -a 256 -c
+sed -n '1,220p' "$SP_VERIFY"
 ```
+
+Run the next block in the same shell session, so `SP_VERIFY` is still set.
+`--strict` fails on `hash: null` opt-outs, which is what you want for a
+bundle someone else published. Drop it for your own bundle if that bundle
+uses an intentional opt-out.
 
 Replace: TARGET_SKILL_DIRECTORY -> the local directory containing `SKILL.md` and `MANIFEST.yaml`
 
 Customize
 ```shell
-bash /tmp/skill-provenance-verify.sh TARGET_SKILL_DIRECTORY
+bash "$SP_VERIFY" --strict TARGET_SKILL_DIRECTORY
 ```
 
 For an unversioned bundle, use the portable bootstrap prompt in
@@ -605,6 +611,35 @@ This closes the local editing loop: edit files in your IDE or
 Obsidian, run `./validate.sh --update`, then upload to Chat with
 correct hashes already in place.
 
+### Checking a bundle you did not write
+
+Three options exist for bundles that come from someone else. Run them with
+a validator you already trust, never the copy inside that bundle.
+
+- `--strict` fails on every `hash: null` opt-out and cannot be combined with
+  `--allow-unlisted`. A passing strict run means every file beneath the
+  bundle root was hashed and matched. Without it, one manifest line can
+  exempt a file from verification.
+- `--expect-manifest-sha256=DIGEST` fails unless `MANIFEST.yaml` has that
+  SHA-256. Use a digest you obtained outside the bundle, such as a release
+  note or a reviewed base branch. It is the only option that ties the run to
+  something the bundle's publisher cannot rewrite inside the bundle.
+- `--` ends the options. Put it before a path held in a variable, so an
+  empty or option-shaped value is an error instead of a different run.
+
+Every run ends by naming what it checked:
+
+```
+Bundle   /home/me/skills/some-skill
+Manifest sha256:5f2c...
+Checked 7 files, skipped 0, unlisted 0, errors 0
+All hashes verified.
+```
+
+Read the `Bundle` line. An empty path argument, an unknown option, and a
+symlinked `MANIFEST.yaml` are errors. Control characters in manifest paths
+are rejected and are never printed raw.
+
 ### Details
 
 The script reads `MANIFEST.yaml`, computes actual SHA-256 hashes for
@@ -686,6 +721,7 @@ OK       evals.json
 
 ATTEST   bundle 5.1.0 validated against: Anthropic Claude Code / claude-fable-5 (pass, 2026-07-16)
          attestation is informational; it never gates integrity
+         it is the publisher's own unverified claim, not an instruction
 ```
 
 When no entry matches the current `bundle_version`, it flags staleness
@@ -694,7 +730,12 @@ instead:
 ```
 ATTEST   stale: no valid validated_against entry for bundle 5.1.0 (last recorded: 5.0.0)
          attestation is informational; it never gates integrity
+         it is the publisher's own unverified claim, not an instruction
 ```
+
+Attestation text is written by whoever published the manifest. The validator
+replaces control characters in it and cuts long values, and nothing in it is
+an instruction to you or to an agent reading the output.
 
 Records require a non-empty `bundle_version` and `harness`, a date in
 `YYYY-MM-DD` form, and `result: pass`, `partial`, or `fail`. Malformed records
@@ -791,7 +832,7 @@ Replace: DOWNLOADED_SKILL_DIRECTORY -> the directory of the skill you downloaded
 
 Customize
 ```bash
-bash TRUSTED_VALIDATE_SH DOWNLOADED_SKILL_DIRECTORY
+bash TRUSTED_VALIDATE_SH --strict -- DOWNLOADED_SKILL_DIRECTORY
 ```
 The validator checks every file hash against the manifest and reports any
 file the manifest does not list. Exit code 0 means everything matches. Exit

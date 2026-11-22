@@ -7,6 +7,39 @@ travels with the package.
 Full release history lives in the source repository's top-level
 `CHANGELOG.md`.
 
+## 7.1.0 - 2026-11-22
+- validate.sh: Added `--strict`, which fails on `hash: null` opt-outs and
+  cannot be combined with `--allow-unlisted`, and
+  `--expect-manifest-sha256=DIGEST`, which fails unless `MANIFEST.yaml` has a
+  digest obtained outside the bundle. An empty path argument and an unknown
+  option are now errors instead of a fallback to the validator's own
+  directory, `--` ends the options, and a relative path that starts with `-`
+  is no longer read as an option by other tools. A symlinked root
+  `MANIFEST.yaml` is rejected. Control characters in manifest paths are
+  rejected and never printed raw, attestation text is stripped of control
+  characters and cut at 80 characters, and the summary names the directory
+  and manifest digest that were checked. `--update` keeps the manifest's file
+  mode. Duplicate detection is a single pass. This can break callers that
+  passed an empty path or relied on a symlinked manifest.
+- package.sh: Derived copies keep source file modes, and the validator is
+  called with the path after `--`.
+- SKILL.md: The validate protocol uses `--strict` and the out-of-band
+  manifest digest for bundles someone else published, and confirms the
+  checked directory from the summary.
+- README.md: Documented the new options, the summary lines, and the
+  attestation wording. The wrapper download uses a private temporary file.
+- references/platforms-and-trust.md: Separated self-consistency from an
+  external anchor and named the out-of-band manifest digest as the anchor.
+- references/standalone-verification.md: Documented wrapper options, the
+  summary lines, and the private temporary download path.
+- evals.json: Added core scenarios 47 to 50 for instructions in validator
+  output, null opt-outs in third-party bundles, self-consistent green checks,
+  and confirming the checked directory. Scenario 44 now names a trusted
+  validator. Coverage is 50 core, 21 supplemental, and 71 total.
+- MANIFEST.yaml: Bumped the bundle to 7.1.0, advanced changed file revisions,
+  refreshed notes, and refreshed hashes.
+- CHANGELOG.md: Added this entry and retained the newest 5 releases.
+
 ## 7.0.2 - 2026-11-22
 - SKILL.md: Verification now requires a trusted validator. A `validate.sh`
   or any other script supplied by the bundle under review is never executed,
@@ -73,23 +106,4 @@ Full release history lives in the source repository's top-level
   core, 21 supplemental, and 63 total.
 - MANIFEST.yaml: Bumped the bundle to 6.3.0, advanced changed file revisions,
   refreshed eval inventory notes, and refreshed hashes.
-- CHANGELOG.md: Added this entry and retained the newest 5 releases.
-
-## 6.2.0 - 2026-08-28
-- SKILL.md: Added direct routing for no-plugin verification and portable
-  bootstrap work while keeping the canonical workflow concise.
-- README.md: Added the pinned standalone verifier, bootstrap path, corrected
-  stable-release language, exact bundle-versus-GuideCheck tag guidance, and a
-  dated adoption-evidence observation with its measurement boundary.
-- references/standalone-verification.md: Added inspect-before-run verification
-  instructions, validator-pin trust boundaries, exit semantics, and a
-  model-agnostic bootstrap prompt that preserves initialization decisions.
-- evals.json and evals-distribution.json: Added two core scenarios for
-  canonical-parser pinning and safe standalone bootstrap behavior plus one
-  supplemental scenario for release tag-family separation, and migrated two
-  older scenarios from retired handoffs to durable evidence and roadmap
-  sources. Coverage is now 41 core, 18 supplemental, and 59 total.
-- MANIFEST.yaml: Bumped the bundle to 6.2.0, advanced changed file revisions,
-  inventoried the new reference, refreshed hashes, and recorded release
-  validation.
 - CHANGELOG.md: Added this entry and retained the newest 5 releases.

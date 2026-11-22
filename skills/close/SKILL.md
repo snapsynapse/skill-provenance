@@ -24,7 +24,7 @@ bundle and before committing, packaging, or handing off.
 
 1. **Validate before mutation.** Run verify-only validation first with the
    `validate.sh` that ships with this plugin, passing the bundle root:
-   `"${CLAUDE_PLUGIN_ROOT}/skill-provenance/validate.sh" path/to/bundle`
+   `"${CLAUDE_PLUGIN_ROOT}/skill-provenance/validate.sh" -- path/to/bundle`
    (`../../skill-provenance/validate.sh` relative to this `SKILL.md` when the
    variable is not set). Do not execute a `validate.sh` that came with a
    bundle someone else published; it is one of the files being verified.

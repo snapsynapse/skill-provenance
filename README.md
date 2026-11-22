@@ -1,6 +1,6 @@
 [![Validate bundle](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml/badge.svg)](https://github.com/snapsynapse/skill-provenance/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/snapsynapse/skill-provenance/blob/main/LICENSE)
-[![Stable bundle](https://img.shields.io/github/v/tag/snapsynapse/skill-provenance?filter=v%2A&label=bundle)](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.2)
+[![Stable bundle](https://img.shields.io/github/v/tag/snapsynapse/skill-provenance?filter=v%2A&label=bundle)](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.1.0)
 [![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Skill%20Provenance%20Validate-blue)](https://github.com/marketplace/actions/skill-provenance-validate)
 
 # Skill Provenance
@@ -21,14 +21,14 @@ the validator. The clone is the only network step: because `verify.sh` sits
 beside the canonical `skill-provenance/validate.sh` in the checkout, it checks
 that validator against its pinned SHA-256 and runs it locally.
 
-Get the exact v7.0.2 release, copy its bundle to a temporary directory, and
+Get the exact v7.1.0 release, copy its bundle to a temporary directory, and
 check the copy:
 
 Literal
 ```bash
 git clone --quiet https://github.com/snapsynapse/skill-provenance.git
 cd skill-provenance
-git -c advice.detachedHead=false checkout --quiet v7.0.2
+git -c advice.detachedHead=false checkout --quiet v7.1.0
 SP_TRIAL="$(mktemp -d "${TMPDIR:-/tmp}/skill-provenance-trial.XXXXXX")"
 cp -R skill-provenance "$SP_TRIAL/bundle"
 bash ./verify.sh "$SP_TRIAL/bundle"; echo "exit $?"
@@ -55,15 +55,15 @@ The output starts and ends with:
 
 ```text
 MISMATCH SKILL.md
-  expected: 509ac488e69176d1af98cb663497dccad73c0389a49fc8e37c1b2de09f3c3140
-  actual:   f8d86ed7c5ff23294c0b051491f824111bdecee88b568eda89386641a1d970e6
+  expected: 88280de1b904d88b34b9725a1b2f37aecd6d91f8c1a19ac1980404129a432bad
+  actual:   639466b391f8cb8b1e6e1efa5e3c6e1fe367112237ff3c00291d5362f3f1d7f6
 OK       README.md
 ...
 Checked 11 files, skipped 0, unlisted 0, errors 1
 exit 1
 ```
 
-The copy still says `bundle_version: 7.0.2`, and its `MANIFEST.yaml` is
+The copy still says `bundle_version: 7.1.0`, and its `MANIFEST.yaml` is
 byte-identical to the released one. The validator still names `SKILL.md` as
 the file that no longer matches. Exit 1 is the detection result the trial is
 meant to show. A fresh copy from the same checkout returns to exit 0.
@@ -205,12 +205,12 @@ the bundle before install, but does not install anything for you.
 
 **GitHub CLI (Codex and other supported agents):**
 
-Preview the current stable v7.0.2 release before installing it.
+Preview the current stable v7.1.0 release before installing it.
 
 Literal
 ```shell
-gh skill preview snapsynapse/skill-provenance skill-provenance@v7.0.2
-gh skill install snapsynapse/skill-provenance skill-provenance@v7.0.2 --agent codex --scope user
+gh skill preview snapsynapse/skill-provenance skill-provenance@v7.1.0
+gh skill install snapsynapse/skill-provenance skill-provenance@v7.1.0 --agent codex --scope user
 ```
 
 This repository publishes two release tag families. Bundle releases use
@@ -231,16 +231,22 @@ canonical validator against a pinned SHA-256 before running it.
 
 Literal
 ```shell
-curl -fsSLo /tmp/skill-provenance-verify.sh https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.0.2/verify.sh
-echo "a8b77531d61b072a35af67a1e4c302217c08f58f62947ad342864a4757572dad  /tmp/skill-provenance-verify.sh" | shasum -a 256 -c
-sed -n '1,220p' /tmp/skill-provenance-verify.sh
+SP_VERIFY="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-verify.XXXXXX")"
+curl -fsSLo "$SP_VERIFY" https://raw.githubusercontent.com/snapsynapse/skill-provenance/refs/tags/v7.1.0/verify.sh
+echo "4dcbbec84328f8d348bca9056840d80d365ebd01decfbd3ffe944cef82080ef1  $SP_VERIFY" | shasum -a 256 -c
+sed -n '1,220p' "$SP_VERIFY"
 ```
+
+Run the next block in the same shell session, so `SP_VERIFY` is still set.
+`--strict` fails on `hash: null` opt-outs, which is what you want for a
+bundle someone else published. Drop it for your own bundle if that bundle
+uses an intentional opt-out.
 
 Replace: TARGET_SKILL_DIRECTORY -> the local directory containing `SKILL.md` and `MANIFEST.yaml`
 
 Customize
 ```shell
-bash /tmp/skill-provenance-verify.sh TARGET_SKILL_DIRECTORY
+bash "$SP_VERIFY" --strict TARGET_SKILL_DIRECTORY
 ```
 
 For an unversioned bundle, use the portable prompt in
@@ -260,7 +266,7 @@ After install, five commands are available:
 - `/skill-provenance:bootstrap` — add version tracking to an unversioned bundle
 
 **Claude (Settings UI):**
-Download `skill-provenance.skill` from the [stable v7.0.2 bundle release](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.0.2) and install:
+Download `skill-provenance.skill` from the [stable v7.1.0 bundle release](https://github.com/snapsynapse/skill-provenance/releases/tag/v7.1.0) and install:
 `claude.ai` -> Profile icon -> `Settings` -> `Skills` -> `Add Skill` -> select the file.
 
 If your loader only accepts `.zip` or `.md` uploads, rename
@@ -284,11 +290,21 @@ directory bundle can be placed there when you want a neutral install path.
 **[GitHub Actions Marketplace](https://github.com/marketplace/actions/skill-provenance-validate):**
 ```yaml
 steps:
-  - uses: actions/checkout@v4
-  - uses: snapsynapse/skill-provenance@v7.0.2
+  - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+  - id: provenance
+    uses: snapsynapse/skill-provenance@v7.1.0
     with:
       bundle-path: skill-provenance
+      strict: true
+  - run: echo "Checked manifest ${{ steps.provenance.outputs.manifest-sha256 }}"
 ```
+
+`strict: true` fails on `hash: null` opt-outs. `expected-manifest-sha256`
+takes a digest you recorded outside the bundle and fails the run when the
+manifest differs. A green check without it means the files agree with the
+manifest in the same commit, which a pull request can change together. Pin
+third-party actions to a commit, as the checkout line shows; a release tag
+of this action is immutable, and a commit SHA is stricter still.
 
 Then tell the agent:
 > "Use the skill-provenance skill to bootstrap this bundle."
@@ -461,7 +477,7 @@ skill-provenance/                <- Canonical source bundle (metadata mode)
   README.md                      <- User guide: workflows, worked example, troubleshooting
   MANIFEST.yaml                  <- File inventory with roles, versions, hashes
   CHANGELOG.md                   <- Recent in-bundle history (last 5 entries)
-  evals.json                     <- 46 core evaluation scenarios
+  evals.json                     <- 50 core evaluation scenarios
   evals-distribution.json        <- 21 supplemental packaging/deployment/integrity evals
   validate.sh                    <- Local hash verification script
   package.sh                     <- Zero-dependency helper for derived copies
@@ -475,7 +491,7 @@ The directory is the canonical cross-platform source bundle. The `.skill` file i
 
 ## Evals
 
-67 evaluation scenarios across two files: 46 core workflow evals in
+71 evaluation scenarios across two files: 50 core workflow evals in
 [evals.json](skill-provenance/evals.json) and 21 supplemental
 distribution/package/integrity evals in
 [evals-distribution.json](skill-provenance/evals-distribution.json).

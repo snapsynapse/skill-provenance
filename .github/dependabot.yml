@@ -1,0 +1,9 @@
+# Keep pinned GitHub Actions current. Each update arrives as a pull request
+# that must pass the required `validate` check before it can merge.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

@@ -234,6 +234,32 @@ check_wrapper_download_surfaces() {
   echo "Wrapper download surfaces OK: $wrapper_hash from $wrapper_tag"
 }
 
+# The rule that a bundle never supplies its own validator lives in prose that
+# agents read. Keep an edit from quietly reversing it: the instruction files
+# must still state the rule, and no reader-facing surface may bring back the
+# wording that told readers to run the bundle's own script.
+check_trusted_validator_instructions() {
+  local surface
+  local forbidden="prefer the bundle's .?validate\\.sh|run .?validate\\.sh.? when available|if the bundle includes .?validate\\.sh"
+
+  for surface in skills/validate/SKILL.md skills/open/SKILL.md \
+    skills/close/SKILL.md skill-provenance/SKILL.md; do
+    grep -Eq '(Do not|Never) execute a `validate\.sh`' "$surface" ||
+      fail "$surface no longer forbids running a validator supplied by the bundle under review"
+  done
+
+  for surface in skills/validate/SKILL.md skills/open/SKILL.md \
+    skills/close/SKILL.md skills/handoff/SKILL.md skills/bootstrap/SKILL.md \
+    skill-provenance/SKILL.md skill-provenance/README.md \
+    skill-provenance/references/*.md README.md llms.txt index.html; do
+    if grep -Eiq "$forbidden" "$surface"; then
+      fail "$surface tells the reader to run a validator supplied by the bundle under review"
+    fi
+  done
+
+  echo "Trusted-validator instructions present on agent-facing surfaces"
+}
+
 # The README opens with a changed-bundle trial whose displayed output is
 # pinned to the current release. Re-run that trial against a temporary copy
 # of the canonical bundle and require every displayed output line, exit code,
@@ -344,6 +370,7 @@ check_skill_zip() {
   local dir
   local archived_hash
   local source_hash
+  local private_entries
 
   [ -f "$archive" ] || fail "$archive missing"
   unzip -t "$archive" >/dev/null
@@ -351,6 +378,16 @@ check_skill_zip() {
 
   printf '%s\n' "$archive_listing" | grep -Fx "skill-provenance/" >/dev/null ||
     fail "$archive does not contain the canonical skill-provenance/ directory"
+
+  # Every archived file must be readable by group and other. A 0600 entry,
+  # which a temporary-file rewrite can leave behind, installs as unreadable
+  # for any account other than the one that unpacked it.
+  private_entries="$(
+    unzip -Z "$archive" |
+      awk '$1 ~ /^-/ && $1 !~ /^-rw[x-]r-[x-]r-[x-]/ { print $1 " " $NF }'
+  )"
+  [ -z "$private_entries" ] ||
+    fail "$archive has entries that are not group and world readable: $private_entries"
 
   expected_file="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-expected.XXXXXX")"
   actual_file="$(mktemp "${TMPDIR:-/tmp}/skill-provenance-actual.XXXXXX")"
@@ -414,5 +451,6 @@ check_release_tag_families
 check_assistant_guide_manifest
 check_standalone_verifier
 check_wrapper_download_surfaces
+check_trusted_validator_instructions
 check_readme_trial
 check_skill_zip

@@ -1,5 +1,5 @@
 bundle: skill-provenance
-bundle_version: 7.0.2
+bundle_version: 7.1.0
 bundle_date: 2026-11-22
 description: >
   Metaskill for portable provenance, integrity, and drift control across
@@ -164,18 +164,33 @@ validated_against:
       output, eval counts, and archive agreement passed. The new core eval
       was added as a scenario, not executed as a model run. Attestation
       remains informational.
+  - bundle_version: 7.1.0
+    harness: Anthropic Claude Code
+    model: claude-mythos-5-2
+    date: 2026-11-22
+    result: pass
+    method: validate.sh strict verify + regression suite under Bash 5.3 and 3.2 + standalone pin and option tests + action input, strict, digest, and output tests + derived package validation + search contract + release-surface-check.sh including the instruction lint and archive-mode checks
+    notes: >
+      Canonical hashes in strict mode, each 2026-11-22 audit finding as a
+      regression test, derived strict and ClawHub packages with preserved
+      modes, standalone verifier pinning, wrapper digest on every surface,
+      search contract, README trial output, eval counts, and archive
+      agreement passed locally on macOS. The four new core evals are written
+      scenarios, and the adversarial agent eval runner was exercised with
+      stand-in agents only; neither was executed as a model run. Attestation
+      remains informational.
 
 files:
   - path: SKILL.md
     role: skill
-    version: 27
-    hash: sha256:509ac488e69176d1af98cb663497dccad73c0389a49fc8e37c1b2de09f3c3140
+    version: 28
+    hash: sha256:88280de1b904d88b34b9725a1b2f37aecd6d91f8c1a19ac1980404129a432bad
     note: Canonical skill definition with a trusted-validator rule that never executes a script supplied by the bundle under review, action-led triggers, concise progressive disclosure, constrained manifest grammar, complete-inventory verification that fails on unlisted files, standalone verification and bootstrap routing, exact package inventory, evidence-based staleness, package validation gates, origin metadata, and provenance metadata in frontmatter
 
   - path: README.md
     role: reference
-    version: 30
-    hash: sha256:03d3f59d0af8ac4383ce4cb3d7f59032bf584a2cb991e6d304ea983572106063
+    version: 31
+    hash: sha256:7320900e9e8c481b84cbe8b571e49b79c311957882fc58b241c6514b8d42a65f
     note: Human-facing instructions for GitHub CLI installation, verifying a downloaded skill with a trusted validator instead of the bundle's own script, exact-tag wrapper download with a SHA-256 check, exact bundle-versus-GuideCheck release tags, no-plugin verification and bootstrap, dated adoption evidence, OpenAI discovery metadata, constrained manifest paths, complete-inventory verification with unlisted-file reporting, exact package inventory, fail-closed validation, packaging, trust, and troubleshooting
 
   - path: agents/openai.yaml
@@ -192,21 +207,21 @@ files:
 
   - path: references/platforms-and-trust.md
     role: reference
-    version: 3
-    hash: sha256:fd793a1725b2c5e22bde9ae50722dc7bc5f0f637bbcf4ac0338c87f64b58c233
+    version: 4
+    hash: sha256:29be5c8d445cb888686c12ec49e5206e69416cfd8724b7e7bb6523201a922268
     note: Load-on-demand canonical and derived states, platform notes, ecosystem boundaries, trust guidance, and version-label versus digest guidance
 
   - path: references/standalone-verification.md
     role: reference
-    version: 2
-    hash: sha256:dded718caf0ad6e7ebb85ae3b2fe864b2a07c018f6256eb8a7a375dff637f750
+    version: 3
+    hash: sha256:c856f04ba86d5ac79a62da6798e59b49fb507e881fce4eae9f52aa5c506f1d61
     note: No-plugin verification procedure with exact-tag wrapper download and SHA-256 check, pinned-validator trust boundary, the rule that a bundle never supplies its own validator, exit semantics, and portable bootstrap prompt
 
   - path: evals.json
     role: evals
-    version: 20
-    hash: sha256:87a4233a7b1f122db30e46a2f91261c7b374c0e9289545fe5fc2febb79c86ea5
-    note: 46 core evals including refusal to execute a bundle-supplied validator, same-version-label content comparison, refusal to refresh hashes to clear a downloaded bundle's mismatch, unlisted-file inventory failure, verified-adoption evidence classification, standalone verifier pinning and bootstrap decision gates, files-section scope, malformed attestation, exact package inventory, unsafe paths, duplicates, symlinks, fail-closed hashes, and prior provenance, portability, deployment, validation, and trust workflows
+    version: 21
+    hash: sha256:55b43d3bbad07899aa15202544dc807a90c7ab73b27b2fbd5300f7fadd4ad2af
+    note: 50 core evals including instructions in validator output, null opt-outs in third-party bundles, self-consistency versus an out-of-band manifest digest, confirming the checked directory, refusal to execute a bundle-supplied validator, same-version-label content comparison, refusal to refresh hashes to clear a downloaded bundle's mismatch, unlisted-file inventory failure, verified-adoption evidence classification, standalone verifier pinning and bootstrap decision gates, files-section scope, malformed attestation, exact package inventory, unsafe paths, duplicates, symlinks, fail-closed hashes, and prior provenance, portability, deployment, validation, and trust workflows
 
   - path: evals-distribution.json
     role: evals
@@ -216,18 +231,18 @@ files:
 
   - path: CHANGELOG.md
     role: reference
-    version: 35
-    hash: sha256:2d1417c000868d645a9348264326ade1762532c7b2b120da16624d3244add766
+    version: 36
+    hash: sha256:d65a0260904eff3a913b833967f8425083b516b441cf65a356f1b70800312b1b
     note: Active in-bundle changelog with the 5 most recent entries; older history lives in the repo root
 
   - path: validate.sh
     role: script
-    version: 10
-    hash: sha256:aaeac06ba392fd9d2283ec24a8e490d924df3f5f2cd9cd2f85604ff9a5063497
-    note: Zero-dependency constrained manifest parsing, path and symlink enforcement, complete-inventory walk that fails on unlisted files, symlinks, and special files unless --allow-unlisted is given, fail-closed hash verification and repair, explicit null opt-outs, and non-gating malformed, stale, or matching validated_against reporting
+    version: 11
+    hash: sha256:8d03a6899490b886312d6170813e91d2fe3f0bb703acb45baa4cbc25edd66142
+    note: Zero-dependency constrained manifest parsing, --strict rejection of null opt-outs, --expect-manifest-sha256 digest binding, fail-closed empty and option-shaped arguments, symlinked-manifest rejection, escaped report text, mode-preserving update, single-pass duplicate detection, path and symlink enforcement, complete-inventory walk that fails on unlisted files, symlinks, and special files unless --allow-unlisted is given, fail-closed hash verification and repair, explicit null opt-outs, and non-gating malformed, stale, or matching validated_against reporting
 
   - path: package.sh
     role: script
-    version: 5
-    hash: sha256:6bcdd97f4c0b02782c4bc7e429c3d83007ac2e8803c7f15110ac775f867b6439
+    version: 6
+    hash: sha256:c3d4e5dd8efa66622ba409e14b5bffc408d38bf3b7de03880d79c5d5f24833a5
     note: Zero-dependency derived-package builder that delegates both derived hash updates and boundary verification to canonical validate.sh
