@@ -363,7 +363,6 @@ check_readme_trial() {
 check_skill_zip() {
   local archive="skill-provenance.skill"
   local archive_listing
-  local expected_listing
   local expected_file
   local actual_file
   local path
