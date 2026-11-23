@@ -49,15 +49,22 @@ fetches the validator from the `v7.1.0` tag, the release whose
 (`sha256:a8b77531d61b072a35af67a1e4c302217c08f58f62947ad342864a4757572dad`)
 keeps working: it fetches the `v7.0.1` validator.
 
-Release `guidecheck-1.4.0` carries `assistant-guide.txt` (7,934 bytes,
-`sha256:a0099f11098377dbb679414bc2c66cd37cc69fc04723111000530774ce52c6e0`)
-and its `assistant-guide-manifest.txt` sidecar. It applies to bundle release
+Release `guidecheck-1.4.0` carries `assistant-guide.txt` (7,937 bytes,
+`sha256:aa5073e648b98cd27b07d2376c13b1dcd6291cf3a667741a485cfb9c165da79b`)
+and its `assistant-guide-manifest.txt` sidecar. It declares GuideCheck
+profile 2.0.0. It applies to bundle release
 `7.1.0` exactly. It clones tag `v7.1.0`, expects release commit
 `582876f7da65ece43f774f3947dbbe1cef457801`, pins `validate.sh` with
 `exec-sha256` `8d03a6899490b886312d6170813e91d2fe3f0bb703acb45baa4cbc25edd66142`,
 and runs it with `--expect-manifest-sha256` set to
 `ab89d8a7fe4a27ac8b7ef2be4e65e45cb50369732b8cd83aa5e53b899790e8ec`.
 `release-surface-check.sh` checks those four values against the published tag.
+
+GuideCheck Level 4 needs the guide hash on a channel the web host does not
+control. The intended channel is a DNS TXT record at
+`_assistant-guide.skillprovenance.dev` with value
+`v=1; sha256=<guide-sha256>; url=https://skillprovenance.dev/.well-known/assistant-guide.txt`.
+It must be updated whenever a new guide is published.
 
 The previous guide release, `guidecheck-1.3.0`, carried a 6,973-byte guide
 with digest

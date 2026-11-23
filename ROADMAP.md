@@ -20,8 +20,9 @@
   release closed the validator items from the 2026-11-22 audit, and
   GuideCheck guide 1.4.0 pins the release it verifies. Still open: build
   release assets in CI with provenance, run the adversarial agent evals
-  against a model and record the result, and publish an independent anchor
-  for the guide hash so it can reach GuideCheck Level 4.
+  against a model and record the result, and publish the guide hash as a
+  DNS TXT anchor at `_assistant-guide.skillprovenance.dev` so the guide
+  reaches GuideCheck Level 4 under profile 2.0.0.
 
 ## Adoption evidence gate
 

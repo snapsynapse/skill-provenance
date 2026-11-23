@@ -137,6 +137,7 @@ check_assistant_guide_manifest() {
   local guide_bytes
   local manifest_hash
   local manifest_bytes
+  local guide_profile_version
 
   [ -f .well-known/assistant-guide.txt ] || fail "assistant guide missing"
   [ -f .well-known/assistant-guide-manifest.txt ] || fail "assistant guide manifest missing"
@@ -158,7 +159,43 @@ check_assistant_guide_manifest() {
     [ -n "$(manifest_value "$key")" ] || fail "assistant guide manifest missing $key"
   done
 
-  echo "Assistant guide sidecar OK: $guide_hash, $guide_bytes bytes"
+  # A verifier rejects a sidecar that names a different profile version
+  # from the guide it describes.
+  guide_profile_version="$(awk '/^profile-version: / { print $2; exit }' .well-known/assistant-guide.txt)"
+  [ -n "$guide_profile_version" ] || fail "assistant guide has no profile-version"
+  [ "$guide_profile_version" = "$(manifest_value profile-version)" ] ||
+    fail "assistant guide declares profile $guide_profile_version but its sidecar declares $(manifest_value profile-version)"
+
+  echo "Assistant guide sidecar OK: $guide_hash, $guide_bytes bytes, profile $guide_profile_version"
+  check_assistant_guide_dns_anchor "$guide_hash"
+}
+
+# GuideCheck Level 4 needs the guide hash on a channel the web host does not
+# control. This repository uses DNS TXT at _assistant-guide.skillprovenance.dev.
+# The record can only be updated after a new guide is published, so a missing
+# or older record is reported, never failed. When dig is unavailable or the
+# lookup fails, the check says so and moves on.
+check_assistant_guide_dns_anchor() {
+  local guide_hash="$1"
+  local record
+  local anchor_hash
+
+  if ! command -v dig >/dev/null 2>&1; then
+    echo "NOTE: dig not available; guide DNS anchor not checked"
+    return 0
+  fi
+  record="$(dig +short +time=5 +tries=2 TXT _assistant-guide.skillprovenance.dev 2>/dev/null | tr -d '"' || true)"
+  if [ -z "$record" ]; then
+    echo "NOTE: no guide DNS anchor at _assistant-guide.skillprovenance.dev; GuideCheck Level 4 needs one"
+    return 0
+  fi
+  anchor_hash="$(printf '%s\n' "$record" | grep -Eo 'sha256=[0-9a-f]{64}' | head -1)"
+  anchor_hash="${anchor_hash#sha256=}"
+  if [ "$anchor_hash" = "$guide_hash" ]; then
+    echo "Assistant guide DNS anchor matches the guide hash"
+  else
+    echo "NOTE: guide DNS anchor holds ${anchor_hash:-no sha256 value}; the guide is $guide_hash. Update the record once this guide is published."
+  fi
 }
 
 check_standalone_verifier() {

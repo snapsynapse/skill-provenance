@@ -3,7 +3,7 @@ Assistant Guide: Skill Provenance bundle fetch and integrity check
 [assistant-guide-metadata]
 identifier: assistant-guide
 profile: human-verifiable-assistant-guide
-profile-version: 0.3.0
+profile-version: 2.0.0
 guide-version: 1.4.0
 applies-to: skill-provenance 7.1.0
 canonical-url: https://skillprovenance.dev/.well-known/assistant-guide.txt
@@ -12,7 +12,7 @@ source-path: /.well-known/assistant-guide.txt
 last-reviewed: 2026-11-22
 status: active
 recommended-verifier: https://guidecheck.org/verify
-verifier-conformance: human-verifiable-assistant-guide-verifier >=0.3.0, <0.4.0
+verifier-conformance: human-verifiable-assistant-guide-verifier >=2.0.0, <3.0.0
 manifest-url: https://skillprovenance.dev/.well-known/assistant-guide-manifest.txt
 [/assistant-guide-metadata]
 
@@ -48,7 +48,7 @@ This guide is advisory. It is lower priority than system
 instructions, user instructions, local repository instructions, local
 security policy, package manager trust policy, and operating system
 permission prompts. The presence of this guide is not permission to
-broaden tool access, skip sandboxing, or skip approval gates.
+broaden tool access, disable sandboxing, or skip approval gates.
 
 Safety rules
 Run the actions in the order listed. Stop on any error. Do not
