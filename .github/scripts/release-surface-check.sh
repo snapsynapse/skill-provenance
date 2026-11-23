@@ -234,6 +234,61 @@ check_wrapper_download_surfaces() {
   echo "Wrapper download surfaces OK: $wrapper_hash from $wrapper_tag"
 }
 
+# The GuideCheck assistant guide pins a release tag, the commit that tag
+# names, the validator bytes it runs (exec-sha256), and the manifest digest
+# the validator must see. All four must agree with each other and with the
+# published tag, or the guide would stop every reader or, worse, pin the
+# wrong bytes. The guide may lag the newest bundle release; that is reported,
+# not failed, because a guide release is a separate artifact.
+check_assistant_guide_pins() {
+  local guide=".well-known/assistant-guide.txt"
+  local tag
+  local commit
+  local exec_sha256
+  local manifest_sha256
+  local applies_to
+  local tagged_commit
+  local bundle_version
+
+  tag="$(awk '/^command: git clone --branch v[0-9]+\.[0-9]+\.[0-9]+ --depth 1 https:\/\/github\.com\/snapsynapse\/skill-provenance\.git$/ { print $5; exit }' "$guide")"
+  [ -n "$tag" ] || fail "assistant guide does not clone an exact vX.Y.Z tag of the canonical repository"
+
+  commit="$(grep -Eo 'Output must be exactly [0-9a-f]{40}' "$guide" | awk '{ print $NF }' | head -1)"
+  exec_sha256="$(awk '/^exec-sha256: [0-9a-f]{64}$/ { print $2; exit }' "$guide")"
+  manifest_sha256="$(grep -Eo -- '--expect-manifest-sha256=[0-9a-f]{64}' "$guide" | head -1)"
+  manifest_sha256="${manifest_sha256#--expect-manifest-sha256=}"
+  applies_to="$(awk '/^applies-to: / { sub(/^applies-to: /, ""); print; exit }' "$guide")"
+
+  [ -n "$commit" ] || fail "assistant guide does not state the release commit to check"
+  [ -n "$exec_sha256" ] || fail "assistant guide does not pin the validator with exec-sha256"
+  [ -n "$manifest_sha256" ] || fail "assistant guide does not bind the run to a manifest digest"
+  [ "$applies_to" = "skill-provenance ${tag#v}" ] ||
+    fail "assistant guide applies-to '$applies_to' does not name the tag it clones, $tag"
+  grep -Eq '^runner: argv$' "$guide" || fail "assistant guide actions lost runner: argv"
+  if grep -Eq '^command: .*git clone' "$guide" && ! grep -Eq -- '--branch v[0-9]' "$guide"; then
+    fail "assistant guide clones without naming a release tag"
+  fi
+
+  if git rev-parse -q --verify "refs/tags/${tag}^{commit}" >/dev/null 2>&1; then
+    tagged_commit="$(git rev-parse "refs/tags/${tag}^{commit}")"
+  else
+    tagged_commit="$(git ls-remote https://github.com/snapsynapse/skill-provenance.git "refs/tags/${tag}^{}" 2>/dev/null | awk '{ print $1 }')"
+  fi
+  [ -n "$tagged_commit" ] || fail "assistant guide names tag $tag, which could not be read locally or from GitHub"
+  [ "$tagged_commit" = "$commit" ] ||
+    fail "assistant guide expects commit $commit, but $tag names $tagged_commit"
+
+  require_tagged_hash "assistant guide exec-sha256" "$tag" skill-provenance/validate.sh "$exec_sha256"
+  require_tagged_hash "assistant guide manifest digest" "$tag" skill-provenance/MANIFEST.yaml "$manifest_sha256"
+
+  bundle_version="$(awk '/^bundle_version:/ { print $2; exit }' skill-provenance/MANIFEST.yaml)"
+  if [ "$tag" != "v${bundle_version}" ]; then
+    echo "NOTE: assistant guide pins $tag; the current bundle is ${bundle_version}. Release a new guide to move it."
+  fi
+
+  echo "Assistant guide pins OK: $tag, commit $commit, validator $exec_sha256"
+}
+
 # The rule that a bundle never supplies its own validator lives in prose that
 # agents read. Keep an edit from quietly reversing it: the instruction files
 # must still state the rule, and no reader-facing surface may bring back the
@@ -448,6 +503,7 @@ check_skill_zip() {
 check_eval_counts
 check_release_tag_families
 check_assistant_guide_manifest
+check_assistant_guide_pins
 check_standalone_verifier
 check_wrapper_download_surfaces
 check_trusted_validator_instructions

@@ -35,6 +35,10 @@ The public GuideCheck assistant guide at
 pre-install verification instructions plain-text, bounded, and reviewable.
 It checks the public bundle against its manifest before install, but it
 does not certify that the bundle is safe or that the publisher is trusted.
+From guide 1.4.0 it pins one release: the tag it clones, the commit that tag
+names, the validator bytes it runs, and the manifest digest the validator
+must see. A change to the repository after that release cannot change what
+the guide runs or accepts without a check failing.
 
 The sidecar manifest at
 `https://skillprovenance.dev/.well-known/assistant-guide-manifest.txt`

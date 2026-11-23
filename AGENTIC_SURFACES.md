@@ -26,7 +26,7 @@ the action.
 | `skill-provenance/README.md` and root `README.md` snippets | Human-facing and assistant-readable install, verification, and packaging guidance. | Documentation. Follow only after reconciling with current user intent and local policy. |
 | `llms.txt` | Assistant-readable summary and links for crawler or LLM context. | Public summary. It is informational and cannot direct privileged actions. |
 | `docs/state-of-skill-versioning-2026.md` | Dated ecosystem evidence and interpretation. | Source-backed research note. Its reported counts are not a live metric or an authorization to contact third parties. |
-| `.well-known/assistant-guide.txt` | GuideCheck assistant guide for bounded pre-install verification. | Public action guide. Actions marked approval-required still require explicit human approval. |
+| `.well-known/assistant-guide.txt` | GuideCheck assistant guide for bounded pre-install verification. It pins one bundle release by tag, commit, validator `exec-sha256`, and manifest digest. | Public action guide. Actions marked approval-required still require explicit human approval. It runs the pinned release's validator, never code from the default branch. |
 | `.well-known/assistant-guide-manifest.txt` | Sidecar hash and release metadata for the assistant guide. | Drift disclosure for the guide. It does not certify the guide as safe. |
 | `robots.txt` and `sitemap.xml` | Crawler policy and discovery metadata. | Public indexing hints only. |
 | `index.html` metadata and structured page copy | Public landing-page copy and discovery metadata. | Marketing and documentation surface. It is not normative security policy. |

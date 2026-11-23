@@ -7,6 +7,33 @@ The in-bundle file at `skill-provenance/CHANGELOG.md` is the active changelog
 that travels with the skill bundle and keeps only the five most recent entries
 to limit package weight. Older history remains here in the repo root.
 
+## guidecheck-1.4.0 - 2026-11-22 (assistant guide only)
+Closes the last part of the audit's first High finding: the guide no longer
+clones the default branch and runs whatever validator it finds there.
+- .well-known/assistant-guide.txt and its root mirror: Guide 1.4.0 pins one
+  release. `clone-bundle` clones tag `v7.1.0` instead of the default
+  branch. A new read-only `check-release-commit` action prints the commit
+  and the guide states the one it must be
+  (`582876f7da65ece43f774f3947dbbe1cef457801`). `verify-integrity` declares
+  `exec-sha256` for `validate.sh` and runs it with `--expect-manifest-sha256`,
+  so the validator itself fails unless the manifest is the 7.1.0 one, which
+  also rules out unhashed files. `applies-to` is now `skill-provenance 7.1.0`.
+  The acceptance checklist, stop rules, task scope, and threat model say
+  what is pinned. The GuideCheck reference verifier now reports Level 3 with
+  no blocking findings; 1.3.0 was Level 2 with an unpinned-script finding.
+- .well-known/assistant-guide-manifest.txt and its root mirror: guide
+  version, digest, byte count, release URL, and release date for 1.4.0.
+- .github/scripts/release-surface-check.sh: New `check_assistant_guide_pins`
+  fails unless the guide clones an exact tag, `applies-to` names that tag,
+  the stated commit is the one the tag names, and the `exec-sha256` and
+  manifest digest match the files at that tag. It reports, without failing,
+  when the guide pins an older release than the current bundle.
+- README.md, SECURITY.md, AGENTIC_SURFACES.md, ROADMAP.md, and
+  docs/release-provenance.md: Describe what the guide pins.
+- Not changed: the bundle, the validator, and the wrapper. Still open: an
+  independent anchor for the guide hash (GuideCheck Level 4), and every
+  future bundle release now needs a matching guide release to move the pin.
+
 ## 7.1.0 - 2026-11-22
 Validator hardening release from the 2026-11-22 repository audit. It closes
 the Medium and Low findings that sit in code, and adds the checks that keep
