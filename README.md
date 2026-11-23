@@ -366,7 +366,10 @@ Skill Provenance publishes a GuideCheck `assistant-guide.txt` at
 [https://skillprovenance.dev/.well-known/assistant-guide.txt](https://skillprovenance.dev/.well-known/assistant-guide.txt).
 It is a plain-text, approval-gated guide for fetching this repository and
 running the local manifest integrity check. It is useful when you want an
-assistant to help verify the public bundle before you install it.
+assistant to help verify the public bundle before you install it. It clones
+an exact release tag, checks the release commit, pins the validator's bytes,
+and makes the validator fail unless the manifest has the digest the guide
+states. It never runs code from the default branch.
 
 Conformance is not safety. The guide and manifest confirm form and
 integrity, not publisher intent or runtime safety. Read the guide before
